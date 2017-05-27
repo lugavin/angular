@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="../">
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+    <script src="assets/js/lib/angular/angular.js"></script>
+</head>
+<body ng-app="app">
+<div id="page-wrapper" class="container">
+    <div class="page-header">
+        <label class="h4">Angular13-directive</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <fieldset ng-controller="controller">
+                <h3>渲染指令<small>(ng-init | ng-repeat | ng-bind | ng-bind-template | ng-include)</small></h3>
+                <ul ng-init="users = [{id:101,name:'user_101'},{id:102,name:'user_102'},{id:103,name:'user_103'}]">
+                    <li ng-repeat="user in users">
+                        {{user.name}}&emsp;<span ng-bind="$index"></span>&emsp;{{$first}}&emsp;{{$middle}}&emsp;{{$last}}
+                    </li>
+                </ul>
+                <!--
+                <p ng-bind-template="{{users}}"></p>
+                <div ng-include="'angular.html'"></div>
+                -->
+
+                <h3>事件指令<small>(ng-click | ng-dblclick | ng-mouseover ...)</small></h3>
+                <p><button ng-click="toggleState($event)">切换状态</button></p>
+                <p ng-show="state"><i class="fa fa-spinner fa-spin fa-2x"></i></p>
+
+                <h3>节点指令<small>(ng-style | ng-class | ng-show | ng-hide | ng-switch | ng-src | ng-href | ng-if)</small></h3>
+                <ul ng-style="{'font-size': '16px'}" ng-class="'bg-danger'" ng-init="users = [{id:101,name:'user_101'},{id:102,name:'user_102'},{id:103,name:'user_103'}]">
+                    <li ng-repeat="user in users" ng-class-even="'text-warning'" ng-class-odd="'text-success'">
+                        {{user.name}}&emsp;<span ng-bind="$index"></span>&emsp;{{$first}}&emsp;{{$middle}}&emsp;{{$last}}
+                    </li>
+                </ul>
+                <p ng-show="state"><i class="fa fa-cog fa-spin fa-2x"></i></p>
+                <p ng-hide="state"><i class="fa fa-spinner fa-spin fa-2x"></i></p>
+                <p ng-if="state"><img ng-src="{{faviconIco}}"></p>
+                <p><a ng-href="{{faviconIco}}">icon</a></p>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script id="template" type="text/ng-template">
+    <div><img src="{{faviconIco}}"/></div>
+</script>
+<script src="assets/js/lib/jquery/jquery.js"></script>
+<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
+<script type="text/javascript">
+    angular.module("app", []).controller("controller", ["$scope", function (scope) {
+        scope.state = true;
+        scope.faviconIco = 'assets/img/favicon.ico';
+        scope.toggleState = function (event) {
+            scope.state = !scope.state;
+        };
+    }]);
+</script>
+</body>
+</html>

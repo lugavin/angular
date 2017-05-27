@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="../">
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+    <script src="assets/js/lib/angular/angular.js"></script>
+</head>
+<body>
+<div id="page-wrapper" class="container" ng-app="app">
+    <div class="page-header">
+        <label class="h4">Angular10-filterProvider</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <fieldset ng-controller="controller">
+                <ul>
+                    <li ng-repeat="item in data | filterItem">
+                        {{item.id}} -- {{item.name}} -- {{item.py}}
+                    </li>
+                </ul>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script src="assets/js/lib/jquery/jquery.js"></script>
+<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
+<script type="text/javascript">
+    angular.module("app", [], function ($provide, $filterProvider) {
+        $provide.service('data', function () {
+            return [
+                {id: 101, name: '上海', py: 'shanghai'},
+                {id: 102, name: '北京', py: 'beijing'},
+                {id: 103, name: '天津', py: 'tianjin'},
+                {id: 103, name: '重庆', py: ''}
+            ];
+        });
+        $filterProvider.register('filterItem', function () {
+            return function (objs) {
+                var results = [];
+                angular.forEach(objs, function (obj) {
+                    if (obj.py) {
+                        results.push(obj);
+                    }
+                });
+                return results;
+            };
+        });
+    }).controller('controller', function ($scope, data) {
+        $scope.data = data;
+    });
+</script>
+</body>
+</html>

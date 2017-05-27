@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="../">
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+    <script src="assets/js/lib/angular/angular.js"></script>
+</head>
+<body>
+<div id="page-wrapper" class="container" ng-app="app">
+    <div class="page-header">
+        <label class="h4">Angular14-constant</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <fieldset ng-controller="controller">
+                <p>APIKEY: {{APIKEY}}</p>
+                <p>VERSION: {{VERSION}}</p>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script src="assets/js/lib/jquery/jquery.js"></script>
+<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
+<script type="text/javascript">
+    angular.module("app", [], ["$provide", function ($provide) {
+        /**
+         * constant: 用来声明整个应用范围内的常量,并且它们在所有的配置(config)和实例(service & controller等)方法中都可用.
+         * value: 如果只是想在服务内得到一些内容,可以通过value来声明常量.
+         */
+        $provide.constant("APIKEY", "3986874b369863a88de3f82728004977");
+        $provide.value("VERSION", "1.0");
+    }]).config(function (APIKEY) {
+        console.info("function config()...", APIKEY);
+    }).run(function () {
+        /**
+         * run: 想要在注入启动之后执行某些操作而这些操作需要在页面对用户可用之前执行,可以使用此方法,比如加载远程模板需要在使用前放入缓存.
+         */
+        console.info("function run()...");
+    }).controller("controller", ["$scope", "APIKEY", "VERSION", function (scope, APIKEY, VERSION) {
+        scope.APIKEY = APIKEY;
+        scope.VERSION = VERSION;
+        console.info("function controller()...", scope);
+    }]);
+</script>
+</body>
+</html>

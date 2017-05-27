@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="../">
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+    <script src="assets/js/lib/angular/angular.js"></script>
+</head>
+<body>
+<div id="page-wrapper" class="container" ng-app="app">
+    <div class="page-header">
+        <label class="h4">Angular07-service</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <fieldset ng-controller="controller">
+                <div class="form-group">
+                    <h4>{{data}}</h4>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script src="assets/js/lib/jquery/jquery.js"></script>
+<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
+<script type="text/javascript">
+    angular.module("app", [], function ($provide) {
+        console.info($provide);
+        // service方法的返回值只能是引用(对象)类型
+        $provide.service('service', function () {
+            return {
+                data: "provide.service(name,function)"
+            };
+        });
+    }).controller("controller", function ($scope, service) {
+        $scope.data = service.data;
+    });
+</script>
+</body>
+</html>

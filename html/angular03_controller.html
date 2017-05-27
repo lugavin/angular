@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="../">
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+    <script src="assets/js/lib/angular/angular.js"></script>
+</head>
+<body>
+<div id="page-wrapper" class="container" ng-app="app">
+    <div class="page-header">
+        <label class="h4">Angular03-controller</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <fieldset ng-controller="controller">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="name">Name:</label>
+                    <div class="col-sm-4">
+                        <input id="name" name="name" class="form-control" ng-model="name" placeholder="Enter a name here">
+                    </div>
+                    <div class="col-sm-6 h4">
+                        Hello {{name}}!
+                        Hello <span ng-bind="name"></span>!
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script src="assets/js/lib/jquery/jquery.js"></script>
+<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
+<script type="text/javascript">
+    angular.module("app", []).controller("controller", function ($scope) {
+        $scope.name = "AngularJS";
+    });
+</script>
+</body>
+</html>

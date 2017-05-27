@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="../">
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+    <script src="assets/js/lib/angular/angular.js"></script>
+</head>
+<body>
+<div id="page-wrapper" class="container" ng-app="app">
+    <div class="page-header">
+        <label class="h4">Angular04-apply</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <fieldset ng-controller="controller">
+                <div class="form-group">
+                    <h4>当前时间: {{data.datetime}}</h4>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script src="assets/js/lib/jquery/jquery.js"></script>
+<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
+<script type="text/javascript">
+
+    angular.module("app", []).controller("controller", function ($scope) {
+
+        /**
+         * setInterval()
+         * (1)方法可按照指定的周期（以毫秒计）来调用函数或计算表达式;
+         * (2)方法会不停地调用函数, 直到 clearInterval() 被调用或窗口被关闭;
+         * (3)方法返回的 ID 值可用作 clearInterval() 方法的参数.
+         * clearInterval()
+         * (1)方法可取消由 setInterval() 设置的 timeout;
+         * (2)方法的参数必须是由 setInterval() 返回的 ID 值.
+         */
+        var intervalId1 = window.setInterval(function () {
+            $scope.$apply(function () {
+                $scope.data = {datetime: new Date()};
+            });
+        }, 1000);
+
+        /**
+         * setTimeout() 方法用于在指定的毫秒数后调用函数或计算表达式.
+         */
+        var intervalId2 = window.setTimeout(function () {
+            // window.clearInterval(intervalId1);
+            // window.clearTimeout(intervalId2);
+        }, 5000);
+
+    });
+</script>
+</body>
+</html>

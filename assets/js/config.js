@@ -9,7 +9,9 @@ var require = {
     paths: {
         'jquery': 'lib/jquery/jquery',
         'angular': 'lib/angular/angular',
-        'bootstrap': 'lib/bootstrap/bootstrap'
+        'bootstrap': 'lib/bootstrap/bootstrap',
+        'nprogress': 'lib/nprogress/nprogress',
+        'treeMenu': 'lib/jquery-treeMenu/jquery.treeMenu'
     },
     /**
      * Remember: only use shim config for non-AMD scripts, scripts that do not already call define().

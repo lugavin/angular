@@ -58,6 +58,23 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="control-label col-sm-2" for="captcha">验证码</label>
+                    <div class="col-sm-6" ng-class="{'has-error':form.captcha.$dirty && form.captcha.$invalid}">
+                        <div class="input-group">
+                            <input id="captcha" name="captcha" type="text" class="form-control" placeholder="验证码"
+                                   ng-model="data.captcha" ng-required="true">
+                            <span class="input-group-btn">
+                                <button class="btn btn-sm btn-primary" type="button"
+                                        ng-bind="description" ng-disabled="canClick"
+                                        ng-click="sendSms()"></button>
+                            </span>
+                        </div>
+                        <small class="help-block" ng-show="form.captcha.$dirty && form.captcha.$error.required">
+                            密码不能为空
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="control-label col-sm-2" for="repPassword">确认密码</label>
                     <div class="col-sm-6" ng-class="{'has-error':form.password.$dirty && form.repPassword.$dirty && data.password!==data.repPassword}">
                         <input id="repPassword" name="repPassword" type="password" class="form-control" placeholder="确认密码"
@@ -264,8 +281,27 @@
                 });
             }
         };
-    }).controller("controller", ["$scope", "service", function ($scope, service) {
+    }).controller("controller", ["$scope", "$interval", "service", function ($scope, $interval, service) {
         $scope.area = service.area;
+        // Captcha
+        $scope.description = "发送验证码";
+        $scope.canClick = false;
+        var second = 59;
+        var timer;
+        $scope.sendSms = function () {
+            timer = $interval(function () {
+                if (second <= 0) {
+                    $interval.cancel(timer);
+                    second = 59;
+                    $scope.description = "重新发送";
+                    $scope.canClick = false;
+                } else {
+                    $scope.description = "重新发送(" + second + "s)";
+                    second--;
+                    $scope.canClick = true;
+                }
+            }, 1000)
+        };
     }]);
 </script>
 </body>

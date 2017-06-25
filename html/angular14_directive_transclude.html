@@ -1,35 +1,30 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
-    <base href="../">
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/lib/angular/angular.js"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/lib/angular/angular.js"></script>
 </head>
-<body ng-app="app">
-<div id="page-wrapper" class="container">
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
     <div class="page-header">
         <label class="h4">Angular14-directive-transclude</label>
     </div>
     <div id="page-content">
         <form id="form" method="post" class="form-horizontal form-group-sm">
-            <fieldset ng-controller="controller">
-                <h3>自定义指令</h3>
-                <p ng-tmpl1=""></p>
-                <p ng-tmpl2=""></p>
-                <p ng-tmpl3="">旧数据</p>
-            </fieldset>
+            <h3>自定义指令</h3>
+            <p ng-tmpl1=""></p>
+            <p ng-tmpl2=""></p>
+            <p ng-tmpl3="">旧数据</p>
         </form>
     </div>
 </div>
 <script id="template" type="text/ng-template">
     <div><img src="{{faviconIco}}"/></div>
 </script>
-<script src="assets/js/lib/jquery/jquery.js"></script>
-<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
 <script type="text/javascript">
-    angular.module("app", [], ["$compileProvider", function ($compileProvider) {
+    var myApp = angular.module("myApp", [], ["$compileProvider", function ($compileProvider) {
         $compileProvider.directive("ngTmpl1", function () {
             return {
                 restrict: 'ECMA',
@@ -52,8 +47,9 @@
             template: '<div class="h4">新数据... <small ng-transclude=""></small></div>',
             replace: true
         };
-    }).controller("controller", ["$scope", function (scope) {
-        scope.faviconIco = 'assets/img/favicon.ico';
+    });
+    myApp.controller("myController", ["$scope", function ($scope) {
+        $scope.faviconIco = '../favicon.ico';
     }]);
 </script>
 </body>

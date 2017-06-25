@@ -1,39 +1,35 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
-    <base href="../">
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/lib/angular/angular.js"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/lib/angular/angular.js"></script>
 </head>
-<body>
-<div id="page-wrapper" class="container" ng-app="app">
+<body ng-app="myApp">
+<div id="page-wrapper" class="container">
     <div class="page-header">
         <label class="h4">Angular02-module</label>
     </div>
     <div id="page-content">
         <form id="form" method="post" class="form-horizontal form-group-sm">
-            <fieldset>
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="name">Name:</label>
-                    <div class="col-sm-4">
-                        <input id="name" name="name" class="form-control" ng-model="name" placeholder="Enter a name here">
-                    </div>
-                    <div class="col-sm-6 h4">
-                        Hello {{name}}!
-                        Hello <span ng-bind="name"></span>!
-                    </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="name">Name:</label>
+                <div class="col-sm-4">
+                    <input id="name" name="name" class="form-control" ng-model="name" placeholder="Enter a name here">
                 </div>
-            </fieldset>
+                <div class="col-sm-6 h4">
+                    <span class="text-primary">{{name}}</span>
+                    <span ng-bind="name" class="text-danger"></span>
+                </div>
+            </div>
         </form>
     </div>
 </div>
-<script src="assets/js/lib/jquery/jquery.js"></script>
-<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
 <script type="text/javascript">
-    var app = angular.module("app", []);
-    console.info(app);
+    // Create a new module
+    var myApp = angular.module("myApp", []);
+    console.info(myApp);
 </script>
 </body>
 </html>

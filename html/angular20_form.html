@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
-    <base href="../">
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/lib/angular/angular.js"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/lib/angular/angular.js"></script>
     <style type="text/css">
         .has-error .help-block {
             color: #a94442;
@@ -85,7 +84,7 @@
                                    ng-model="data.captcha" ng-required="true">
                             <span class="input-group-btn">
                                 <button class="btn btn-sm btn-primary" type="button"
-                                        ng-bind="description" ng-disabled="canClick"
+                                        ng-bind="desc" ng-disabled="canClick"
                                         ng-click="sendSms()"></button>
                             </span>
                         </div>
@@ -211,8 +210,6 @@
         </form>
     </div>
 </div>
-<script src="assets/js/lib/jquery/jquery.js"></script>
-<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
 <script type="text/javascript">
     angular.module("app", []).service("service", function () {
         return {
@@ -284,7 +281,7 @@
     }).controller("controller", ["$scope", "$interval", "service", function ($scope, $interval, service) {
         $scope.area = service.area;
         // Captcha
-        $scope.description = "发送验证码";
+        $scope.desc = "发送验证码";
         $scope.canClick = false;
         var second = 59;
         var timer;
@@ -293,10 +290,10 @@
                 if (second <= 0) {
                     $interval.cancel(timer);
                     second = 59;
-                    $scope.description = "重新发送";
+                    $scope.desc = "重新发送";
                     $scope.canClick = false;
                 } else {
-                    $scope.description = "重新发送(" + second + "s)";
+                    $scope.desc = "重新发送(" + second + "s)";
                     second--;
                     $scope.canClick = true;
                 }

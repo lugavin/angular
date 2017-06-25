@@ -1,38 +1,34 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
-    <base href="../">
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/lib/angular/angular.js"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/lib/angular/angular.js"></script>
 </head>
-<body>
-<div id="page-wrapper" class="container" ng-app="app">
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
     <div class="page-header">
         <label class="h4">Angular06-factory</label>
     </div>
     <div id="page-content">
         <form id="form" method="post" class="form-horizontal form-group-sm">
-            <fieldset ng-controller="controller">
-                <div class="form-group">
-                    <h4>{{data}}</h4>
-                </div>
-            </fieldset>
+            <div class="form-group">
+                <h4>{{data}}</h4>
+            </div>
         </form>
     </div>
 </div>
-<script src="assets/js/lib/jquery/jquery.js"></script>
-<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
 <script type="text/javascript">
-    angular.module("app", [], function ($provide) {
+    var myApp = angular.module("myApp", [], function ($provide) {
         // factory方法的返回值可以是任意类型
-        $provide.factory('factory', function () {
+        $provide.factory('myFactory', function () {
             return "provide.factory(name,function)";
         });
-    }).controller("controller", function ($scope, factory) {
-        $scope.data = factory;
     });
+    myApp.controller("myController", ["$scope", "myFactory", function ($scope, myFactory) {
+        $scope.data = myFactory;
+    }]);
 </script>
 </body>
 </html>

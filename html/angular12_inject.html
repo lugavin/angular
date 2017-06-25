@@ -1,34 +1,29 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
-    <base href="../">
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/lib/angular/angular.js"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/lib/angular/angular.js"></script>
 </head>
-<body>
-<div id="page-wrapper" class="container" ng-app="app">
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
     <div class="page-header">
         <label class="h4">Angular12-injection</label>
     </div>
     <div id="page-content">
         <form id="form" method="post" class="form-horizontal form-group-sm">
-            <fieldset ng-controller="controller">
-                <ul>
-                    <li ng-repeat="item in data | filterItem">
-                        {{item.id}} -- {{item.name}} -- {{item.py}}
-                    </li>
-                </ul>
-            </fieldset>
+            <ul>
+                <li ng-repeat="item in data | filterItem">
+                    {{item.id}} -- {{item.name}} -- {{item.py}}
+                </li>
+            </ul>
         </form>
     </div>
 </div>
-<script src="assets/js/lib/jquery/jquery.js"></script>
-<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
 <script type="text/javascript">
-    angular.module("app", [], ["$provide", "$controllerProvider", "$filterProvider", function (provide, controller, filter) {
-                provide.service('data', function () {
+    angular.module("myApp", [], ["$provide", "$controllerProvider", "$filterProvider", function ($provide, $controllerProvider, $filterProvider) {
+                $provide.service('data', function () {
                     return [
                         {id: 101, name: '上海', py: 'shanghai'},
                         {id: 102, name: '北京', py: 'beijing'},
@@ -36,10 +31,10 @@
                         {id: 103, name: '重庆', py: ''}
                     ];
                 });
-                controller.register('controller', ['$scope', 'data', function (scope, data) {
+                $controllerProvider.register('myController', ['$scope', 'data', function (scope, data) {
                     scope.data = data;
                 }]);
-                filter.register('filterItem', function () {
+                $filterProvider.register('filterItem', function () {
                     return function (objs) {
                         var results = [];
                         angular.forEach(objs, function (obj) {

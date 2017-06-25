@@ -1,40 +1,43 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
-    <base href="../">
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/lib/angular/angular.js"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/lib/angular/angular.js"></script>
 </head>
-<body>
-<div id="page-wrapper" class="container" ng-app="app">
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
     <div class="page-header">
         <label class="h4">Angular03-controller</label>
     </div>
     <div id="page-content">
         <form id="form" method="post" class="form-horizontal form-group-sm">
-            <fieldset ng-controller="controller">
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="name">Name:</label>
-                    <div class="col-sm-4">
-                        <input id="name" name="name" class="form-control" ng-model="name" placeholder="Enter a name here">
-                    </div>
-                    <div class="col-sm-6 h4">
-                        Hello {{name}}!
-                        Hello <span ng-bind="name"></span>!
-                    </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="name">Name:</label>
+
+                <div class="col-sm-4">
+                    <input id="name" class="form-control" placeholder="Enter a name here"
+                           ng-model="name" ng-blur="fnBlur()">
                 </div>
-            </fieldset>
+                <div class="col-sm-6 h4">
+                    <span class="text-primary">{{name}}</span>
+                    <span ng-bind="name" class="text-danger"></span>
+                </div>
+            </div>
         </form>
     </div>
 </div>
-<script src="assets/js/lib/jquery/jquery.js"></script>
-<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
 <script type="text/javascript">
-    angular.module("app", []).controller("controller", function ($scope) {
+    var myApp = angular.module("myApp", []);
+    myApp.controller("myController", ["$scope", function ($scope) {
+        // ng-model(双向绑定): $scope <=> View
+        // ng-bind(单向绑定): $scope => View 相当于{{expression}}
         $scope.name = "AngularJS";
-    });
+        $scope.fnBlur = function () {
+            console.info(this);
+        }
+    }]);
 </script>
 </body>
 </html>

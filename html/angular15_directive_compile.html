@@ -1,28 +1,23 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
-    <base href="../">
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/lib/angular/angular.js"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/lib/angular/angular.js"></script>
 </head>
-<body ng-app="app">
-<div id="page-wrapper" class="container">
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
     <div class="page-header">
         <label class="h4">Angular15-directive-compile</label>
     </div>
     <div id="page-content">
         <form id="form" method="post" class="form-horizontal form-group-sm">
-            <fieldset ng-controller="controller">
-                <h3>自定义指令</h3>
-                <p ng-tmpl1="" ng-tmpl2=""></p>
-            </fieldset>
+            <h3>自定义指令</h3>
+            <p ng-tmpl1="" ng-tmpl2=""></p>
         </form>
     </div>
 </div>
-<script src="assets/js/lib/jquery/jquery.js"></script>
-<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
 <script type="text/javascript">
     /**
      * angular指令编译三阶段
@@ -30,7 +25,7 @@
      * (2)angular compile: 搜索匹配的directive,按照priorty排序,并执行directive上的compile方法;
      * (3)angular link: 执行directive上的link方法,进行scope上的数据和事件的绑定.
      */
-    angular.module("app", [], ["$compileProvider", function ($compileProvider) {
+    var myApp = angular.module("myApp", [], ["$compileProvider", function ($compileProvider) {
         $compileProvider.directive("ngTmpl1", function () {
             return {
                 priorty: 1,
@@ -83,8 +78,9 @@
                 }
             };
         });
-    }]).controller("controller", ["$scope", function (scope) {
-        scope.faviconIco = 'assets/img/favicon.ico';
+    }]);
+    myApp.controller("myController", ["$scope", function ($scope) {
+        $scope.faviconIco = '../favicon.ico';
     }]);
 </script>
 </body>

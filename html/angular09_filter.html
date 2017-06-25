@@ -1,62 +1,58 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
-    <base href="../">
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="stylesheet" href="assets/css/app.css">
-    <script src="assets/js/lib/angular/angular.js"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/lib/angular/angular.js"></script>
 </head>
-<body>
-<div id="page-wrapper" class="container" ng-app="app">
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
     <div class="page-header">
         <label class="h4">Angular09-filter</label>
     </div>
     <div id="page-content">
         <form id="form" method="post" class="form-horizontal form-group-sm">
-            <fieldset ng-controller="controller">
-                <h3>数字(number):</h3>
-                <p>{{3.1415926}}</p>
-                <p>{{3.1415926|number}}</p>
-                <p>{{3.1415926|number:2}}</p>
+            <h3>数字(number):</h3>
+            <p>{{3.1415926}}</p>
+            <p>{{3.1415926|number}}</p>
+            <p>{{3.1415926|number:2}}</p>
 
-                <h3>货币(currency):</h3>
-                <p>{{100000000}}</p>
-                <p>{{100000000|currency}}</p>
-                <p>{{100000000|currency:'RMB'}}</p>
+            <h3>货币(currency):</h3>
+            <p>{{100000000}}</p>
+            <p>{{100000000|currency}}</p>
+            <p>{{100000000|currency:'RMB'}}</p>
 
-                <h3>日期(date):</h3>
-                <p>{{sysDate}}</p>
-                <p>{{sysDate|date}}</p>
-                <p>{{sysDate|date:'yyyy-MM-dd HH:mm:ss'}}</p>
+            <h3>日期(date):</h3>
+            <p>{{sysDate}}</p>
+            <p>{{sysDate|date}}</p>
+            <p>{{sysDate|date:'yyyy-MM-dd HH:mm:ss'}}</p>
 
-                <h3>大小写(uppercase&lowercase):</h3>
-                <p>{{'Hello AngularJS'}}</p>
-                <p>{{'Hello AngularJS'|uppercase}}</p>
-                <p>{{'Hello AngularJS'|lowercase}}</p>
+            <h3>大小写(uppercase&lowercase):</h3>
+            <p>{{'Hello AngularJS'}}</p>
+            <p>{{'Hello AngularJS'|uppercase}}</p>
+            <p>{{'Hello AngularJS'|lowercase}}</p>
 
-                <h3>限制(limitTo):</h3>
-                <p>{{data}}</p>
-                <p>{{data|limitTo:3}}</p>
-                <p>{{data|limitTo:-3}}</p>
+            <h3>限制(limitTo):</h3>
+            <p>{{data}}</p>
+            <p>{{data|limitTo:3}}</p>
+            <p>{{data|limitTo:-3}}</p>
 
-                <h3>排序(orderBy):</h3>
-                <p>{{data}}</p>
-                <p>{{data|orderBy:'py'}}</p>
-                <p>{{data|orderBy:'-py'}}</p>
+            <h3>排序(orderBy):</h3>
+            <p>{{data}}</p>
+            <p>{{data|orderBy:'py'}}</p>
+            <p>{{data|orderBy:'-py'}}</p>
 
-                <h3>过滤(filter):</h3>
-                <p>{{data}}</p>
-                <p>{{data|filter:'上海'}}</p>
-                <p>{{data|filter:filterItem}}</p>
-            </fieldset>
+            <h3>过滤(filter):</h3>
+            <p>{{data}}</p>
+            <p>{{data|filter:'上海'}}</p>
+            <p>{{data|filter:filterItem}}</p>
         </form>
     </div>
 </div>
-<script src="assets/js/lib/jquery/jquery.js"></script>
-<script src="assets/js/lib/bootstrap/bootstrap.js"></script>
 <script type="text/javascript">
-    angular.module("app", []).controller("controller", function ($scope, $filter) {
+    var myApp = angular.module("myApp", []);
+    myApp.controller("myController", ["$scope", "$filter", function ($scope, $filter) {
         $scope.sysDate = new Date();
         $scope.data = [
             {id: 101, name: '上海', py: 'shanghai'},
@@ -69,7 +65,7 @@
         };
         var json = $filter('json')($scope.data);
         console.info(json);
-    });
+    }]);
 </script>
 </body>
 </html>

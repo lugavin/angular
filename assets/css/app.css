@@ -1,6 +1,3 @@
 @CHARSET "UTF-8";
 @import url("lib/bootstrap/bootstrap.css");
 @import url("lib/font-awesome/font-awesome.css");
-@import url("lib/nprogress/nprogress.css");
-@import url("lib/jquery-treeMenu/jquery.treeMenu.css");
-@import url("app/base.css");

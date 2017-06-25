@@ -12,17 +12,24 @@
         <label class="h4">Angular03-controller</label>
     </div>
     <div id="page-content">
-        <form id="form" method="post" class="form-horizontal form-group-sm">
+        <form name="myForm" method="post" class="form-horizontal form-group-sm">
             <div class="form-group">
                 <label class="control-label col-sm-2" for="name">Name:</label>
-
                 <div class="col-sm-4">
-                    <input id="name" class="form-control" placeholder="Enter a name here"
-                           ng-model="name" ng-blur="fnBlur()">
+                    <input id="name" name="fieldName" class="form-control" placeholder="Enter a name here"
+                           ng-model="name" ng-blur="fnBlur()" minlength="5">
                 </div>
                 <div class="col-sm-6 h4">
                     <span class="text-primary">{{name}}</span>
                     <span ng-bind="name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <p>字段是否已更改: {{myForm.fieldName.$dirty}}</p>
+                    <p>字段是否未更改: {{myForm.fieldName.$pristine}}</p>
+                    <p>字段是否有效: {{myForm.fieldName.$valid}}</p>
+                    <p>字段是否无效: {{myForm.fieldName.$invalid}}</p>
                 </div>
             </div>
         </form>
@@ -35,7 +42,10 @@
         // ng-bind(单向绑定): $scope => View 相当于{{expression}}
         $scope.name = "AngularJS";
         $scope.fnBlur = function () {
-            console.info(this);
+            console.info("字段是否已更改: " + $scope.myForm.fieldName.$dirty);
+            console.info("字段是否未更改: " + $scope.myForm.fieldName.$pristine);
+            console.info("字段是否有效: " + $scope.myForm.fieldName.$valid);
+            console.info("字段是否无效: " + $scope.myForm.fieldName.$invalid);
         }
     }]);
 </script>

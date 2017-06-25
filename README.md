@@ -5,7 +5,7 @@
 
 ## Angular核心功能
 - Data Binding - 自动同步model和view组件之间的数据，ng-model指令用于数据绑定。
-- Scope − 和model关联的对象，充当controller和view之间的粘合剂。
+- Scope − 和model关联的对象，充当controller和view之间的纽带。
 - Controller − 绑定到特定scope的JavaScript函数。
 - Services − AngularJS内置了一些服务，例如可用于Ajax请求的$https服务，服务是单例对象，仅在应用程序中实例化一次。
 - Filters − 过滤器用于根据定义的条件从项目列表中显示过滤的项目。

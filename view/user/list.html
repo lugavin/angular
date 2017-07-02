@@ -8,7 +8,7 @@
     <script src="../../assets/js/app.js"></script>
     <script src="../../assets/js/lib/angular/angular.js"></script>
     <script src="../../assets/js/lib/angular/angular-animate.js"></script>
-    <script src="../../assets/js/lib/angular-ui/ui-bootstrap.js"></script>
+    <script src="../../assets/js/lib/angular-ui/ui-bootstrap-tpls.js"></script>
     <script src="../../assets/js/app/app-services.js"></script>
     <style type="text/css">
         .pagination {
@@ -130,48 +130,42 @@
         </div>
     </div>
 </div>
-<script type="text/ng-template" id="save.html">
-    <div class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <label class="modal-title">{{title}}</label>
+<script id="save.html" type="text/ng-template">
+    <div class="modal-header bg-primary">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <label class="modal-title">{{title}}</label>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <form id="form_{{index}}" class="form-horizontal form-group-sm" role="form">
+                <div class="form-group">
+                    <label class="control-label" for="code_{{index}}">用户帐号</label>
+                    <input id="code_{{index}}" name="code" value="{{code}}" type="text" class="form-control"
+                           placeholder="用户帐号">
                 </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <form id="form_{{index}}" class="form-horizontal form-group-sm" role="form">
-                            <div class="form-group">
-                                <label class="control-label" for="code_{{index}}">用户帐号</label>
-                                <input id="code_{{index}}" name="code" value="{{code}}" type="text" class="form-control"
-                                       placeholder="用户帐号">
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label" for="name_{{index}}">用户名</label>
-                                <input id="name_{{index}}" name="name" value="{{name}}" type="text" class="form-control"
-                                       placeholder="用户名"
-                                       data-bv-notempty="true">
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label" for="status_{{index}}">状态</label>
-                                <select id="status_{{index}}" name="status" class="form-control">
-                                    <option value="1">未锁定</option>
-                                    <option value="0">锁定</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
+                <div class="form-group">
+                    <label class="control-label" for="name_{{index}}">用户名</label>
+                    <input id="name_{{index}}" name="name" value="{{name}}" type="text" class="form-control"
+                           placeholder="用户名"
+                           data-bv-notempty="true">
                 </div>
-                <div class="modal-footer">
-                    <button id="btnSave_{{index}}" type="button" class="btn btn-sm btn-primary">
-                        <i class="glyphicon glyphicon-saved"></i> 保存
-                    </button>
+                <div class="form-group">
+                    <label class="control-label" for="status_{{index}}">状态</label>
+                    <select id="status_{{index}}" name="status" class="form-control">
+                        <option value="1">未锁定</option>
+                        <option value="0">锁定</option>
+                    </select>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
+    <div class="modal-footer">
+        <button id="btnSave_{{index}}" type="button" class="btn btn-sm btn-primary">
+            <i class="glyphicon glyphicon-saved"></i> 保存
+        </button>
+    </div>
 </script>
-<script type="text/ng-template" id="view.html">
+<script id="view.html" type="text/ng-template">
     <h1>Template heading</h1>
     <p>Content goes here</p>
 </script>
@@ -191,7 +185,16 @@
         };
 
         $scope.fnUpdate = function (row) {
-            $log.info(row);
+            $uibModal.open({
+                templateUrl: 'save.html',
+                controller: 'ModalCtrl',
+                size: 'lg',
+                resolve: {
+                    items: function () {
+                        return row;
+                    }
+                }
+            });
         };
 
         $scope.fnDelete = function (row) {
@@ -234,6 +237,20 @@
         $scope.reset();
 
     }]);
+
+    mainApp.controller('ModalCtrl', function ($scope, $uibModalInstance, $log, items) {
+
+        $log.info(items);
+
+        $scope.ok = function () {
+            $uibModalInstance.close(true);
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss(0);
+        };
+
+    });
 </script>
 </body>
 </html>

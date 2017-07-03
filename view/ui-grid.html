@@ -14,13 +14,44 @@
     <div class="page-header">
         <label class="h4">angular-ui-grid</label>
     </div>
-    <div class="bs-content form-inline" data-content="数据列表">
-        <div class="grid" ui-grid="gridOptions" ui-grid-edit></div>
-    </div>
+    <form id="form" class="form-horizontal form-group-sm" role="form">
+        <fieldset class="bs-content" data-content="数据列表">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="btn-group" role="group" style="margin-bottom: 5px;">
+                        <button type="button" class="btn btn-sm btn-default" ng-click="add()">
+                            <i class="glyphicon glyphicon-plus"></i> 新增
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default" ng-click="edit()">
+                            <i class="glyphicon glyphicon-edit"></i> 更新
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default" ng-click="delete()">
+                            <i class="glyphicon glyphicon-remove"></i> 删除
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default" ng-click="view()">
+                            <i class="glyphicon glyphicon-eye-open"></i> 查看
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="grid" ui-grid="gridOptions" ui-grid-selection ui-grid-edit></div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button type="button" class="btn btn-sm btn-primary" ng-click="save()">
+                    <i class="glyphicon glyphicon-saved"></i> 保存
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
 <script type="text/javascript">
 
-    angular.module('mainApp', ['ui.grid', 'ui.grid.edit']).service('data', function () {
+    angular.module('mainApp', ['ui.grid', 'ui.grid.edit', 'ui.grid.selection']).service('data', function () {
         return [
             {id: 1001, name: 'iPad', quantity: 5, price: 500},
             {id: 1002, name: 'iPhone', quantity: 5, price: 1000},
@@ -28,7 +59,10 @@
         ];
     }).controller('MainCtrl', function ($scope, $log, data) {
 
-        $scope.gridOptions = {};
+        $scope.gridOptions = {
+            enableRowSelection: true,
+            multiSelect: false
+        };
 
         $scope.gridOptions.columnDefs = [
             {field: 'id', name: '商品编号', enableCellEdit: false, visible: true},
@@ -50,6 +84,27 @@
         });
 
         $scope.gridOptions.data = data;
+
+        $scope.add = function () {
+            $scope.gridOptions.data.push({
+                id: 1003,
+                name: 'iMac',
+                quantity: 5,
+                price: 2000,
+                getTotalPrice: function () {
+                    return this.quantity * this.price;
+                }
+            });
+        };
+
+        $scope.save = function () {
+            var param = [];
+            angular.forEach($scope.gridOptions.data, function (obj) {
+                param.push(angular.extend({}, obj, {totalPrice: obj.quantity * obj.price}));
+            });
+            $log.info($scope.gridOptions.data);
+            $log.info(param);
+        };
 
     });
 </script>

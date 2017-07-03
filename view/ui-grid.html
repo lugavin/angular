@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-TW" ng-app="mainApp">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/lib/angular/angular.js"></script>
+    <script src="../assets/js/lib/angular-ui/ui-grid.js"></script>
+</head>
+<body ng-controller="MainCtrl">
+<div class="container">
+    <div class="page-header">
+        <label class="h4">angular-ui-grid</label>
+    </div>
+    <div class="bs-content form-inline" data-content="数据列表">
+        <div class="grid" ui-grid="gridOptions" ui-grid-edit></div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    angular.module('mainApp', ['ui.grid', 'ui.grid.edit']).service('data', function () {
+        return [
+            {id: 1001, name: 'iPad', quantity: 5, price: 500},
+            {id: 1002, name: 'iPhone', quantity: 5, price: 1000},
+            {id: 1003, name: 'iMac', quantity: 5, price: 2000}
+        ];
+    }).controller('MainCtrl', function ($scope, $log, data) {
+
+        $scope.gridOptions = {};
+
+        $scope.gridOptions.columnDefs = [
+            {field: 'id', name: '商品编号', enableCellEdit: false, visible: true},
+            {field: 'name', name: '商品名称', enableCellEdit: false},
+            {field: 'quantity', name: '购买数量', enableCellEdit: true, type: 'number'},
+            {field: 'price', name: '商品单价', enableCellEdit: false},
+            {field: 'getTotalPrice()', name: '商品总价', enableCellEdit: false}
+        ];
+
+        /**
+         * @see <a href="http://ui-grid.info/docs/#/tutorial/106_binding">ui-grid Binding examples</a>
+         */
+        angular.forEach(data, function (obj) {
+            angular.extend(obj, {
+                getTotalPrice: function () {
+                    return this.quantity * this.price;
+                }
+            });
+        });
+
+        $scope.gridOptions.data = data;
+
+    });
+</script>
+</body>
+</html>

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>AngularJS</title>
-    <link rel="shortcut icon" href="../../favicon.ico">
-    <link rel="stylesheet" href="../../assets/css/app.css">
-    <script src="../../assets/js/app.js"></script>
-    <script src="../../assets/js/lib/angular/angular.js"></script>
-    <script src="../../assets/js/lib/angular/angular-animate.js"></script>
-    <script src="../../assets/js/lib/angular-ui/ui-bootstrap-tpls.js"></script>
-    <script src="../../assets/js/app/app-services.js"></script>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/lib/angular/angular.js"></script>
+    <script src="../assets/js/lib/angular/angular-animate.js"></script>
+    <script src="../assets/js/lib/angular-ui/ui-bootstrap-tpls.js"></script>
+    <script src="../assets/js/app/app-services.js"></script>
     <style type="text/css">
         .pagination {
             margin: 0;
@@ -19,7 +19,7 @@
 <body ng-controller="MainCtrl">
 <div class="container">
     <div class="page-header">
-        <label class="h4">Angular-DataTable</label>
+        <label class="h4">angular-ui-bootstrap</label>
     </div>
     <div class="bs-content" data-content="查询条件">
         <form id="form" class="form-horizontal form-group-sm" role="form">
@@ -35,7 +35,6 @@
                            ng-model="user.username">
                 </div>
                 <div class="col-sm-4">
-                    <!-- 一定要指明type属性的值(否则可能向服务端发送两次请求) -->
                     <button id="btnQuery" type="button" class="btn btn-primary btn-sm"
                             ng-click="query()" ng-disabled="undefined || null || ''">
                         <i class="glyphicon glyphicon-search"></i> 查询
@@ -75,7 +74,8 @@
                         <td>{{item['remark']}}</td>
                         <td>
                             <div class="dropdown" uib-dropdown>
-                                <button type="button" class="btn btn-default btn-xs" aria-expanded="false" uib-dropdown-toggle>
+                                <button type="button" class="btn btn-default btn-xs" aria-expanded="false"
+                                        uib-dropdown-toggle>
                                     详细 <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu pull-right" role="menu" uib-dropdown-menu>
@@ -132,35 +132,31 @@
 </div>
 <script id="save.html" type="text/ng-template">
     <div class="modal-header bg-primary">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <label class="modal-title">{{title}}</label>
+        <button type="button" class="close" aria-hidden="true" ng-click="close()">&times;</button>
+        <label class="modal-title">{{user.title}}</label>
     </div>
     <div class="modal-body">
         <div class="container-fluid">
-            <form id="form_{{index}}" class="form-horizontal form-group-sm" role="form">
+            <form class="form-horizontal form-group-sm" role="form">
                 <div class="form-group">
-                    <label class="control-label" for="code_{{index}}">用户帐号</label>
-                    <input id="code_{{index}}" name="code" value="{{code}}" type="text" class="form-control"
-                           placeholder="用户帐号">
+                    <label class="control-label" for="uid_1">用戶编号</label>
+                    <input id="uid_1" name="uid" type="text" class="form-control" readonly placeholder="用戶编号"
+                           ng-model="user.uid">
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="name_{{index}}">用户名</label>
-                    <input id="name_{{index}}" name="name" value="{{name}}" type="text" class="form-control"
-                           placeholder="用户名"
-                           data-bv-notempty="true">
+                    <label class="control-label" for="name_1">用户名</label>
+                    <input id="name_1" name="name" type="text" class="form-control" placeholder="用户名"
+                           ng-model="user.username">
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="status_{{index}}">状态</label>
-                    <select id="status_{{index}}" name="status" class="form-control">
-                        <option value="1">未锁定</option>
-                        <option value="0">锁定</option>
-                    </select>
+                    <label class="control-label" for="remark_1">备注</label>
+                    <textarea id="remark_1" name="remark" class="form-control" ng-model="user.remark"></textarea>
                 </div>
             </form>
         </div>
     </div>
     <div class="modal-footer">
-        <button id="btnSave_{{index}}" type="button" class="btn btn-sm btn-primary">
+        <button type="button" class="btn btn-sm btn-primary" ng-click="save()">
             <i class="glyphicon glyphicon-saved"></i> 保存
         </button>
     </div>
@@ -181,7 +177,10 @@
     mainApp.controller('MainCtrl', ['$scope', '$http', '$uibModal', '$log', function ($scope, $http, $uibModal, $log) {
 
         $scope.fnCreate = function () {
-
+            var source = {code: '0168'};
+            var destination = {name: 'Gavin'};
+            console.log(angular.extend({}, source, destination));
+            console.log(angular.copy(source));
         };
 
         $scope.fnUpdate = function (row) {
@@ -191,7 +190,7 @@
                 size: 'lg',
                 resolve: {
                     items: function () {
-                        return row;
+                        return angular.extend({}, row, {title: 'User Update'});
                     }
                 }
             });
@@ -210,7 +209,7 @@
         var queryForPage = function (param, successCallback) {
             $http({
                 method: 'POST',
-                url: '../../data/DataTable.json',
+                url: '../data/DataTable.json',
                 data: param
             }).then(function (response) {
                 $scope.data = response.data.data;
@@ -240,13 +239,13 @@
 
     mainApp.controller('ModalCtrl', function ($scope, $uibModalInstance, $log, items) {
 
-        $log.info(items);
+        $scope.user = items;
 
-        $scope.ok = function () {
+        $scope.save = function () {
             $uibModalInstance.close(true);
         };
 
-        $scope.cancel = function () {
+        $scope.close = function () {
             $uibModalInstance.dismiss(0);
         };
 

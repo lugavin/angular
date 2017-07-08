@@ -6,9 +6,9 @@
     'use strict';
 
     angular
-        .module('app.ui.bootstrap')
-        .controller('BootstrapCtrl', ['$http', '$uibModal', '$log', BootstrapCtrl])
-        .controller('BootstrapModalCtrl', ['$uibModalInstance', 'items', BootstrapModalCtrl]);
+        .module('app.bootstrap.module')
+        .controller('BootstrapCtrl', BootstrapCtrl)
+        .controller('BootstrapModalCtrl', BootstrapModalCtrl);
 
     function BootstrapCtrl($http, $uibModal, $log) {
 
@@ -47,7 +47,7 @@
             $log.info('Query => ' + JSON.stringify(vm.user));
             $http({
                 method: 'POST',
-                url: '../data/Grid.json',
+                url: 'data/Grid.json',
                 data: vm.user
             }).then(function (response) {
                 vm.recordsTotal = response.data.recordsTotal;

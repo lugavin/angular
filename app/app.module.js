@@ -6,9 +6,9 @@
     'use strict';
 
     angular.module('app', [
-        'app.config.route',
-        'app.ui.bootstrap',
-        'app.ui.grid'
+        'app.route',
+        'app.bootstrap.module',
+        'app.grid.module'
     ]);
 
 })();

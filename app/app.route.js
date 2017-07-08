@@ -5,14 +5,14 @@
 
     'use strict';
 
-    angular.module('app.config.route', [
+    angular.module('app.route', [
         'ngRoute'
     ]).config(Route);
 
     function Route($routeProvider) {
         $routeProvider
-            .when('/ui-bootstrap', {templateUrl: './ui/ui-bootstrap.html'})
-            .when('/ui-grid', {templateUrl: './ui/ui-grid.html'})
+            .when('/ui-bootstrap', {templateUrl: 'app/ui/bootstrap.html'})
+            .when('/ui-grid', {templateUrl: 'app/ui/grid.html'})
             .otherwise({redirectTo: '/'});
     }
 

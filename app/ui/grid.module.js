@@ -5,7 +5,7 @@
 
     'use strict';
 
-    angular.module('app.ui.grid', [
+    angular.module('app.grid.module', [
         'ngAnimate',
         'ui.bootstrap',
         'ui.grid',

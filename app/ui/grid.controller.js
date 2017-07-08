@@ -6,11 +6,11 @@
     'use strict';
 
     angular
-        .module('app.ui.grid')
-        .controller('MainCtrl', ['$scope', '$http', '$uibModal', '$log', 'i18nService', MainCtrl])
-        .controller('ModalCtrl', ['$uibModalInstance', 'items', ModalCtrl]);
+        .module('app.grid.module')
+        .controller('GridCtrl', ['$scope', '$http', '$uibModal', '$log', 'i18nService', GridCtrl])
+        .controller('GridModalCtrl', ['$uibModalInstance', 'items', GridModalCtrl]);
 
-    function MainCtrl($scope, $http, $uibModal, $log, i18nService) {
+    function GridCtrl($scope, $http, $uibModal, $log, i18nService) {
 
         i18nService.setCurrentLang('zh-cn');
 
@@ -120,7 +120,7 @@
         var modelView = function (row, param) {
             $uibModal.open({
                 templateUrl: 'edit.html',
-                controller: 'ModalCtrl',
+                controller: 'GridModalCtrl',
                 controllerAs: 'vm',
                 size: 'lg',
                 resolve: {
@@ -142,7 +142,7 @@
 
     }
 
-    function ModalCtrl($uibModalInstance, items) {
+    function GridModalCtrl($uibModalInstance, items) {
 
         var vm = this;
 

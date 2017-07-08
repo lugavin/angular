@@ -10,7 +10,7 @@
                         <button type="button" class="btn btn-sm btn-default" ng-click="vm.edit()">
                             <i class="glyphicon glyphicon-edit"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-default" ng-click="vm.delete()">
+                        <button type="button" class="btn btn-sm btn-default" ng-click="vm.remove()">
                             <i class="glyphicon glyphicon-remove"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-default" ng-click="vm.view()">
@@ -41,9 +41,14 @@
 </div>
 <script id="template" type="text/ng-template">
     <div class="ui-grid-cell-contents">
-        <button type="button" class="btn btn-xs btn-primary"
-                ng-click="grid.appScope.vm.editRow(grid, row)">
-            <i class="glyphicon glyphicon-edit"></i>
+        <button class="btn btn-xs btn-primary" ng-click="grid.appScope.vm.editRow(grid, row)">
+            <i class="glyphicon glyphicon-edit"></i> 更新
+        </button>
+        <button class="btn btn-xs btn-danger" ng-click="grid.appScope.vm.removeRow(grid, row)">
+            <i class="glyphicon glyphicon-trash"></i> 删除
+        </button>
+        <button class="btn btn-xs btn-default" ng-click="grid.appScope.vm.viewRow(grid, row)">
+            <i class="glyphicon glyphicon-eye-open"></i> 查看
         </button>
     </div>
 </script>
@@ -78,7 +83,7 @@
             </form>
         </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" ng-hide="vm.item.disabled">
         <button type="button" class="btn btn-sm btn-primary" ng-click="vm.save()">
             <i class="glyphicon glyphicon-saved"></i> 保存
         </button>

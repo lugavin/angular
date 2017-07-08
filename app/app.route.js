@@ -13,7 +13,8 @@
         $routeProvider
             .when('/ui-bootstrap', {templateUrl: 'app/ui/bootstrap.html'})
             .when('/ui-grid', {templateUrl: 'app/ui/grid.html'})
-            .otherwise({redirectTo: '/'});
+            .when('/welcome', {templateUrl: 'app/welcome.html'})
+            .otherwise({redirectTo: '/welcome'});
     }
 
 })();

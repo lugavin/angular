@@ -7,60 +7,72 @@
 
     angular
         .module('app.ui.bootstrap')
-        .controller('MainCtrl', MainCtrl)
-        .controller('ModalCtrl', ModalCtrl);
+        .controller('BootstrapCtrl', ['$http', '$uibModal', '$log', BootstrapCtrl])
+        .controller('BootstrapModalCtrl', ['$uibModalInstance', 'items', BootstrapModalCtrl]);
 
-    function MainCtrl($scope, $http, $uibModal, $log) {
+    function BootstrapCtrl($http, $uibModal, $log) {
 
-        $scope.user = {};
+        var vm = this;
 
-        $scope.edit = function (row) {
+        vm.user = {};
+
+        vm.edit = function (row) {
             $uibModal.open({
-                templateUrl: 'save.html',
-                controller: 'ModalCtrl',
-                size: 'lg'
+                templateUrl: 'edit.html',
+                controller: 'BootstrapModalCtrl',
+                controllerAs: 'vm',
+                size: 'lg',
+                resolve: {
+                    items: function () {
+                        return angular.extend({}, row, {title: '更新用户'});
+                    }
+                }
             });
         };
 
-        $scope.delete = function (row) {
-            var source = {code: '0168'};
-            var destination = {name: 'Gavin'};
-            console.log(angular.extend({}, source, destination));
-            console.log(angular.copy(source));
-        };
-
-        $scope.view = function (row) {
+        vm.delete = function (row) {
             $log.info(row);
         };
 
-        $scope.query = function () {
+        vm.view = function (row) {
+            // row.uid = row.uid + '_';
+            // row.username = row.username + '_';
+            var userExt = angular.extend({}, row);
+            userExt.uid = row.uid + '_';
+            var userClone = angular.copy(row);
+            userClone.username = row.username + '_';
+        };
+
+        vm.query = function () {
+            $log.info('Query => ' + JSON.stringify(vm.user));
             $http({
                 method: 'POST',
-                url: '../../data/Grid.json',
-                data: $scope.user
+                url: '../data/Grid.json',
+                data: vm.user
             }).then(function (response) {
-                console.info(response);
+                vm.recordsTotal = response.data.recordsTotal;
+                vm.users = response.data.data;
             });
         };
 
-        var initData = {uid: 1001, username: 'Gavin'};
-
-        $scope.reset = function () {
-            $scope.user = angular.copy(initData);
+        vm.reset = function () {
+            vm.user = {};
         };
 
-        $scope.reset();
+        vm.query();
     }
 
-    function ModalCtrl($scope, $uibModalInstance, $log, items) {
+    function BootstrapModalCtrl($uibModalInstance, items) {
 
-        $scope.user = items;
+        var vm = this;
 
-        $scope.save = function () {
+        vm.user = items;
+
+        vm.save = function () {
             $uibModalInstance.close(true);
         };
 
-        $scope.close = function () {
+        vm.close = function () {
             $uibModalInstance.dismiss(0);
         };
 

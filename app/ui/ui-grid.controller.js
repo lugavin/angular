@@ -7,10 +7,10 @@
 
     angular
         .module('app.ui.grid')
-        .controller('MainCtrl', MainCtrl)
-        .controller('ModalCtrl', ModalCtrl);
+        .controller('MainCtrl', ['$scope', '$http', '$uibModal', '$log', 'i18nService', MainCtrl])
+        .controller('ModalCtrl', ['$uibModalInstance', 'items', ModalCtrl]);
 
-    function MainCtrl($scope, $uibModal, $log, i18nService) {
+    function MainCtrl($scope, $http, $uibModal, $log, i18nService) {
 
         i18nService.setCurrentLang('zh-cn');
 
@@ -142,7 +142,7 @@
 
     }
 
-    function ModalCtrl($uibModalInstance, $log, items) {
+    function ModalCtrl($uibModalInstance, items) {
 
         var vm = this;
 

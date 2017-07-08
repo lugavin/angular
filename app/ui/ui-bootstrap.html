@@ -1,46 +1,25 @@
-<!DOCTYPE html>
-<html lang="zh-TW" ng-app="mainApp">
-<head>
-    <meta charset="UTF-8">
-    <title>AngularJS</title>
-    <link rel="shortcut icon" href="../../favicon.ico">
-    <link rel="stylesheet" href="../../assets/css/app.css">
-    <script src="../../assets/js/app.js"></script>
-    <script src="../../assets/js/lib/angular/angular.js"></script>
-    <script src="../../assets/js/lib/angular/angular-animate.js"></script>
-    <script src="../../assets/js/lib/angular-ui/ui-bootstrap-tpls.js"></script>
-    <script src="../../assets/js/app/app-services.js"></script>
-    <style type="text/css">
-        .pagination {
-            margin: 0;
-        }
-    </style>
-</head>
-<body ng-controller="MainCtrl">
-<div class="container-fluid">
-    <div class="page-header">
-        <label class="h4">angular-ui-bootstrap</label>
-    </div>
+<div class="container-fluid" ng-controller="BootstrapCtrl as vm">
     <div class="bs-content" data-content="查询条件">
         <form id="form" class="form-horizontal form-group-sm" role="form">
             <div class="form-group">
                 <label class="control-label col-sm-1" for="uid">用戶编号</label>
+
                 <div class="col-sm-3">
                     <input id="uid" name="uid" type="text" class="form-control" placeholder="用户ID"
-                           ng-model="user.uid">
+                           ng-model="vm.user.uid">
                 </div>
                 <label class="control-label col-sm-1" for="username">用户名</label>
                 <div class="col-sm-3">
                     <input id="username" name="username" type="text" class="form-control" placeholder="用户名"
-                           ng-model="user.username">
+                           ng-model="vm.user.username">
                 </div>
                 <div class="col-sm-4">
                     <button id="btnQuery" type="button" class="btn btn-primary btn-sm"
-                            ng-click="query()" ng-disabled="undefined || null || ''">
+                            ng-click="vm.query()" ng-disabled="undefined || null || ''">
                         <i class="glyphicon glyphicon-search"></i> 查询
                     </button>
                     <button id="btnReset" type="button" class="btn btn-default btn-sm"
-                            ng-click="reset()">
+                            ng-click="vm.reset()">
                         <i class="glyphicon glyphicon-refresh"></i> 重置
                     </button>
                 </div>
@@ -64,14 +43,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="item in data">
+                    <tr ng-repeat="user in vm.users">
                         <td>{{$index+1}}</td>
-                        <td>{{item['uid']}}</td>
-                        <td>{{item['username']}}</td>
-                        <td>{{item['dept']}}</td>
-                        <td>{{item['birthday']}}</td>
-                        <td>{{item['createTime']}}</td>
-                        <td>{{item['remark']}}</td>
+                        <td>{{user['uid']}}</td>
+                        <td>{{user['username']}}</td>
+                        <td>{{user['dept']}}</td>
+                        <td>{{user['birthday']}}</td>
+                        <td>{{user['createTime']}}</td>
+                        <td>{{user['remark']}}</td>
                         <td>
                             <div class="dropdown" uib-dropdown>
                                 <button type="button" class="btn btn-default btn-xs" aria-expanded="false"
@@ -79,10 +58,9 @@
                                     详细 <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu pull-right" role="menu" uib-dropdown-menu>
-                                    <li><a href="javascript:void(0)" ng-click="fnCreate()">新增</a></li>
-                                    <li><a href="javascript:void(0)" ng-click="fnUpdate(item)">更新</a></li>
-                                    <li><a href="javascript:void(0)" ng-click="fnDelete(item)">删除</a></li>
-                                    <li><a href="javascript:void(0)" ng-click="fnSearch(item)">查看</a></li>
+                                    <li><a href="javascript:void(0)" ng-click="vm.edit(user)">更新</a></li>
+                                    <li><a href="javascript:void(0)" ng-click="vm.delete(user)">删除</a></li>
+                                    <li><a href="javascript:void(0)" ng-click="vm.view(user)">查看</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -107,7 +85,7 @@
             <div class="col-sm-6">
                 <div class="text-right">
                     <nav>
-                        <ul class="pagination">
+                        <ul class="pagination" style="margin: 0;">
                             <li class="disabled">
                                 <a href="#" aria-label="Previous">
                                     <span aria-hidden="true">«</span>
@@ -130,10 +108,10 @@
         </div>
     </div>
 </div>
-<script id="save.html" type="text/ng-template">
+<script id="edit.html" type="text/ng-template">
     <div class="modal-header bg-primary">
-        <button type="button" class="close" aria-hidden="true" ng-click="close()">&times;</button>
-        <label class="modal-title">{{user.title}}</label>
+        <button type="button" class="close" aria-hidden="true" ng-click="vm.close()">&times;</button>
+        <label class="modal-title">{{vm.user.title}}</label>
     </div>
     <div class="modal-body">
         <div class="container-fluid">
@@ -141,115 +119,23 @@
                 <div class="form-group">
                     <label class="control-label" for="uid_1">用戶编号</label>
                     <input id="uid_1" name="uid" type="text" class="form-control" readonly placeholder="用戶编号"
-                           ng-model="user.uid">
+                           ng-model="vm.user.uid">
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="name_1">用户名</label>
                     <input id="name_1" name="name" type="text" class="form-control" placeholder="用户名"
-                           ng-model="user.username">
+                           ng-model="vm.user.username">
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="remark_1">备注</label>
-                    <textarea id="remark_1" name="remark" class="form-control" ng-model="user.remark"></textarea>
+                    <textarea id="remark_1" name="remark" class="form-control" ng-model="vm.user.remark"></textarea>
                 </div>
             </form>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-primary" ng-click="save()">
+        <button type="button" class="btn btn-sm btn-primary" ng-click="vm.save()">
             <i class="glyphicon glyphicon-saved"></i> 保存
         </button>
     </div>
 </script>
-<script id="view.html" type="text/ng-template">
-    <h1>Template heading</h1>
-    <p>Content goes here</p>
-</script>
-<script type="text/javascript">
-
-    // var mainApp = angular.module('mainApp', ['baseModule']);
-    // mainApp.controller('MainCtrl', ['$scope', 'baseService', function ($scope, baseService) {
-    //     console.info(baseService);
-    // }]);
-
-    var mainApp = angular.module('mainApp', ['ngAnimate', 'ui.bootstrap']);
-
-    mainApp.controller('MainCtrl', ['$scope', '$http', '$uibModal', '$log', function ($scope, $http, $uibModal, $log) {
-
-        $scope.fnCreate = function () {
-            var source = {code: '0168'};
-            var destination = {name: 'Gavin'};
-            console.log(angular.extend({}, source, destination));
-            console.log(angular.copy(source));
-        };
-
-        $scope.fnUpdate = function (row) {
-            $uibModal.open({
-                templateUrl: 'save.html',
-                controller: 'ModalCtrl',
-                size: 'lg',
-                resolve: {
-                    items: function () {
-                        return angular.extend({}, row, {title: 'User Update'});
-                    }
-                }
-            });
-        };
-
-        $scope.fnDelete = function (row) {
-            $log.info(row);
-        };
-
-        $scope.fnSearch = function (row) {
-            $log.info(row);
-        };
-
-        $scope.user = {};
-
-        var queryForPage = function (param, successCallback) {
-            $http({
-                method: 'POST',
-                url: '../../data/Grid.json',
-                data: param
-            }).then(function (response) {
-                $scope.data = response.data.data;
-                $scope.recordsTotal = response.recordsTotal;
-                $scope.pages = Math.ceil(response.recordsTotal / $scope['pageSize']);
-                successCallback && successCallback(response);
-            });
-        };
-
-        queryForPage();
-
-        $scope.query = function () {
-            queryForPage($scope.user, function (response) {
-                $log.info(response.data);
-            });
-        };
-
-        var initData = {uid: 1001, username: 'Gavin'};
-
-        $scope.reset = function () {
-            $scope.user = angular.copy(initData);
-        };
-
-        $scope.reset();
-
-    }]);
-
-    mainApp.controller('ModalCtrl', function ($scope, $uibModalInstance, $log, items) {
-
-        $scope.user = items;
-
-        $scope.save = function () {
-            $uibModalInstance.close(true);
-        };
-
-        $scope.close = function () {
-            $uibModalInstance.dismiss(0);
-        };
-
-    });
-</script>
-</body>
-</html>

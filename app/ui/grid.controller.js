@@ -154,15 +154,6 @@
             });
         };
 
-        vm.save = function () {
-            var param = [];
-            angular.forEach(vm.gridOptions.data, function (obj) {
-                param.push(angular.extend({}, obj, {totalPrice: obj.quantity * obj.price}));
-            });
-            $log.info(vm.gridOptions.data);
-            $log.info(param);
-        };
-
     }
 
     function GridModalCtrl($uibModalInstance, items) {

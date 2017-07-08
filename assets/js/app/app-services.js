@@ -1,27 +1,17 @@
-var baseModule = angular.module('baseModule', []);
+/*!
+ * https://github.com/johnpapa/angular-styleguide/blob/master/a1/i18n/zh-CN.md
+ */
+(function () {
 
-baseModule.factory('menuService', function () {
+    'use strict';
 
-    var factory = {};
+    angular
+        .module('app.base', [])
+        .factory('baseService', baseService);
 
-    factory.multiply = function (a, b) {
-        return a * b
-    };
+    function baseService() {
 
-    return factory;
+        return {};
+    }
 
-});
-
-baseModule.factory('pageService', ['$http', function ($http) {
-
-    console.info($http);
-
-    var factory = {};
-
-    factory.multiply = function (a, b) {
-        return a * b
-    };
-
-    return factory;
-
-}]);
+})();

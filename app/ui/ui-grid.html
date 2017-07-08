@@ -1,0 +1,49 @@
+<div ng-controller="MainCtrl as vm">
+    <form id="form" class="form-horizontal form-group-sm" role="form">
+        <fieldset class="bs-content" data-content="数据列表">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="btn-group" role="group" style="margin-bottom: 5px;">
+                        <button type="button" class="btn btn-sm btn-default" ng-click="vm.add()">
+                            <i class="glyphicon glyphicon-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default" ng-click="vm.edit()">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default" ng-click="vm.delete()">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default" ng-click="vm.view()">
+                            <i class="glyphicon glyphicon-eye-open"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="grid" ui-grid="vm.gridOptions"
+                         ui-grid-auto-resize
+                         ui-grid-resize-columns
+                         ui-grid-pagination
+                         ui-grid-selection
+                         ui-grid-edit></div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button type="button" class="btn btn-sm btn-primary" ng-click="vm.save()">
+                    <i class="glyphicon glyphicon-saved"></i> 保存
+                </button>
+            </div>
+        </div>
+    </form>
+    <script id="template" type="text/ng-template">
+        <div class="ui-grid-cell-contents">
+            <button type="button" class="btn btn-xs btn-primary"
+                    ng-click="grid.appScope.vm.editRow(grid, row)">
+                <i class="glyphicon glyphicon-edit"></i>
+            </button>
+        </div>
+    </script>
+</div>

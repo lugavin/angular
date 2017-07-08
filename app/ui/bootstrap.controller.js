@@ -46,7 +46,7 @@
         vm.query = function () {
             $log.info('Query => ' + JSON.stringify(vm.user));
             $http({
-                method: 'POST',
+                method: 'GET',
                 url: 'data/Grid.json',
                 data: vm.user
             }).then(function (response) {

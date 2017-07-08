@@ -7,61 +7,39 @@
 
     angular
         .module('app.ui.bootstrap')
-        .controller('MainCtrl', MainCtrl);
+        .controller('MainCtrl', MainCtrl)
+        .controller('ModalCtrl', ModalCtrl);
 
     function MainCtrl($scope, $http, $uibModal, $log) {
 
-        $log.info($scope);
+        $scope.user = {};
 
-        $scope.fnCreate = function () {
+        $scope.edit = function (row) {
+            $uibModal.open({
+                templateUrl: 'save.html',
+                controller: 'ModalCtrl',
+                size: 'lg'
+            });
+        };
+
+        $scope.delete = function (row) {
             var source = {code: '0168'};
             var destination = {name: 'Gavin'};
             console.log(angular.extend({}, source, destination));
             console.log(angular.copy(source));
         };
 
-        $scope.fnUpdate = function (row) {
-            $uibModal.open({
-                templateUrl: 'save.html',
-                controller: 'ModalCtrl',
-                size: 'lg',
-                resolve: {
-                    items: function () {
-                        return angular.extend({}, row, {title: 'User Update'});
-                    }
-                }
-            });
-        };
-
-        $scope.fnDelete = function (row) {
+        $scope.view = function (row) {
             $log.info(row);
         };
-
-        $scope.fnSearch = function (row) {
-            $log.info(row);
-        };
-
-        $scope.user = {};
-
-        var queryForPage = function (param, successCallback) {
-            $http({
-                method: 'POST',
-                url: '../../data/DataTable.json',
-                data: param
-            }).then(function (response) {
-                console.info(response);
-                $scope.data = response.data.data;
-                $scope.recordsTotal = response.recordsTotal;
-                $scope.pages = Math.ceil(response.recordsTotal / $scope['pageSize']);
-                successCallback && successCallback(response);
-            });
-        };
-
-        queryForPage();
 
         $scope.query = function () {
-            queryForPage($scope.user, function (response) {
-                $log.info(response.data);
+            $http({
+                method: 'POST',
+                url: '../../data/Grid.json',
+                data: $scope.user
+            }).then(function (response) {
+                console.info(response);
             });
         };
 

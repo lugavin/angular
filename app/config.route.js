@@ -11,9 +11,9 @@
 
     function Route($routeProvider) {
         $routeProvider
-            .when('/ui-bootstrap', {templateUrl: './ui/ui-bootstrap.html'})
             .when('/ui-grid', {templateUrl: './ui/ui-grid.html'})
-            .otherwise({redirectTo: './index.html'});
+            .when('/ui-bootstrap', {templateUrl: './ui/ui-bootstrap.html'})
+            .otherwise({redirectTo: '/'});
     }
 
 })();

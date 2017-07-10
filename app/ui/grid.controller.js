@@ -8,16 +8,17 @@
     angular
         .module('app.grid.module')
         .controller('GridCtrl', ['$scope', '$http', '$uibModal', '$log', 'i18nService', 'uiGridConstants', GridCtrl])
-        .controller('GridModalCtrl', ['$uibModalInstance', 'items', GridModalCtrl]);
+        .controller('GridModalCtrl', ['$uibModalInstance', 'items', GridModalCtrl])
+        .filter('StatusFormatter', StatusFormatter);
 
     function GridCtrl($scope, $http, $uibModal, $log, i18nService, uiGridConstants) {
 
         i18nService.setCurrentLang('zh-cn');
 
         var data = [
-            {id: 1001, name: 'iPad', quantity: 5, price: 500, subcost: 2500},
-            {id: 1002, name: 'iPhone', quantity: 5, price: 1000, subcost: 5000},
-            {id: 1003, name: 'iMac', quantity: 5, price: 2000, subcost: 10000}
+            {id: 1001, name: 'iPad', status: '1', quantity: 5, price: 500, subcost: 2500},
+            {id: 1002, name: 'iPhone', status: '1', quantity: 5, price: 1000, subcost: 5000},
+            {id: 1003, name: 'iMac', status: '1', quantity: 5, price: 2000, subcost: 10000}
         ];
 
         var vm = this;
@@ -65,6 +66,14 @@
                     enableColumnMenu: false
                 },
                 {
+                    field: 'status',
+                    displayName: '状态',
+                    visible: false,
+                    enableCellEdit: false,
+                    enableColumnMenu: false,
+                    cellFilter: 'StatusFormatter'
+                },
+                {
                     field: 'quantity',
                     displayName: '购买数量',
                     type: 'number',
@@ -103,7 +112,7 @@
         vm.gridOptions.data = data;
 
         vm.add = function () {
-            var row = {id: 1004, name: 'iMac', quantity: 5, price: 2000, subcost: 10000};
+            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000};
             vm.gridOptions.data.push(row);
         };
 
@@ -137,6 +146,7 @@
         };
 
         vm.viewRow = function (grid, row) {
+            $log.info(row);
             openModal(row.entity, {title: '查看商品', disabled: true});
         };
 
@@ -170,6 +180,13 @@
             $uibModalInstance.dismiss(0);
         };
 
+    }
+
+    function StatusFormatter() {
+        var map = {'0': '不可用', '1': '可用'};
+        return function (input) {
+            return map[input] || '';
+        };
     }
 
 })();

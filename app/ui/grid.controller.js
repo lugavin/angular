@@ -7,11 +7,18 @@
 
     angular
         .module('app.grid.module')
+        .filter('StatusFormatter', StatusFormatter)
         .controller('GridCtrl', ['$scope', '$http', '$uibModal', '$log', 'i18nService', 'uiGridConstants', GridCtrl])
-        .controller('GridModalCtrl', ['$uibModalInstance', 'items', GridModalCtrl])
-        .filter('StatusFormatter', StatusFormatter);
+        .controller('GridModalCtrl', ['$uibModalInstance', 'items', GridModalCtrl]);
 
-    function GridCtrl($scope, $http, $uibModal, $log, i18nService, uiGridConstants) {
+    function StatusFormatter() {
+        var map = {'0': '不可用', '1': '可用'};
+        return function (input) {
+            return map[input] || '';
+        };
+    }
+
+    function GridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants, $window) {
 
         i18nService.setCurrentLang('zh-cn');
 
@@ -28,6 +35,7 @@
          * https://github.com/angular-ui/ui-grid/wiki/Defining-columns
          */
         vm.gridOptions = {
+            enableCellEditOnFocus: true,
             enableHorizontalScrollbar: false,
             enableVerticalScrollbar: true,
             enableRowSelection: true,
@@ -41,14 +49,20 @@
             totalItems: 0,
             useExternalPagination: true,
             enableFiltering: false,
-            showGridFooter: false,
             showColumnFooter: true,
+            showGridFooter: false,
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
-                vm.gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
+                gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
                     if (newValue != oldValue) {
                         rowEntity.subcost = (rowEntity.quantity || 0) * (rowEntity.price || 0);
                     }
+                });
+                gridApi.validate.on.validationFailed($scope, function (rowEntity, colDef, newValue, oldValue) {
+                    $window.alert('rowEntity: ' + rowEntity + '\n' +
+                        'colDef: ' + colDef + '\n' +
+                        'newValue: ' + newValue + '\n' +
+                        'oldValue: ' + oldValue);
                 });
             },
             columnDefs: [
@@ -128,7 +142,7 @@
 
         vm.remove = function () {
             var row = vm.gridApi.selection.getSelectedRows()[0];
-            row && vm.gridOptions.data.splice(vm.gridOptions.data.indexOf(row.entity), 1);
+            row && vm.gridOptions.data.splice(vm.gridOptions.data.indexOf(row), 1);
         };
 
         vm.view = function () {
@@ -141,7 +155,7 @@
         };
 
         vm.removeRow = function (grid, row) {
-            var index = vm.gridOptions.data.indexOf(row);
+            var index = vm.gridOptions.data.indexOf(row.entity);
             vm.gridOptions.data.splice(index, 1);
         };
 
@@ -180,13 +194,6 @@
             $uibModalInstance.dismiss(0);
         };
 
-    }
-
-    function StatusFormatter() {
-        var map = {'0': '不可用', '1': '可用'};
-        return function (input) {
-            return map[input] || '';
-        };
     }
 
 })();

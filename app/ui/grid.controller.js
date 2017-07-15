@@ -18,9 +18,21 @@
         };
     }
 
-    function GridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants) {
+    function GridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridValidateService, uiGridConstants) {
 
         i18nService.setCurrentLang('zh-cn');
+
+        /**
+         * setValidator(name, validatorFactory, messageFunction)
+         */
+        uiGridValidateService.setValidator('minValue', function (argument) {
+                return function (oldValue, newValue, rowEntity, colDef) {
+                    return newValue >= argument;
+                };
+            }, function (argument) {
+                return '你输入的值不能小于"' + argument + '"';
+            }
+        );
 
         var data = [
             {id: 1001, name: 'iPad', status: '1', quantity: 5, price: 500, subcost: 2500},
@@ -51,6 +63,12 @@
             enableFiltering: false,
             showColumnFooter: true,
             showGridFooter: false,
+            // rowTemplate: '<div ng-dblclick="grid.appScope.ondblclick(grid, row)" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{\'ui-grid-row-header-cell\': col.isRowHeader}" ui-grid-cell></div>',
+            // appScopeProvider: {
+            //     ondblclick: function (grid, row) {
+            //         console.info(row.entity);
+            //     }
+            // },
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
                 gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
@@ -59,10 +77,7 @@
                     }
                 });
                 gridApi.validate.on.validationFailed($scope, function (rowEntity, colDef, newValue, oldValue) {
-                    $window.alert('rowEntity: ' + rowEntity + '\n' +
-                        'colDef: ' + colDef + '\n' +
-                        'newValue: ' + newValue + '\n' +
-                        'oldValue: ' + oldValue);
+                    $log.info(rowEntity, colDef, newValue, oldValue);
                 });
             },
             columnDefs: [
@@ -94,6 +109,8 @@
                     cellClass: 'text-left',
                     enableCellEdit: true,
                     enableColumnMenu: false,
+                    validators: {required: true, minValue: 1},
+                    cellTemplate: 'ui-grid/cellTitleValidator',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
                     aggregationLabel: '购买总数量：'
                 },

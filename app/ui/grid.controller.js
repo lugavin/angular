@@ -154,7 +154,7 @@
             // rowData.name = rowData.name + '_';
             // angular.extend(row, rowData);
             // angular.extend({}, row, rowData);
-            row && openModal(row, {title: '修改商品', disabled: false});
+            row && openModal(row, {parentCtrl: vm, title: '修改商品', disabled: false});
         };
 
         vm.remove = function () {
@@ -164,11 +164,11 @@
 
         vm.view = function () {
             var row = vm.gridApi.selection.getSelectedRows()[0];
-            row && openModal(row, {title: '查看商品', disabled: true});
+            row && openModal(row, {parentCtrl: vm, title: '查看商品', disabled: true});
         };
 
         vm.editRow = function (grid, row) {
-            openModal(row.entity, {title: '修改商品', disabled: false});
+            openModal(row.entity, {parentCtrl: vm, title: '修改商品', disabled: false});
         };
 
         vm.removeRow = function (grid, row) {
@@ -177,8 +177,7 @@
         };
 
         vm.viewRow = function (grid, row) {
-            $log.info(row);
-            openModal(row.entity, {title: '查看商品', disabled: true});
+            openModal(row.entity, {parentCtrl: vm, title: '查看商品', disabled: true});
         };
 
         var openModal = function (row, param) {
@@ -195,9 +194,13 @@
             });
         };
 
+        vm.refresh = function () {
+            $log.info('Refresh DataGrid...');
+        };
+
     }
 
-    function GridModalCtrl($uibModalInstance, items) {
+    function GridModalCtrl($uibModalInstance, $log, items) {
 
         var vm = this;
 
@@ -205,11 +208,12 @@
 
         vm.save = function () {
             $uibModalInstance.close(true);
+            vm.item.parentCtrl.refresh();
         };
 
         vm.close = function () {
             $uibModalInstance.dismiss(0);
-        };
+        }
 
     }
 

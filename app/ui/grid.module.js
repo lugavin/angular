@@ -6,11 +6,10 @@
     'use strict';
 
     angular.module('app.grid.module', [
-        'ui.bootstrap',
         'ngAnimate',
+        'ui.bootstrap',
         'ui.grid',
         'ui.grid.edit',
-        'ui.grid.validate',
         'ui.grid.selection',
         'ui.grid.pagination',
         'ui.grid.autoResize',

@@ -8,8 +8,8 @@
     angular
         .module('app.grid.module')
         .filter('StatusFormatter', StatusFormatter)
-        .controller('GridCtrl', ['$scope', '$http', '$uibModal', '$log', 'i18nService', 'uiGridConstants', GridCtrl])
-        .controller('GridModalCtrl', ['$uibModalInstance', 'items', GridModalCtrl]);
+        .controller('GridCtrl', GridCtrl)
+        .controller('GridModalCtrl', GridModalCtrl);
 
     function StatusFormatter() {
         var map = {'0': '不可用', '1': '可用'};
@@ -18,7 +18,7 @@
         };
     }
 
-    function GridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants, $window) {
+    function GridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants) {
 
         i18nService.setCurrentLang('zh-cn');
 

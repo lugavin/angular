@@ -43,12 +43,15 @@
         </fieldset>
     </form>
 </div>
-<!-- http://brianhann.com/ui-grid-and-dropdowns/ -->
+<!--
+<a>http://brianhann.com/ui-grid-and-dropdowns/</a>
+<a>https://github.com/angular-ui/ui-grid/issues/2808</a>
+-->
 <script id="template.html" type="text/ng-template">
     <div ui-select-wrap>
-        <ui-select theme="bootstrap" append-to-body="true" ng-model="MODEL_COL_FIELD">
+        <ui-select theme="bootstrap" append-to-body="true" ng-disabled="disabled" ng-model="MODEL_COL_FIELD">
             <ui-select-match placeholder="请选择...">{{COL_FIELD}}</ui-select-match>
-            <ui-select-choices repeat="item in grid.appScope.vm.couponItems | propsFilter: {cid: $select.search, cname: $select.search}">
+            <ui-select-choices repeat="item in grid.appScope.vm.dropdownOptions | propsFilter: {cid: $select.search, cname: $select.search}">
                 <div ng-bind-html="item.cname | highlight: $select.search"></div>
                 <small>
                     cid: {{item.cid}}

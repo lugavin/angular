@@ -9,6 +9,7 @@
         .module('app.select.module')
         .directive('uiSelectWrap', uiSelectWrap)
         .controller('SelectCtrl', SelectCtrl)
+        //.filter('griddropdown', griddropdown)
         .filter('propsFilter', propsFilter);
 
     function uiSelectWrap($document, uiGridEditConstants) {
@@ -21,6 +22,29 @@
                 }
             }
         };
+    }
+
+    function griddropdown() {
+        return function (input, context) {
+            try {
+                var map = context.col.colDef.editDropdownOptionsArray;
+                var idField = context.col.colDef.editDropdownIdLabel;
+                var valueField = context.col.colDef.editDropdownValueLabel;
+                var initial = context.row.entity[context.col.field];
+                if (typeof map !== "undefined") {
+                    for (var i = 0; i < map.length; i++) {
+                        if (map[i][idField] == input) {
+                            return map[i][valueField];
+                        }
+                    }
+                } else if (initial) {
+                    return initial;
+                }
+                return input;
+            } catch (e) {
+                context.grid.appScope.vm.log("Error: " + e);
+            }
+        }
     }
 
     function SelectCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants) {
@@ -41,7 +65,7 @@
             {uid: '105', name: 'lugavin', email: 'lugavin@gmail.com'}
         ];
 
-        var couponItems = [
+        var dropdownOptions = [
             {cid: '101', cname: 'coupon1'},
             {cid: '102', cname: 'coupon2'},
             {cid: '103', cname: 'coupon3'},
@@ -52,7 +76,7 @@
         var vm = this;
 
         vm.items = items;
-        vm.couponItems = couponItems;
+        vm.dropdownOptions = dropdownOptions;
 
         /**
          * https://github.com/angular-ui/ui-grid/wiki/Configuration-Options
@@ -80,10 +104,10 @@
                 gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
                     if (newValue != oldValue) {
                         rowEntity.subcost = (rowEntity.quantity || 0) * (rowEntity.price || 0);
+                        rowEntity.cid = newValue.cid;
+                        rowEntity.cname = newValue.cname;
                     }
-                });
-                gridApi.validate.on.validationFailed($scope, function (rowEntity, colDef, newValue, oldValue) {
-                    $log.info(rowEntity, colDef, newValue, oldValue);
+                    $log.info(vm.gridOptions.data);
                 });
             },
             columnDefs: [
@@ -101,14 +125,20 @@
                     enableColumnMenu: false
                 },
                 {
-                    field: 'couponId',
+                    field: 'cid',
                     displayName: '优惠券',
                     visible: false
                 },
                 {
-                    field: 'couponName',
+                    field: 'cname',
                     displayName: '优惠券',
+                    // editableCellTemplate: 'ui-grid/dropdownEditor',
+                    // editDropdownOptionsArray: dropdownOptions,
+                    // editDropdownIdLabel: 'cid',
+                    // editDropdownValueLabel: 'cname',
+                    // cellFilter: 'griddropdown:this',
                     editableCellTemplate: 'template.html'
+
                 },
                 {
                     field: 'quantity',

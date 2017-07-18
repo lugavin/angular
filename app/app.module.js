@@ -8,7 +8,8 @@
     angular.module('app', [
         'app.route',
         'app.bootstrap.module',
-        'app.grid.module'
+        'app.grid.module',
+        'app.select.module'
     ]);
 
 })();

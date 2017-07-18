@@ -1,0 +1,60 @@
+<div class="container-fluid" ng-controller="SelectCtrl as vm">
+    <form id="form" class="form-horizontal form-group-sm" role="form">
+        <fieldset class="bs-content" data-content="查询条件">
+            <div class="row">
+                <label class="control-label col-sm-1" for="uid">用户名</label>
+                <div class="col-sm-5">
+                    <ui-select id="uid" theme="bootstrap" ng-disabled="vm.disabled" ng-model="vm.item.selected">
+                        <ui-select-match placeholder="请选择...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="item in vm.items | propsFilter: {uid: $select.search, name: $select.search}">
+                            <div ng-bind-html="item.name | highlight: $select.search"></div>
+                            <small>
+                                uid: {{item.uid}}
+                                name: <span ng-bind-html="item.name | highlight: $select.search"></span>
+                            </small>
+                        </ui-select-choices>
+                    </ui-select>
+                    <small class="help-block">{{vm.item.selected}}</small>
+                </div>
+                <div class="col-sm-4">
+                    <button id="btnQuery" type="button" class="btn btn-primary btn-sm"
+                            ng-click="vm.query()" ng-disabled="undefined || null || ''">
+                        <i class="glyphicon glyphicon-search"></i> 查询
+                    </button>
+                    <button id="btnReset" type="button" class="btn btn-default btn-sm"
+                            ng-click="vm.reset()">
+                        <i class="glyphicon glyphicon-refresh"></i> 重置
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="bs-content" data-content="查询条件">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="grid" ui-grid="vm.gridOptions"
+                         ui-grid-auto-resize
+                         ui-grid-resize-columns
+                         ui-grid-pagination
+                         ui-grid-validate
+                         ui-grid-selection
+                         ui-grid-edit></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<!-- http://brianhann.com/ui-grid-and-dropdowns/ -->
+<script id="template.html" type="text/ng-template">
+    <div ui-select-wrap>
+        <ui-select theme="bootstrap" append-to-body="true" ng-model="MODEL_COL_FIELD">
+            <ui-select-match placeholder="请选择...">{{COL_FIELD}}</ui-select-match>
+            <ui-select-choices repeat="item in grid.appScope.vm.couponItems | propsFilter: {cid: $select.search, cname: $select.search}">
+                <div ng-bind-html="item.cname | highlight: $select.search"></div>
+                <small>
+                    cid: {{item.cid}}
+                    cname: <span ng-bind-html="item.cname | highlight: $select.search"></span>
+                </small>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</script>

@@ -7,44 +7,24 @@
 
     angular
         .module('app.select.module')
-        .directive('uiSelectWrap', uiSelectWrap)
+        //.directive('uiSelectWrap', uiSelectWrap)
         .controller('SelectCtrl', SelectCtrl)
-        //.filter('griddropdown', griddropdown)
         .filter('propsFilter', propsFilter);
 
     function uiSelectWrap($document, uiGridEditConstants) {
-        return function link($scope, $elm, $attr) {
-            $document.on('click', docClick);
-            function docClick(evt) {
-                if (!angular.element(evt.target).closest('.ui-select-container')) {
-                    $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
-                    $document.off('click', docClick);
+        return {
+            link: function ($scope, $element, $attr) {
+                $document.on('click', onClick);
+                function onClick(evt) {
+                    console.info($element);
+                    console.info($attr);
+                    if (!angular.element(evt.target).closest('.ui-select-container')) {
+                        $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                        $document.off('click', onClick);
+                    }
                 }
             }
         };
-    }
-
-    function griddropdown() {
-        return function (input, context) {
-            try {
-                var map = context.col.colDef.editDropdownOptionsArray;
-                var idField = context.col.colDef.editDropdownIdLabel;
-                var valueField = context.col.colDef.editDropdownValueLabel;
-                var initial = context.row.entity[context.col.field];
-                if (typeof map !== "undefined") {
-                    for (var i = 0; i < map.length; i++) {
-                        if (map[i][idField] == input) {
-                            return map[i][valueField];
-                        }
-                    }
-                } else if (initial) {
-                    return initial;
-                }
-                return input;
-            } catch (e) {
-                context.grid.appScope.vm.log("Error: " + e);
-            }
-        }
     }
 
     function SelectCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants) {
@@ -66,17 +46,22 @@
         ];
 
         var dropdownOptions = [
-            {cid: '101', cname: 'coupon1'},
-            {cid: '102', cname: 'coupon2'},
-            {cid: '103', cname: 'coupon3'},
-            {cid: '104', cname: 'coupon4'},
-            {cid: '105', cname: 'coupon5'}
+            {id: '101', value: '满100减50'},
+            {id: '102', value: '满200减120'},
+            {id: '103', value: '满300减180'},
+            {id: '104', value: '满400减250'},
+            {id: '105', value: '满500减300'}
         ];
 
         var vm = this;
 
         vm.items = items;
         vm.dropdownOptions = dropdownOptions;
+
+        vm.onSelected = function ($item, $model, grid, row) {
+            row.entity.cid = $item.id;
+            row.entity.cname = $item.value;
+        };
 
         /**
          * https://github.com/angular-ui/ui-grid/wiki/Configuration-Options
@@ -104,10 +89,7 @@
                 gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
                     if (newValue != oldValue) {
                         rowEntity.subcost = (rowEntity.quantity || 0) * (rowEntity.price || 0);
-                        rowEntity.cid = newValue.cid;
-                        rowEntity.cname = newValue.cname;
                     }
-                    $log.info(vm.gridOptions.data);
                 });
             },
             columnDefs: [
@@ -126,11 +108,14 @@
                 },
                 {
                     field: 'cid',
-                    displayName: '优惠券',
                     visible: false
                 },
                 {
                     field: 'cname',
+                    visible: false
+                },
+                {
+                    field: 'coupon',
                     displayName: '优惠券',
                     // editableCellTemplate: 'ui-grid/dropdownEditor',
                     // editDropdownOptionsArray: dropdownOptions,
@@ -180,7 +165,6 @@
             var out = [];
             if (angular.isArray(items)) {
                 var keys = Object.keys(props);
-
                 items.forEach(function (item) {
                     var itemMatches = false;
                     for (var i = 0; i < keys.length; i++) {
@@ -196,11 +180,33 @@
                     }
                 });
             } else {
-                // Let the output be the input untouched
                 out = items;
             }
             return out;
         };
     }
+
+    // function griddropdown() {
+    //     return function (input, context) {
+    //         try {
+    //             var map = context.col.colDef.editDropdownOptionsArray;
+    //             var idField = context.col.colDef.editDropdownIdLabel;
+    //             var valueField = context.col.colDef.editDropdownValueLabel;
+    //             var initial = context.row.entity[context.col.field];
+    //             if (typeof map !== "undefined") {
+    //                 for (var i = 0; i < map.length; i++) {
+    //                     if (map[i][idField] == input) {
+    //                         return map[i][valueField];
+    //                     }
+    //                 }
+    //             } else if (initial) {
+    //                 return initial;
+    //             }
+    //             return input;
+    //         } catch (e) {
+    //             context.grid.appScope.vm.log("Error: " + e);
+    //         }
+    //     }
+    // }
 
 })();

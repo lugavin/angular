@@ -43,21 +43,19 @@
         </fieldset>
     </form>
 </div>
-<!--
-<a>http://brianhann.com/ui-grid-and-dropdowns/</a>
-<a>https://github.com/angular-ui/ui-grid/issues/2808</a>
--->
+<!-- <a href="https://github.com/angular-ui/ui-select/wiki/ui-select">ui-select</a> -->
 <script id="template.html" type="text/ng-template">
-    <div ui-select-wrap>
-        <ui-select theme="bootstrap" append-to-body="true" ng-disabled="disabled" ng-model="MODEL_COL_FIELD">
-            <ui-select-match placeholder="请选择...">{{COL_FIELD}}</ui-select-match>
-            <ui-select-choices repeat="item in grid.appScope.vm.dropdownOptions | propsFilter: {cid: $select.search, cname: $select.search}">
-                <div ng-bind-html="item.cname | highlight: $select.search"></div>
+    <ui-select-wrap>
+        <ui-select on-select="grid.appScope.vm.onSelected($item, $model, grid, row)"
+                   ng-model="MODEL_COL_FIELD" append-to-body="true">
+            <ui-select-match placeholder="请选择...">{{$select.selected.value}}</ui-select-match>
+            <ui-select-choices repeat="item in grid.appScope.vm.dropdownOptions | propsFilter: {id: $select.search, value: $select.search}" style="width: 250px;">
+                <div ng-bind-html="item.value | highlight: $select.search"></div>
                 <small>
-                    cid: {{item.cid}}
-                    cname: <span ng-bind-html="item.cname | highlight: $select.search"></span>
+                    id: {{item.id}}
+                    text: <span ng-bind-html="item.value | highlight: $select.search"></span>
                 </small>
             </ui-select-choices>
         </ui-select>
-    </div>
+    </ui-select-wrap>
 </script>

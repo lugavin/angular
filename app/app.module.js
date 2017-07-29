@@ -9,6 +9,7 @@
         'app.route',
         'app.bootstrap.module',
         'app.grid.module',
+        'app.treegrid.module',
         'app.select.module'
     ]);
 

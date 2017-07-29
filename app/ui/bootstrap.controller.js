@@ -24,7 +24,11 @@
                 size: 'lg',
                 resolve: {
                     items: function () {
-                        return angular.extend({}, row, {title: '更新用户'});
+                        return {
+                            parentCtrl: vm,
+                            rowData: angular.copy(row),
+                            title: '更新用户'
+                        };
                     }
                 }
             });
@@ -66,10 +70,13 @@
 
         var vm = this;
 
-        vm.user = items;
+        vm.user = items.rowData;
+        vm.title = items.title;
+        vm.parentCtrl = items.parentCtrl;
 
         vm.save = function () {
             $uibModalInstance.close(true);
+            vm.parentCtrl.query();
         };
 
         vm.close = function () {

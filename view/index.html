@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" ng-app="app">
 <head>
     <meta charset="UTF-8">
     <title>AngularJS</title>
@@ -12,136 +12,144 @@
         }
     </style>
 </head>
-<body>
+<body ng-controller="mainCtrl">
 <!-- ng-app用于标记该区域的内容将被AngularJS渲染 -->
-<div id="page-wrapper" class="container" ng-app="app">
+<div id="page-wrapper" class="container">
     <div class="page-header">
         <label class="h4">Angular CRUD</label>
     </div>
     <div id="page-content">
         <form id="form" class="form-horizontal form-group-sm">
-            <fieldset>
-                <div ng-controller="controller">
-                    <div class="row" ng-show="products.length">
-                        <div class="col-sm-12">
-                            <label class="col-sm-3 control-label pull-right">
-                                <input type="search" class="form-control input-sm" placeholder="Search..."
-                                       ng-model="search">
-                            </label>
-                        </div>
-                        <div class="col-sm-12">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th ng-class="{dropup:orderType===''}" ng-click="toggleOrder('id')">
-                                        商品编号 <span ng-class="{orderColor:orderName==='id'}" class="caret"></span>
-                                    </th>
-                                    <th ng-class="{dropup:orderType===''}" ng-click="toggleOrder('name')">
-                                        商品名称 <span ng-class="{orderColor:orderName==='name'}" class="caret"></span>
-                                    </th>
-                                    <th ng-class="{dropup:orderType===''}" ng-click="toggleOrder('quantity')">
-                                        购买数量 <span ng-class="{orderColor:orderName==='quantity'}"
-                                                   class="caret"></span>
-                                    </th>
-                                    <th ng-class="{dropup:orderType===''}" ng-click="toggleOrder('price')">
-                                        商品单价 <span ng-class="{orderColor:orderName==='price'}" class="caret"></span>
-                                    </th>
-                                    <th>商品总价</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="product in products | filter:search | orderBy: orderType+orderName">
-                                    <td>{{product.id}}</td>
-                                    <td>{{product.name}}</td>
-                                    <td>
-                                        <input name="quantity" type="number" min="1" max="99999"
-                                               style="width: 100px"
-                                               value="{{product.quantity}}" ng-model="product.quantity">
-                                    </td>
-                                    <td>{{product.price|currency}}</td>
-                                    <td>{{product.quantity * product.price|currency}}</td>
-                                    <td>
-                                        <button class="btn btn-xs btn-danger" ng-click="remove(product.id)">
-                                            <i class="glyphicon glyphicon-trash"></i> 删除
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                                <tfoot>
-                                <tr>
-                                    <th>合计：</th>
-                                    <th class="text-right">购买总数量</th>
-                                    <th>{{totalQuantity()}}</th>
-                                    <th class="text-right">购买总价</th>
-                                    <th>{{totalPrice()|currency}}</th>
-                                    <th>
-                                        <button class="btn btn-xs btn-danger" ng-click="products=[]">
-                                            <i class="glyphicon glyphicon-trash"></i> 清空
-                                        </button>
-                                    </th>
-                                </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-                    <div ng-hide="products.length">
-                        <h3>您的购物车为空！</h3>
-                    </div>
+            <div class="row" ng-show="products.length">
+                <div class="col-sm-12">
+                    <label class="col-sm-3 control-label pull-right">
+                        <input type="search" class="form-control input-sm" placeholder="Search..."
+                               ng-model="search">
+                    </label>
                 </div>
-            </fieldset>
+                <div class="col-sm-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th ng-class="{dropup:orderType===''}" ng-click="toggleOrder('id')">
+                                商品编号 <span ng-class="{orderColor:orderName==='id'}" class="caret"></span>
+                            </th>
+                            <th ng-class="{dropup:orderType===''}" ng-click="toggleOrder('name')">
+                                商品名称 <span ng-class="{orderColor:orderName==='name'}" class="caret"></span>
+                            </th>
+                            <th ng-class="{dropup:orderType===''}" ng-click="toggleOrder('quantity')">
+                                购买数量 <span ng-class="{orderColor:orderName==='quantity'}"
+                                           class="caret"></span>
+                            </th>
+                            <th ng-class="{dropup:orderType===''}" ng-click="toggleOrder('price')">
+                                商品单价 <span ng-class="{orderColor:orderName==='price'}" class="caret"></span>
+                            </th>
+                            <th>商品总价</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="product in products | filter:search | orderBy: orderType+orderName">
+                            <td>{{product.id}}</td>
+                            <td>{{product.name}}</td>
+                            <td>
+                                <input name="quantity" type="number" min="1" max="99999"
+                                       style="width: 100px"
+                                       value="{{product.quantity}}" ng-model="product.quantity">
+                            </td>
+                            <td>{{product.price|currency}}</td>
+                            <td>{{product.quantity * product.price|currency}}</td>
+                            <td>
+                                <button class="btn btn-xs btn-danger" ng-click="remove(product.id)">
+                                    <i class="glyphicon glyphicon-trash"></i> 删除
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th>合计：</th>
+                            <th class="text-right">购买总数量</th>
+                            <th>{{totalQuantity()}}</th>
+                            <th class="text-right">购买总价</th>
+                            <th>{{totalPrice()|currency}}</th>
+                            <th>
+                                <button class="btn btn-xs btn-danger" ng-click="products=[]">
+                                    <i class="glyphicon glyphicon-trash"></i> 清空
+                                </button>
+                            </th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div ng-hide="products.length">
+                <h3>您的购物车为空！</h3>
+            </div>
         </form>
     </div>
 </div>
 <script type="text/javascript">
-    // alert('模拟阻塞: 正在从服务器加载资源...');
-    angular.module("app", []).service('data', function () {
-        return [
-            {id: 1001, name: 'iPad', quantity: 5, price: 500},
-            {id: 1002, name: 'iPhone', quantity: 5, price: 1000},
-            {id: 1003, name: 'iMac', quantity: 5, price: 2000}
-        ];
-    }).controller("controller", function ($scope, data) {
-        $scope.products = data;
-        $scope.totalQuantity = function () {
-            var total = 0;
-            angular.forEach($scope.products, function (product) {
-                total += product.quantity;
-            });
-            return total;
-        };
-        $scope.totalPrice = function () {
-            var total = 0;
-            angular.forEach($scope.products, function (product) {
-                total += product.quantity * product.price;
-            });
-            return total;
-        };
-        $scope.remove = function (id) {
-            var yes = window.confirm('确认删除吗？');
-            if (yes) {
-                var index = -1;
-                angular.forEach($scope.products, function (product, idx) {
-                    if (product.id == id) {
-                        return index = idx;
-                    }
+    (function () {
+
+        // alert('模拟阻塞: 正在从服务器加载资源...');
+        angular.module("app", [])
+                .service('dataService', dataService)
+                .controller("mainCtrl", ['$scope', 'dataService', mainCtrl]);
+
+        function mainCtrl($scope, dataService) {
+            $scope.products = dataService.data;
+            $scope.totalQuantity = function () {
+                var total = 0;
+                angular.forEach($scope.products, function (product) {
+                    total += product.quantity;
                 });
-                if (index !== -1) {
-                    $scope.products.splice(index, 1);
+                return total;
+            };
+            $scope.totalPrice = function () {
+                var total = 0;
+                angular.forEach($scope.products, function (product) {
+                    total += product.quantity * product.price;
+                });
+                return total;
+            };
+            $scope.remove = function (id) {
+                var yes = window.confirm('确认删除吗？');
+                if (yes) {
+                    var index = -1;
+                    angular.forEach($scope.products, function (product, idx) {
+                        if (product.id == id) {
+                            return index = idx;
+                        }
+                    });
+                    if (index !== -1) {
+                        $scope.products.splice(index, 1);
+                    }
                 }
-            }
-        };
-        $scope.orderName = 'id';
-        $scope.orderType = '-';
-        $scope.toggleOrder = function (name) {
-            $scope.orderName = name;
-            if ($scope.orderType === '') {
-                $scope.orderType = '-';
-            } else {
-                $scope.orderType = '';
-            }
-        };
-    });
+            };
+            $scope.orderName = 'id';
+            $scope.orderType = '-';
+            $scope.toggleOrder = function (name) {
+                $scope.orderName = name;
+                if ($scope.orderType === '') {
+                    $scope.orderType = '-';
+                } else {
+                    $scope.orderType = '';
+                }
+            };
+        }
+
+        function dataService() {
+            return {
+                data: [
+                    {id: 1001, name: 'iPad', quantity: 5, price: 500},
+                    {id: 1002, name: 'iPhone', quantity: 5, price: 1000},
+                    {id: 1003, name: 'iMac', quantity: 5, price: 2000}
+                ]
+            };
+        }
+
+    })();
 </script>
 </body>
 </html>

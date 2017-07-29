@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" ng-app="app">
 <head>
     <meta charset="UTF-8">
     <title>AngularJS</title>
     <link rel="stylesheet" href="../assets/css/app.css">
     <script src="../assets/js/lib/angular/angular.js"></script>
 </head>
-<body ng-app="myApp">
-<div id="page-wrapper" class="container" ng-controller="myController">
+<body ng-controller="mainCtrl">
+<div id="page-wrapper" class="container">
     <div class="page-header">
         <label class="h4">Angular03-controller</label>
     </div>
@@ -36,18 +36,23 @@
     </div>
 </div>
 <script type="text/javascript">
-    var myApp = angular.module("myApp", []);
-    myApp.controller("myController", ["$scope", function ($scope) {
-        // ng-model(双向绑定): $scope <=> View
-        // ng-bind(单向绑定): $scope => View 相当于{{expression}}
-        $scope.name = "AngularJS";
-        $scope.fnBlur = function () {
-            console.info("字段是否已更改: " + $scope.myForm.fieldName.$dirty);
-            console.info("字段是否未更改: " + $scope.myForm.fieldName.$pristine);
-            console.info("字段是否有效: " + $scope.myForm.fieldName.$valid);
-            console.info("字段是否无效: " + $scope.myForm.fieldName.$invalid);
+    (function() {
+
+        angular.module("app", []).controller("mainCtrl", mainCtrl);
+
+        function mainCtrl($scope) {
+            // ng-model(双向绑定): $scope <=> View
+            // ng-bind(单向绑定): $scope => View 相当于{{expression}}
+            $scope.name = "AngularJS";
+            $scope.fnBlur = function () {
+                console.info("字段是否已更改: " + $scope.myForm.fieldName.$dirty);
+                console.info("字段是否未更改: " + $scope.myForm.fieldName.$pristine);
+                console.info("字段是否有效: " + $scope.myForm.fieldName.$valid);
+                console.info("字段是否无效: " + $scope.myForm.fieldName.$invalid);
+            }
         }
-    }]);
+
+    })();
 </script>
 </body>
 </html>

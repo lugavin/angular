@@ -10,7 +10,7 @@
         .controller('BootstrapCtrl', BootstrapCtrl)
         .controller('BootstrapModalCtrl', BootstrapModalCtrl);
 
-    function BootstrapCtrl($http, $uibModal, $log) {
+    function BootstrapCtrl($scope, $http, $uibModal, $log) {
 
         var vm = this;
 
@@ -66,7 +66,7 @@
         vm.query();
     }
 
-    function BootstrapModalCtrl($uibModalInstance, items) {
+    function BootstrapModalCtrl($scope, $uibModalInstance, $log, items) {
 
         var vm = this;
 
@@ -82,6 +82,10 @@
         vm.close = function () {
             $uibModalInstance.dismiss(0);
         };
+
+        // $scope.$on('$destroy', function () {
+        //     $log.debug('Modal scope should be destroyed.');
+        // });
 
     }
 

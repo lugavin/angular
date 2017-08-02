@@ -69,6 +69,10 @@
             //         console.info(row.entity);
             //     }
             // },
+            enableCellEdit: false,
+            cellEditableCondition: function () {
+                return true;
+            },
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
                 gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
@@ -79,27 +83,24 @@
                 gridApi.validate.on.validationFailed($scope, function (rowEntity, colDef, newValue, oldValue) {
                     $log.info(rowEntity, colDef, newValue, oldValue);
                 });
+                gridApi.pagination.on.paginationChanged($scope, function (pageNumber, pageSize) {
+                    $log.info(pageNumber, pageSize);
+                });
             },
             columnDefs: [
                 {
                     field: 'id',
                     displayName: '商品编号',
-                    enableCellEdit: false,
-                    visible: true,
-                    enableColumnMenu: false
+                    visible: true
                 },
                 {
                     field: 'name',
-                    displayName: '商品名称',
-                    enableCellEdit: false,
-                    enableColumnMenu: false
+                    displayName: '商品名称'
                 },
                 {
                     field: 'status',
                     displayName: '状态',
                     visible: false,
-                    enableCellEdit: false,
-                    enableColumnMenu: false,
                     cellFilter: 'StatusFormatter'
                 },
                 {
@@ -108,7 +109,9 @@
                     type: 'number',
                     cellClass: 'text-left',
                     enableCellEdit: true,
-                    enableColumnMenu: false,
+                    cellEditableCondition: function ($scope) {
+                        return $scope.row.entity.isNew;
+                    },
                     validators: {required: true, minValue: 1},
                     cellTemplate: 'ui-grid/cellTitleValidator',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
@@ -117,25 +120,19 @@
                 {
                     field: 'price',
                     displayName: '商品单价',
-                    cellClass: 'text-left',
-                    enableCellEdit: false,
-                    enableColumnMenu: false
+                    cellClass: 'text-left'
                 },
                 {
                     field: 'subcost',
                     displayName: '小计',
                     cellClass: 'text-left',
-                    enableCellEdit: false,
-                    enableColumnMenu: false,
                     aggregationType: uiGridConstants.aggregationTypes.sum,
                     aggregationLabel: '购买总价：'
                 },
                 {
                     field: 'action',
                     displayName: '操作',
-                    cellTemplate: 'template',
-                    enableCellEdit: false,
-                    enableColumnMenu: false
+                    cellTemplate: 'template'
                 }
             ]
         };
@@ -143,7 +140,7 @@
         vm.gridOptions.data = data;
 
         vm.add = function () {
-            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000};
+            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000, isNew: true};
             vm.gridOptions.data.push(row);
         };
 

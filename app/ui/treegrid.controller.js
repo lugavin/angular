@@ -7,43 +7,8 @@
 
     angular
         .module('app.treegrid.module')
-        .config(['$httpProvider', function ($httpProvider) {
-            $httpProvider.interceptors.push('httpInterceptor');
-        }])
-        // register the interceptor as a service
-        .factory('httpInterceptor', httpInterceptor)
         .controller('TreeGridCtrl', TreeGridCtrl)
         .controller('TreeGridModalCtrl', TreeGridModalCtrl);
-
-    function httpInterceptor($q, $injector, $log) {
-
-        $log.debug('$log is here to show you that this is a regular factory with injection');
-
-        return {
-            request: function (config) {
-                $log.debug('========== request ==========');
-                var deferred = $q.defer();
-                deferred.resolve(config);
-                // return $q.reject('Request error.');
-                return deferred.promise;
-            },
-            response: function (config) {
-                $log.debug('========== response ==========');
-                var deferred = $q.defer();
-                deferred.resolve(config);
-                return deferred.promise;
-            },
-            requestError: function (response) {
-                $log.debug('========== requestError ==========');
-                return $q.reject(response);
-            },
-            responseError: function (response) {
-                $log.debug('========== responseError ==========');
-                return $q.reject(response);
-            }
-        };
-
-    }
 
     function TreeGridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridValidateService, uiGridConstants) {
 

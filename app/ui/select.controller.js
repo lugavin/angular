@@ -16,8 +16,6 @@
             link: function ($scope, $element, $attr) {
                 $document.on('click', onClick);
                 function onClick(evt) {
-                    console.info($element);
-                    console.info($attr);
                     if (!angular.element(evt.target).closest('.ui-select-container')) {
                         $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                         $document.off('click', onClick);
@@ -37,28 +35,28 @@
             {id: 1003, name: 'iMac', status: '1', quantity: 5, price: 2000, subcost: 10000}
         ];
 
-        var items = [
-            {uid: '101', name: 'ann', email: 'ann@gmail.com'},
-            {uid: '102', name: 'alan', email: 'alan@gmail.com'},
-            {uid: '103', name: 'panxt', email: 'panxt@gmail.com'},
-            {uid: '104', name: 'gavin', email: 'gavin@gmail.com'},
-            {uid: '105', name: 'lugavin', email: 'lugavin@gmail.com'}
-        ];
-
-        var dropdownOptions = [
-            {id: '101', value: '满100减50'},
-            {id: '102', value: '满200减120'},
-            {id: '103', value: '满300减180'},
-            {id: '104', value: '满400减250'},
-            {id: '105', value: '满500减300'}
-        ];
-
         var vm = this;
 
-        vm.items = items;
-        vm.dropdownOptions = dropdownOptions;
+        vm.items = [];
+        vm.dropdownOptions = [];
 
-        vm.onSelected = function ($item, $model, grid, row) {
+        vm.refreshItems = function (item) {
+            return $http.get('data/Select.json', {keyword: item.text}).then(function (response) {
+                vm.items = response.data;
+            });
+        };
+
+        vm.selectItem = function ($item, $model) {
+            $log.info($item, $model);
+        };
+
+        vm.asyncGridItem = function (item) {
+            return $http.get('data/Select.json', {keyword: item.text}).then(function (response) {
+                vm.dropdownOptions = response.data;
+            });
+        };
+
+        vm.selectGridItem = function ($item, $model, grid, row) {
             row.entity.cid = $item.id;
             row.entity.cname = $item.value;
         };

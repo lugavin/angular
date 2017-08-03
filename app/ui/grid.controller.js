@@ -182,6 +182,7 @@
                 templateUrl: 'edit.html',
                 controller: 'GridModalCtrl',
                 controllerAs: 'vm',
+                backdrop: 'static',
                 size: 'lg',
                 resolve: {
                     items: function () {

@@ -4,17 +4,17 @@
             <div class="row">
                 <label class="control-label col-sm-1" for="uid">用户名</label>
                 <div class="col-sm-5">
-                    <ui-select id="uid" theme="bootstrap" ng-disabled="vm.disabled" ng-model="vm.item.selected">
-                        <ui-select-match placeholder="请选择...">{{$select.selected.name}}</ui-select-match>
-                        <ui-select-choices repeat="item in vm.items | propsFilter: {uid: $select.search, name: $select.search}">
-                            <div ng-bind-html="item.name | highlight: $select.search"></div>
+                    <ui-select id="uid" theme="bootstrap" ng-model="vm.item.selected" on-select="vm.selectItem($item, $model)">
+                        <ui-select-match placeholder="请选择...">{{$select.selected.text}}</ui-select-match>
+                        <ui-select-choices repeat="item in vm.items | propsFilter: {id: $select.search, text: $select.search}"
+                                refresh="vm.refreshItems($select.search)" refresh-delay="0">
+                            <div ng-bind-html="item.text | highlight: $select.search"></div>
                             <small>
-                                uid: {{item.uid}}
-                                name: <span ng-bind-html="item.name | highlight: $select.search"></span>
+                                id: {{item.id}}
+                                text: <span ng-bind-html="item.text | highlight: $select.search"></span>
                             </small>
                         </ui-select-choices>
                     </ui-select>
-                    <small class="help-block">{{vm.item.selected}}</small>
                 </div>
                 <div class="col-sm-4">
                     <button id="btnQuery" type="button" class="btn btn-primary btn-sm"
@@ -46,14 +46,15 @@
 <!-- <a href="https://github.com/angular-ui/ui-select/wiki/ui-select">ui-select</a> -->
 <script id="template.html" type="text/ng-template">
     <ui-select-wrap>
-        <ui-select on-select="grid.appScope.vm.onSelected($item, $model, grid, row)"
+        <ui-select on-select="grid.appScope.vm.selectGridItem($item, $model, grid, row)"
                    ng-model="MODEL_COL_FIELD" append-to-body="true">
-            <ui-select-match placeholder="请选择...">{{$select.selected.value}}</ui-select-match>
-            <ui-select-choices repeat="item in grid.appScope.vm.dropdownOptions | propsFilter: {id: $select.search, value: $select.search}" style="width: 250px;">
-                <div ng-bind-html="item.value | highlight: $select.search"></div>
+            <ui-select-match placeholder="请选择...">{{$select.selected.text}}</ui-select-match>
+            <ui-select-choices repeat="item in grid.appScope.vm.dropdownOptions | propsFilter: {id: $select.search, text: $select.search}" style="width: 250px;"
+                               refresh="grid.appScope.vm.asyncGridItem($select.search)" refresh-delay="0">
+                <div ng-bind-html="item.text | highlight: $select.search"></div>
                 <small>
                     id: {{item.id}}
-                    text: <span ng-bind-html="item.value | highlight: $select.search"></span>
+                    text: <span ng-bind-html="item.text | highlight: $select.search"></span>
                 </small>
             </ui-select-choices>
         </ui-select>

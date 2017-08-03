@@ -5,11 +5,7 @@
 
     'use strict';
 
-    angular.module('app.route', [
-        'ngRoute'
-    ]).config(Route);
-
-    function Route($routeProvider) {
+    var Route = function ($routeProvider) {
         $routeProvider
             .when('/ui-bootstrap', {templateUrl: 'app/ui/bootstrap.html'})
             .when('/ui-grid', {templateUrl: 'app/ui/grid.html'})
@@ -17,6 +13,12 @@
             .when('/ui-select', {templateUrl: 'app/ui/select.html'})
             .when('/welcome', {templateUrl: 'app/welcome.html'})
             .otherwise({redirectTo: '/welcome'});
-    }
+    };
+
+    Route.$inject = ['$routeProvider'];
+
+    angular.module('app.route', [
+        'ngRoute'
+    ]).config(Route);
 
 })();

@@ -5,6 +5,7 @@
 
     'use strict';
 
+
     angular.module('app', [
         'app.route',
         'app.bootstrap.module',
@@ -13,15 +14,15 @@
         'app.select.module'
     ]).config(configuration)
         .run(initialization)
-        .factory('httpInterceptor', httpInterceptor);   // register the interceptor as a service
+        .factory('httpInterceptor', ['$q', '$injector', '$log', httpInterceptor]);
 
     function configuration($httpProvider) {
         $httpProvider.interceptors.push('httpInterceptor');
     }
 
     function initialization($rootScope) {
-        $rootScope.$on('modal.show', function (e) {
-            console.log('modal.show.');
+        $rootScope.$on('$uibModalInstance.opened', function (e, $uibModalInstance) {
+            console.log($uibModalInstance);
         });
     }
 

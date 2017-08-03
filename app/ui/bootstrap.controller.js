@@ -17,10 +17,11 @@
         vm.user = {};
 
         vm.edit = function (row) {
-            $uibModal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: 'edit.html',
                 controller: 'BootstrapModalCtrl',
                 controllerAs: 'vm',
+                backdrop: 'static',
                 size: 'lg',
                 resolve: {
                     items: function () {
@@ -31,6 +32,15 @@
                         };
                     }
                 }
+            });
+            modalInstance.opened.then(function () {
+                console.log("modal opened");
+            });
+            modalInstance.rendered.then(function () {
+                console.log("modal rendered");
+            });
+            modalInstance.closed.then(function () {
+                console.log("modal closed");
             });
         };
 
@@ -69,6 +79,8 @@
     function BootstrapModalCtrl($scope, $uibModalInstance, $log, items) {
 
         var vm = this;
+
+        console.info($uibModalInstance);
 
         vm.user = items.rowData;
         vm.title = items.title;

@@ -17,8 +17,6 @@
 
     Route.$inject = ['$routeProvider'];
 
-    angular.module('app.route', [
-        'ngRoute'
-    ]).config(Route);
+    angular.module('app.route', ['ngRoute']).config(Route);
 
 })();

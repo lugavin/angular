@@ -1,26 +1,32 @@
 /*!
  * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
+ * https://github.com/johnpapa/ng-demos
  */
 (function () {
 
     'use strict';
 
     angular
-        .module('app.grid.module')
-        .filter('StatusFormatter', StatusFormatter)
-        .controller('GridCtrl', GridCtrl)
-        .controller('GridModalCtrl', GridModalCtrl);
+        .module('app.treegrid.module')
+        .controller('TreeGridCtrl', TreeGridCtrl)
+        .controller('TreeGridModalCtrl', TreeGridModalCtrl);
 
-    function StatusFormatter() {
-        var map = {'0': '不可用', '1': '可用'};
-        return function (input) {
-            return map[input] || '';
-        };
-    }
+    function TreeGridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridValidateService, uiGridConstants) {
 
-    function GridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridValidateService, uiGridConstants) {
+        $log.debug($scope);
 
         i18nService.setCurrentLang('zh-cn');
+
+        $http({
+            method: 'GET',
+            url: 'data/Tree.json',
+            params: {},
+            data: {},
+            headers: {},
+            responseType: 'json'
+        }).then(function (response) {
+            $log.info(response.data);
+        });
 
         /**
          * setValidator(name, validatorFactory, messageFunction)
@@ -41,6 +47,15 @@
         ];
 
         var vm = this;
+
+        vm.add = add;
+        vm.edit = edit;
+        vm.view = view;
+        vm.remove = remove;
+        vm.editRow = editRow;
+        vm.removeRow = removeRow;
+        vm.viewRow = viewRow;
+        vm.refresh = refresh;
 
         /**
          * https://github.com/angular-ui/ui-grid/wiki/Configuration-Options
@@ -69,10 +84,6 @@
             //         console.info(row.entity);
             //     }
             // },
-            enableCellEdit: false,
-            cellEditableCondition: function () {
-                return true;
-            },
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
                 gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
@@ -83,24 +94,27 @@
                 gridApi.validate.on.validationFailed($scope, function (rowEntity, colDef, newValue, oldValue) {
                     $log.info(rowEntity, colDef, newValue, oldValue);
                 });
-                gridApi.pagination.on.paginationChanged($scope, function (pageNumber, pageSize) {
-                    $log.info(pageNumber, pageSize);
-                });
             },
             columnDefs: [
                 {
                     field: 'id',
                     displayName: '商品编号',
-                    visible: true
+                    enableCellEdit: false,
+                    visible: true,
+                    enableColumnMenu: false
                 },
                 {
                     field: 'name',
-                    displayName: '商品名称'
+                    displayName: '商品名称',
+                    enableCellEdit: false,
+                    enableColumnMenu: false
                 },
                 {
                     field: 'status',
                     displayName: '状态',
                     visible: false,
+                    enableCellEdit: false,
+                    enableColumnMenu: false,
                     cellFilter: 'StatusFormatter'
                 },
                 {
@@ -109,9 +123,7 @@
                     type: 'number',
                     cellClass: 'text-left',
                     enableCellEdit: true,
-                    cellEditableCondition: function ($scope) {
-                        return $scope.row.entity.isNew;
-                    },
+                    enableColumnMenu: false,
                     validators: {required: true, minValue: 1},
                     cellTemplate: 'ui-grid/cellTitleValidator',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
@@ -120,69 +132,78 @@
                 {
                     field: 'price',
                     displayName: '商品单价',
-                    cellClass: 'text-left'
+                    cellClass: 'text-left',
+                    enableCellEdit: false,
+                    enableColumnMenu: false
                 },
                 {
                     field: 'subcost',
                     displayName: '小计',
                     cellClass: 'text-left',
+                    enableCellEdit: false,
+                    enableColumnMenu: false,
                     aggregationType: uiGridConstants.aggregationTypes.sum,
                     aggregationLabel: '购买总价：'
                 },
                 {
                     field: 'action',
                     displayName: '操作',
-                    cellTemplate: 'template'
+                    cellTemplate: 'template',
+                    enableCellEdit: false,
+                    enableColumnMenu: false
                 }
             ]
         };
 
         vm.gridOptions.data = data;
 
-        vm.add = function () {
-            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000, isNew: true};
+        function add() {
+            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000};
             vm.gridOptions.data.push(row);
-        };
+        }
 
-        vm.edit = function () {
+        function edit() {
             var row = vm.gridApi.selection.getSelectedRows()[0];
             // row.name = row.name + '_';
             // var rowData = angular.copy(row);
             // rowData.name = rowData.name + '_';
             // angular.extend(row, rowData);
             // angular.extend({}, row, rowData);
-            row && openModal(row, {parentCtrl: vm, title: '修改商品', disabled: false});
-        };
+            row && openModal(row, {parentCtrl: vm, action: 'edit', disabled: false});
+        }
 
-        vm.remove = function () {
+        function remove() {
             var row = vm.gridApi.selection.getSelectedRows()[0];
             row && vm.gridOptions.data.splice(vm.gridOptions.data.indexOf(row), 1);
-        };
+        }
 
-        vm.view = function () {
+        function view() {
             var row = vm.gridApi.selection.getSelectedRows()[0];
-            row && openModal(row, {parentCtrl: vm, title: '查看商品', disabled: true});
-        };
+            row && openModal(row, {parentCtrl: vm, action: 'view', disabled: true});
+        }
 
-        vm.editRow = function (grid, row) {
-            openModal(row.entity, {parentCtrl: vm, title: '修改商品', disabled: false});
-        };
+        function editRow(grid, row) {
+            openModal(row.entity, {parentCtrl: vm, action: 'edit', disabled: false});
+        }
 
-        vm.removeRow = function (grid, row) {
+        function removeRow(grid, row) {
             var index = vm.gridOptions.data.indexOf(row.entity);
             vm.gridOptions.data.splice(index, 1);
-        };
+        }
 
-        vm.viewRow = function (grid, row) {
-            openModal(row.entity, {parentCtrl: vm, title: '查看商品', disabled: true});
-        };
+        function viewRow(grid, row) {
+            openModal(row.entity, {parentCtrl: vm, action: 'view', disabled: true});
+        }
 
-        var openModal = function (row, param) {
+        function refresh() {
+            $log.info('Refresh DataGrid...');
+        }
+
+        function openModal(row, param) {
             $uibModal.open({
                 templateUrl: 'edit.html',
                 controller: 'GridModalCtrl',
                 controllerAs: 'vm',
-                backdrop: 'static',
                 size: 'lg',
                 resolve: {
                     items: function () {
@@ -190,15 +211,11 @@
                     }
                 }
             });
-        };
-
-        vm.refresh = function () {
-            $log.info('Refresh DataGrid...');
-        };
+        }
 
     }
 
-    function GridModalCtrl($uibModalInstance, $log, items) {
+    function TreeGridModalCtrl($uibModalInstance, $log, items) {
 
         var vm = this;
 

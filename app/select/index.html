@@ -1,10 +1,10 @@
-<div class="container-fluid" ng-controller="SelectCtrl as vm">
+<div class="container-fluid">
     <form id="form" class="form-horizontal form-group-sm" role="form">
         <fieldset class="bs-content" data-content="查询条件">
             <div class="row">
-                <label class="control-label col-sm-1" for="uid">用户名</label>
+                <label class="control-label col-sm-1" for="coupon">优惠券</label>
                 <div class="col-sm-5">
-                    <ui-select id="uid" theme="bootstrap" ng-model="vm.item.selected" on-select="vm.selectItem($item, $model)">
+                    <ui-select id="coupon" theme="bootstrap" ng-model="vm.coupon.id" on-select="vm.selectItem($item, $model)">
                         <ui-select-match placeholder="请选择...">{{$select.selected.text}}</ui-select-match>
                         <ui-select-choices repeat="item in vm.items | propsFilter: {id: $select.search, text: $select.search}"
                                 refresh="vm.refreshItems($select.search)" refresh-delay="0">

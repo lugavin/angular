@@ -1,26 +1,33 @@
 /*!
  * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
+ * https://github.com/johnpapa/ng-demos
  */
 (function () {
 
     'use strict';
 
-
+    /**
+     * 声明模块(每个独立子模块使用唯一的命名约定以避免命名冲突)
+     */
     angular.module('app', [
         'app.route',
         'app.bootstrap.module',
         'app.grid.module',
         'app.treegrid.module',
         'app.select.module'
-    ]).config(configuration)
-        .run(initialization)
-        .factory('httpInterceptor', ['$q', '$injector', '$log', httpInterceptor]);
+    ]).config(interceptorConfig)
+        .run(init)
+        .factory('httpInterceptor', httpInterceptor);
 
-    function configuration($httpProvider) {
+    interceptorConfig.$inject = ['$httpProvider'];
+    init.$inject = ['$rootScope'];
+    httpInterceptor.$inject = ['$q', '$injector', '$log'];
+
+    function interceptorConfig($httpProvider) {
         $httpProvider.interceptors.push('httpInterceptor');
     }
 
-    function initialization($rootScope) {
+    function init($rootScope) {
         $rootScope.$on('$uibModalInstance.opened', function (e, $uibModalInstance) {
             console.log($uibModalInstance);
         });

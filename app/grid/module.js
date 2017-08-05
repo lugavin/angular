@@ -1,11 +1,12 @@
 /*!
  * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
+ * https://github.com/johnpapa/ng-demos
  */
 (function () {
 
     'use strict';
 
-    angular.module('app.treegrid.module', [
+    angular.module('app.grid.module', [
         'ngAnimate',
         'ui.bootstrap',
         'ui.grid',

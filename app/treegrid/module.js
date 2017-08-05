@@ -1,15 +1,14 @@
 /*!
  * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
+ * https://github.com/johnpapa/ng-demos
  */
 (function () {
 
     'use strict';
 
-    angular.module('app.select.module', [
+    angular.module('app.treegrid.module', [
         'ngAnimate',
-        'ngSanitize',
         'ui.bootstrap',
-        'ui.select',
         'ui.grid',
         'ui.grid.edit',
         'ui.grid.validate',

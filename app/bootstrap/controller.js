@@ -1,10 +1,14 @@
 /*!
  * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
+ * https://github.com/johnpapa/ng-demos
  */
 (function () {
 
     'use strict';
 
+    /**
+     * 获取已声明模块(使用getter的链式语法避免直接用一个变量导致出现变量冲突和泄漏问题)
+     */
     angular
         .module('app.bootstrap.module')
         .controller('BootstrapCtrl', BootstrapCtrl)
@@ -12,11 +16,21 @@
 
     function BootstrapCtrl($scope, $http, $uibModal, $log) {
 
+        $log.debug($scope);
+
         var vm = this;
 
         vm.user = {};
 
-        vm.edit = function (row) {
+        vm.edit = edit;
+        vm.remove = remove;
+        vm.view = view;
+        vm.query = query;
+        vm.reset = reset;
+
+        vm.query();
+
+        function edit(row) {
             var modalInstance = $uibModal.open({
                 templateUrl: 'edit.html',
                 controller: 'BootstrapModalCtrl',
@@ -42,22 +56,22 @@
             modalInstance.closed.then(function () {
                 console.log("modal closed");
             });
-        };
+        }
 
-        vm.delete = function (row) {
+        function remove(row) {
             $log.info(row);
-        };
+        }
 
-        vm.view = function (row) {
+        function view(row) {
             // row.uid = row.uid + '_';
             // row.username = row.username + '_';
             var userExt = angular.extend({}, row);
             userExt.uid = row.uid + '_';
             var userClone = angular.copy(row);
             userClone.username = row.username + '_';
-        };
+        }
 
-        vm.query = function () {
+        function query() {
             $log.info('Query => ' + JSON.stringify(vm.user));
             $http({
                 method: 'GET',
@@ -67,13 +81,12 @@
                 vm.recordsTotal = response.data.recordsTotal;
                 vm.users = response.data.data;
             });
-        };
+        }
 
-        vm.reset = function () {
+        function reset() {
             vm.user = {};
-        };
+        }
 
-        vm.query();
     }
 
     function BootstrapModalCtrl($scope, $uibModalInstance, $log, items) {

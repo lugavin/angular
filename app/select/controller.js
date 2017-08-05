@@ -1,5 +1,6 @@
 /*!
  * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
+ * https://github.com/johnpapa/ng-demos
  */
 (function () {
 
@@ -11,21 +12,9 @@
         .controller('SelectCtrl', SelectCtrl)
         .filter('propsFilter', propsFilter);
 
-    function uiSelectWrap($document, uiGridEditConstants) {
-        return {
-            link: function ($scope, $element, $attr) {
-                $document.on('click', onClick);
-                function onClick(evt) {
-                    if (!angular.element(evt.target).closest('.ui-select-container')) {
-                        $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
-                        $document.off('click', onClick);
-                    }
-                }
-            }
-        };
-    }
-
     function SelectCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants) {
+
+        $log.debug($scope);
 
         i18nService.setCurrentLang('zh-cn');
 
@@ -40,26 +29,12 @@
         vm.items = [];
         vm.dropdownOptions = [];
 
-        vm.refreshItems = function (item) {
-            return $http.get('data/Select.json', {keyword: item.text}).then(function (response) {
-                vm.items = response.data;
-            });
-        };
+        vm.refreshItems = refreshItems;
+        vm.selectItem = selectItem;
+        vm.asyncGridItem = asyncGridItem;
+        vm.selectGridItem = selectGridItem;
 
-        vm.selectItem = function ($item, $model) {
-            $log.info($item, $model);
-        };
-
-        vm.asyncGridItem = function (item) {
-            return $http.get('data/Select.json', {keyword: item.text}).then(function (response) {
-                vm.dropdownOptions = response.data;
-            });
-        };
-
-        vm.selectGridItem = function ($item, $model, grid, row) {
-            row.entity.cid = $item.id;
-            row.entity.cname = $item.value;
-        };
+        vm.reset = reset;
 
         /**
          * https://github.com/angular-ui/ui-grid/wiki/Configuration-Options
@@ -156,6 +131,45 @@
 
         vm.gridOptions.data = data;
 
+        function refreshItems(item) {
+            return $http.get('data/Select.json', {keyword: item.text}).then(function (response) {
+                vm.items = response.data;
+            });
+        }
+
+        function selectItem($item, $model) {
+            $log.info($item, $model);
+        }
+
+        function asyncGridItem(item) {
+            return $http.get('data/Select.json', {keyword: item.text}).then(function (response) {
+                vm.dropdownOptions = response.data;
+            });
+        }
+
+        function selectGridItem($item, $model, grid, row) {
+            row.entity.cid = $item.id;
+            row.entity.cname = $item.value;
+        }
+
+        function reset() {
+            vm.coupon = {};
+        }
+
+    }
+
+    function uiSelectWrap($document, uiGridEditConstants) {
+        return {
+            link: function ($scope, $element, $attr) {
+                $document.on('click', onClick);
+                function onClick(evt) {
+                    if (!angular.element(evt.target).closest('.ui-select-container')) {
+                        $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                        $document.off('click', onClick);
+                    }
+                }
+            }
+        };
     }
 
     function propsFilter() {

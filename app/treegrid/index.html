@@ -1,4 +1,4 @@
-<div ng-controller="TreeGridCtrl as vm">
+<div class="container-fluid">
     <form id="form" class="form-horizontal form-group-sm" role="form">
         <fieldset class="bs-content" data-content="数据列表">
             <div class="row">
@@ -49,7 +49,10 @@
 <script id="edit.html" type="text/ng-template">
     <div class="modal-header bg-primary">
         <button type="button" class="close" aria-hidden="true" ng-click="vm.close()">&times;</button>
-        <label class="modal-title">{{vm.item.title}}</label>
+        <label class="modal-title" ng-switch="vm.action">
+            <span ng-switch-when="edit">修改商品</span>
+            <span ng-switch-when="view">查看商品</span>
+        </label>
     </div>
     <div class="modal-body">
         <div class="container-fluid">
@@ -57,27 +60,27 @@
                 <div class="form-group">
                     <label class="control-label" for="id">商品编号</label>
                     <input id="id" name="id" type="text" class="form-control" readonly placeholder="商品编号"
-                           ng-model="vm.item.id" ng-disabled="vm.item.disabled">
+                           ng-model="vm.item.id" ng-disabled="vm.disabled">
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="name">商品名称</label>
                     <input id="name" name="name" type="text" class="form-control" placeholder="商品名称"
-                           ng-model="vm.item.name" ng-disabled="vm.item.disabled">
+                           ng-model="vm.item.name" ng-disabled="vm.disabled">
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="quantity">购买数量</label>
                     <input id="quantity" name="quantity" type="number" class="form-control" placeholder="购买数量"
-                           ng-model="vm.item.quantity" ng-disabled="vm.item.disabled">
+                           ng-model="vm.item.quantity" ng-disabled="vm.disabled">
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="price">商品单价</label>
                     <input id="price" name="price" type="number" class="form-control" placeholder="商品单价"
-                           ng-model="vm.item.price" ng-disabled="vm.item.disabled">
+                           ng-model="vm.item.price" ng-disabled="vm.disabled">
                 </div>
             </form>
         </div>
     </div>
-    <div class="modal-footer" ng-hide="vm.item.disabled">
+    <div class="modal-footer" ng-hide="vm.disabled">
         <button type="button" class="btn btn-sm btn-primary" ng-click="vm.save()">
             <i class="glyphicon glyphicon-saved"></i> 保存
         </button>

@@ -1,7 +1,3 @@
-/*!
- * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
- * https://github.com/johnpapa/ng-demos
- */
 (function () {
 
     'use strict';
@@ -14,9 +10,8 @@
         .controller('BootstrapCtrl', BootstrapCtrl)
         .controller('BootstrapModalCtrl', BootstrapModalCtrl);
 
+    /* @ngInject */
     function BootstrapCtrl($scope, $http, $uibModal, $log) {
-
-        $log.debug($scope);
 
         var vm = this;
 
@@ -32,17 +27,17 @@
 
         function edit(row) {
             var modalInstance = $uibModal.open({
+                size: 'lg',
+                backdrop: 'static',
                 templateUrl: 'edit.html',
                 controller: 'BootstrapModalCtrl',
                 controllerAs: 'vm',
-                backdrop: 'static',
-                size: 'lg',
+                scope: $scope,
                 resolve: {
                     items: function () {
                         return {
-                            parentCtrl: vm,
                             rowData: angular.copy(row),
-                            title: '更新用户'
+                            action: 'edit'
                         };
                     }
                 }
@@ -89,19 +84,17 @@
 
     }
 
+    /* @ngInject */
     function BootstrapModalCtrl($scope, $uibModalInstance, $log, items) {
 
         var vm = this;
 
-        console.info($uibModalInstance);
-
         vm.user = items.rowData;
-        vm.title = items.title;
-        vm.parentCtrl = items.parentCtrl;
+        vm.action = items.action;
 
         vm.save = function () {
             $uibModalInstance.close(true);
-            vm.parentCtrl.query();
+            $scope.$parent.vm.query();
         };
 
         vm.close = function () {

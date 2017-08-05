@@ -1,7 +1,3 @@
-/*!
- * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
- * https://github.com/johnpapa/ng-demos
- */
 (function () {
 
     'use strict';
@@ -12,6 +8,7 @@
         .controller('SelectCtrl', SelectCtrl)
         .filter('propsFilter', propsFilter);
 
+    /* @ngInject */
     function SelectCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants) {
 
         $log.debug($scope);
@@ -158,6 +155,7 @@
 
     }
 
+    /* @ngInject */
     function uiSelectWrap($document, uiGridEditConstants) {
         return {
             link: function ($scope, $element, $attr) {

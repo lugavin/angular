@@ -1,29 +1,27 @@
-/*!
- * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
- * https://github.com/johnpapa/ng-demos
- */
 (function () {
 
     'use strict';
 
     angular
-        .module('app.grid.module')
-        .filter('StatusFormatter', StatusFormatter)
-        .controller('GridCtrl', GridCtrl)
-        .controller('GridModalCtrl', GridModalCtrl);
+        .module('app.treegrid.module')
+        .controller('TreeGridCtrl', TreeGridCtrl)
+        .controller('TreeGridModalCtrl', TreeGridModalCtrl);
 
-    function StatusFormatter() {
-        var map = {'0': '不可用', '1': '可用'};
-        return function (input) {
-            return map[input] || '';
-        };
-    }
-
-    function GridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridValidateService, uiGridConstants) {
-
-        $log.debug($scope);
+    /* @ngInject */
+    function TreeGridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridValidateService, uiGridConstants) {
 
         i18nService.setCurrentLang('zh-cn');
+
+        $http({
+            method: 'GET',
+            url: 'data/Tree.json',
+            params: {},
+            data: {},
+            headers: {},
+            responseType: 'json'
+        }).then(function (response) {
+            $log.info(response.data);
+        });
 
         /**
          * setValidator(name, validatorFactory, messageFunction)
@@ -49,10 +47,10 @@
         vm.edit = edit;
         vm.view = view;
         vm.remove = remove;
-        vm.refresh = refresh;
         vm.editRow = editRow;
         vm.removeRow = removeRow;
         vm.viewRow = viewRow;
+        vm.refresh = refresh;
 
         /**
          * https://github.com/angular-ui/ui-grid/wiki/Configuration-Options
@@ -81,18 +79,8 @@
             //         console.info(row.entity);
             //     }
             // },
-            enableCellEdit: false,
-            cellEditableCondition: function () {
-                return true;
-            },
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
-                gridApi.pagination.on.paginationChanged($scope, function (pageNumber, pageSize) {
-                    $log.info(pageNumber, pageSize);
-                });
-                gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-                    $log.info(row);
-                });
                 gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
                     if (newValue != oldValue) {
                         rowEntity.subcost = (rowEntity.quantity || 0) * (rowEntity.price || 0);
@@ -106,17 +94,15 @@
                 {
                     field: 'id',
                     displayName: '商品编号',
-                    visible: true
+                    enableCellEdit: false,
+                    visible: true,
+                    enableColumnMenu: false
                 },
                 {
                     field: 'name',
-                    displayName: '商品名称'
-                },
-                {
-                    field: 'status',
-                    displayName: '状态',
-                    visible: false,
-                    cellFilter: 'StatusFormatter'
+                    displayName: '商品名称',
+                    enableCellEdit: false,
+                    enableColumnMenu: false
                 },
                 {
                     field: 'quantity',
@@ -124,9 +110,7 @@
                     type: 'number',
                     cellClass: 'text-left',
                     enableCellEdit: true,
-                    cellEditableCondition: function ($scope) {
-                        return $scope.row.entity.isNew;
-                    },
+                    enableColumnMenu: false,
                     validators: {required: true, minValue: 1},
                     cellTemplate: 'ui-grid/cellTitleValidator',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
@@ -135,19 +119,25 @@
                 {
                     field: 'price',
                     displayName: '商品单价',
-                    cellClass: 'text-left'
+                    cellClass: 'text-left',
+                    enableCellEdit: false,
+                    enableColumnMenu: false
                 },
                 {
                     field: 'subcost',
                     displayName: '小计',
                     cellClass: 'text-left',
+                    enableCellEdit: false,
+                    enableColumnMenu: false,
                     aggregationType: uiGridConstants.aggregationTypes.sum,
                     aggregationLabel: '购买总价：'
                 },
                 {
                     field: 'action',
                     displayName: '操作',
-                    cellTemplate: 'template'
+                    cellTemplate: 'template',
+                    enableCellEdit: false,
+                    enableColumnMenu: false
                 }
             ]
         };
@@ -155,7 +145,7 @@
         vm.gridOptions.data = data;
 
         function add() {
-            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000, isNew: true};
+            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000};
             vm.gridOptions.data.push(row);
         }
 
@@ -198,11 +188,12 @@
 
         function openModal(row, param) {
             $uibModal.open({
-                templateUrl: 'edit.html',
-                controller: 'GridModalCtrl',
-                controllerAs: 'vm',
-                backdrop: 'static',
                 size: 'lg',
+                backdrop: 'static',
+                templateUrl: 'edit.html',
+                controller: 'TreeGridModalCtrl',
+                controllerAs: 'vm',
+                scope: $scope,
                 resolve: {
                     items: function () {
                         return angular.extend({rowData: angular.copy(row)}, param);
@@ -213,24 +204,21 @@
 
     }
 
-    function GridModalCtrl($uibModalInstance, $log, items) {
+    /* @ngInject */
+    function TreeGridModalCtrl($scope, $uibModalInstance, $log, items) {
 
         var vm = this;
 
-        vm.save = save;
-        vm.close = close;
-
         vm.item = items.rowData;
-        vm.parentCtrl = items.parentCtrl;
         vm.action = items.action;
         vm.disabled = items.disabled;
 
-        function save() {
+        vm.save = function () {
             $uibModalInstance.close(true);
-            vm.parentCtrl.refresh();
-        }
+            $scope.$parent.vm.refresh();
+        };
 
-        function close() {
+        vm.close = function () {
             $uibModalInstance.dismiss(0);
         }
 

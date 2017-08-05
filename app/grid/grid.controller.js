@@ -1,32 +1,17 @@
-/*!
- * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
- * https://github.com/johnpapa/ng-demos
- */
 (function () {
 
     'use strict';
 
     angular
-        .module('app.treegrid.module')
-        .controller('TreeGridCtrl', TreeGridCtrl)
-        .controller('TreeGridModalCtrl', TreeGridModalCtrl);
+        .module('app.grid.module')
+        .controller('GridCtrl', GridCtrl)
+        .controller('GridModalCtrl', GridModalCtrl)
+        .filter('statusFormatter', statusFormatter);
 
-    function TreeGridCtrl($scope, $uibModal, $http, $log, i18nService, uiGridValidateService, uiGridConstants) {
-
-        $log.debug($scope);
+    /* @ngInject */
+    function GridCtrl($scope, $uibModal, $log, i18nService, uiGridValidateService, uiGridConstants, dataService) {
 
         i18nService.setCurrentLang('zh-cn');
-
-        $http({
-            method: 'GET',
-            url: 'data/Tree.json',
-            params: {},
-            data: {},
-            headers: {},
-            responseType: 'json'
-        }).then(function (response) {
-            $log.info(response.data);
-        });
 
         /**
          * setValidator(name, validatorFactory, messageFunction)
@@ -40,22 +25,16 @@
             }
         );
 
-        var data = [
-            {id: 1001, name: 'iPad', status: '1', quantity: 5, price: 500, subcost: 2500},
-            {id: 1002, name: 'iPhone', status: '1', quantity: 5, price: 1000, subcost: 5000},
-            {id: 1003, name: 'iMac', status: '1', quantity: 5, price: 2000, subcost: 10000}
-        ];
-
         var vm = this;
 
         vm.add = add;
         vm.edit = edit;
         vm.view = view;
         vm.remove = remove;
+        vm.refresh = refresh;
         vm.editRow = editRow;
         vm.removeRow = removeRow;
         vm.viewRow = viewRow;
-        vm.refresh = refresh;
 
         /**
          * https://github.com/angular-ui/ui-grid/wiki/Configuration-Options
@@ -84,8 +63,18 @@
             //         console.info(row.entity);
             //     }
             // },
+            enableCellEdit: false,
+            cellEditableCondition: function () {
+                return true;
+            },
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
+                gridApi.pagination.on.paginationChanged($scope, function (pageNumber, pageSize) {
+                    $log.info(pageNumber, pageSize);
+                });
+                gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                    $log.info(row);
+                });
                 gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
                     if (newValue != oldValue) {
                         rowEntity.subcost = (rowEntity.quantity || 0) * (rowEntity.price || 0);
@@ -99,23 +88,17 @@
                 {
                     field: 'id',
                     displayName: '商品编号',
-                    enableCellEdit: false,
-                    visible: true,
-                    enableColumnMenu: false
+                    visible: true
                 },
                 {
                     field: 'name',
-                    displayName: '商品名称',
-                    enableCellEdit: false,
-                    enableColumnMenu: false
+                    displayName: '商品名称'
                 },
                 {
                     field: 'status',
                     displayName: '状态',
                     visible: false,
-                    enableCellEdit: false,
-                    enableColumnMenu: false,
-                    cellFilter: 'StatusFormatter'
+                    cellFilter: 'statusFormatter'
                 },
                 {
                     field: 'quantity',
@@ -123,7 +106,9 @@
                     type: 'number',
                     cellClass: 'text-left',
                     enableCellEdit: true,
-                    enableColumnMenu: false,
+                    cellEditableCondition: function ($scope) {
+                        return $scope.row.entity.isNew;
+                    },
                     validators: {required: true, minValue: 1},
                     cellTemplate: 'ui-grid/cellTitleValidator',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
@@ -132,33 +117,27 @@
                 {
                     field: 'price',
                     displayName: '商品单价',
-                    cellClass: 'text-left',
-                    enableCellEdit: false,
-                    enableColumnMenu: false
+                    cellClass: 'text-left'
                 },
                 {
                     field: 'subcost',
                     displayName: '小计',
                     cellClass: 'text-left',
-                    enableCellEdit: false,
-                    enableColumnMenu: false,
                     aggregationType: uiGridConstants.aggregationTypes.sum,
                     aggregationLabel: '购买总价：'
                 },
                 {
                     field: 'action',
                     displayName: '操作',
-                    cellTemplate: 'template',
-                    enableCellEdit: false,
-                    enableColumnMenu: false
+                    cellTemplate: 'template'
                 }
             ]
         };
 
-        vm.gridOptions.data = data;
+        vm.gridOptions.data = dataService.getDataList();
 
         function add() {
-            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000};
+            var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000, isNew: true};
             vm.gridOptions.data.push(row);
         }
 
@@ -169,7 +148,7 @@
             // rowData.name = rowData.name + '_';
             // angular.extend(row, rowData);
             // angular.extend({}, row, rowData);
-            row && openModal(row, {parentCtrl: vm, action: 'edit', disabled: false});
+            row && openModal(row, {action: 'edit', disabled: false});
         }
 
         function remove() {
@@ -179,11 +158,11 @@
 
         function view() {
             var row = vm.gridApi.selection.getSelectedRows()[0];
-            row && openModal(row, {parentCtrl: vm, action: 'view', disabled: true});
+            row && openModal(row, {action: 'view', disabled: true});
         }
 
         function editRow(grid, row) {
-            openModal(row.entity, {parentCtrl: vm, action: 'edit', disabled: false});
+            openModal(row.entity, {action: 'edit', disabled: false});
         }
 
         function removeRow(grid, row) {
@@ -192,19 +171,21 @@
         }
 
         function viewRow(grid, row) {
-            openModal(row.entity, {parentCtrl: vm, action: 'view', disabled: true});
+            openModal(row.entity, {action: 'view', disabled: true});
         }
 
         function refresh() {
-            $log.info('Refresh DataGrid...');
+            vm.gridOptions.data = dataService.getDataList().pop();
         }
 
         function openModal(row, param) {
             $uibModal.open({
+                size: 'lg',
+                backdrop: 'static',
                 templateUrl: 'edit.html',
                 controller: 'GridModalCtrl',
                 controllerAs: 'vm',
-                size: 'lg',
+                scope: $scope,
                 resolve: {
                     items: function () {
                         return angular.extend({rowData: angular.copy(row)}, param);
@@ -215,24 +196,34 @@
 
     }
 
-    function TreeGridModalCtrl($uibModalInstance, $log, items) {
+    /* @ngInject */
+    function GridModalCtrl($scope, $uibModalInstance, $log, items, dataService) {
 
         var vm = this;
 
+        vm.save = save;
+        vm.close = close;
+
         vm.item = items.rowData;
-        vm.parentCtrl = items.parentCtrl;
-        vm.title = items.title;
+        vm.action = items.action;
         vm.disabled = items.disabled;
 
-        vm.save = function () {
+        function save() {
             $uibModalInstance.close(true);
-            vm.parentCtrl.refresh();
-        };
+            $scope.$parent.vm.refresh();
+        }
 
-        vm.close = function () {
+        function close() {
             $uibModalInstance.dismiss(0);
         }
 
+    }
+
+    function statusFormatter() {
+        var map = {'0': '不可用', '1': '可用'};
+        return function (input) {
+            return map[input] || '';
+        };
     }
 
 })();

@@ -1,7 +1,3 @@
-/*!
- * https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md
- * https://github.com/johnpapa/ng-demos
- */
 (function () {
 
     'use strict';
@@ -10,8 +6,7 @@
         .module('app.route', ['ngRoute'])
         .config(routeConfig);
 
-    routeConfig.$inject = ['$routeProvider'];
-
+    /* @ngInject */
     function routeConfig($routeProvider) {
         $routeProvider
             .when('/ui-bootstrap', {

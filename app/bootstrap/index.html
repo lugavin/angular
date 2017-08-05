@@ -110,7 +110,10 @@
 <script id="edit.html" type="text/ng-template">
     <div class="modal-header bg-primary">
         <button type="button" class="close" aria-hidden="true" ng-click="vm.close()">&times;</button>
-        <label class="modal-title">{{vm.title}}</label>
+        <label class="modal-title" ng-switch="vm.action">
+            <span ng-switch-when="edit">更新</span>
+            <span ng-switch-when="view">查看</span>
+        </label>
     </div>
     <div class="modal-body">
         <div class="container-fluid">

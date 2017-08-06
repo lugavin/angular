@@ -27,8 +27,6 @@
 
         function edit(row) {
             var modalInstance = $uibModal.open({
-                size: 'lg',
-                backdrop: 'static',
                 templateUrl: 'edit.html',
                 controller: 'BootstrapModalCtrl',
                 controllerAs: 'vm',
@@ -42,14 +40,9 @@
                     }
                 }
             });
-            modalInstance.opened.then(function () {
-                console.log("modal opened");
-            });
-            modalInstance.rendered.then(function () {
-                console.log("modal rendered");
-            });
-            modalInstance.closed.then(function () {
-                console.log("modal closed");
+            modalInstance.result.then(function (result) {
+                // success: $uibModalInstance.close(result)
+                angular.extend(row, result);
             });
         }
 
@@ -92,12 +85,12 @@
         vm.action = items.action;
 
         vm.save = function () {
-            $uibModalInstance.close(true);
-            $scope.$parent.vm.query();
+            $uibModalInstance.close(vm.user);
+            // $scope.$parent.vm.query();
         };
 
         vm.close = function () {
-            $uibModalInstance.dismiss(0);
+            $uibModalInstance.dismiss('cancel');
         };
 
         // $scope.$on('$destroy', function () {

@@ -1,3 +1,6 @@
+/*!
+ * @see {@link https://github.com/angular-ui/ui-grid.info/tree/gh-pages/release}
+ */
 (function () {
 
     'use strict';
@@ -46,14 +49,15 @@
                 // enableSorting: true,
                 // enableRowSelection: true,
                 // enableRowHeaderSelection: false,
-                // enableMinHeightCheck: true,
+                // enableMinHeightCheck: false,
                 paginationPageSizes: [10, 20, 50],
                 paginationPageSize: 10,
                 paginationCurrentPage: 1
             };
             var gridOptions = angular.copy($delegate);
             gridOptions.initialize = function (options) {
-                return $delegate.initialize(angular.extend({}, defaults, options));
+                options = angular.extend({}, defaults, options);
+                return $delegate.initialize(options);
             };
             return gridOptions;
         }

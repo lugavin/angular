@@ -25,10 +25,15 @@
         vm.viewRow = viewRow;
 
         vm.gridOptions = {
+            paginationPageSizes: [10, 20, 50],
+            paginationPageSize: 10,
+            paginationCurrentPage: 1,
             showColumnFooter: true,
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
                 gridApi.pagination.on.paginationChanged($scope, function (pageNumber, pageSize) {
+                    this.paginationCurrentPage = pageNumber;
+                    this.paginationPageSize = pageSize;
                     $log.info(pageNumber, pageSize);
                 });
                 gridApi.selection.on.rowSelectionChanged($scope, function (row) {
@@ -151,9 +156,7 @@
         }
 
         function openModal(row, param) {
-            $uibModal.open({
-                size: 'lg',
-                backdrop: 'static',
+            var modalInstance = $uibModal.open({
                 templateUrl: 'edit.html',
                 controller: 'GridModalCtrl',
                 controllerAs: 'vm',
@@ -163,6 +166,10 @@
                         return angular.extend({rowData: angular.copy(row)}, param);
                     }
                 }
+            });
+
+            modalInstance.result.then(function (result) {
+                refresh();
             });
         }
 
@@ -181,12 +188,12 @@
         vm.disabled = items.disabled;
 
         function save() {
-            $uibModalInstance.close(true);
-            $scope.$parent.vm.refresh();
+            $uibModalInstance.close(vm.item);
+            // $scope.$parent.vm.refresh();
         }
 
         function close() {
-            $uibModalInstance.dismiss(0);
+            $uibModalInstance.dismiss('cancel');
         }
 
     }

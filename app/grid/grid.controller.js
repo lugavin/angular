@@ -54,6 +54,11 @@
                     displayName: '商品名称'
                 },
                 {
+                    field: 'price',
+                    displayName: '商品单价',
+                    cellClass: 'text-left'
+                },
+                {
                     field: 'quantity',
                     displayName: '购买数量',
                     type: 'number',
@@ -65,19 +70,14 @@
                     validators: {required: true, min: 1, max: 999},
                     cellTemplate: 'ui-grid/cellTitleValidator',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
-                    aggregationLabel: '购买总数量：'
-                },
-                {
-                    field: 'price',
-                    displayName: '商品单价',
-                    cellClass: 'text-left'
+                    aggregationLabel: '合计：'
                 },
                 {
                     field: 'subcost',
                     displayName: '小计',
                     cellClass: 'text-left',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
-                    aggregationLabel: '购买总价：'
+                    aggregationLabel: '合计：'
                 },
                 {
                     field: 'action',

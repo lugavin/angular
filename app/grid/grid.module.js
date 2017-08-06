@@ -3,19 +3,18 @@
     'use strict';
 
     angular.module('app.grid.module', [
-        'ngAnimate',
-        'ui.bootstrap',
         'ui.grid',
         'ui.grid.edit',
         'ui.grid.validate',
         'ui.grid.selection',
         'ui.grid.pagination',
         'ui.grid.autoResize',
-        'ui.grid.resizeColumns'
+        'ui.grid.resizeColumns',
+        'app.bootstrap.module'
     ]).config(config);
 
     /* @ngInject */
-    function config($provide, i18nConstants) {
+    function config($provide, i18nConstants, uiGridConstants) {
 
         i18nConstants.DEFAULT_LANG = 'zh-cn';
 
@@ -27,36 +26,30 @@
 
         /**
          * @see angular.module('ui.grid').factory('GridOptions')
-         * @see {@link https://github.com/angular-ui/ui-grid/wiki/Configuration-Options}
-         * @see {@link https://github.com/angular-ui/ui-grid/wiki/Defining-columns}
+         * @see {@link http://ui-grid.info/docs/#/api/ui.grid.class:GridOptions}
          */
         function GridOptionsDecorator($delegate) {
             var defaults = {
-                enableHorizontalScrollbar: false,
-                enableVerticalScrollbar: true,
+                enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
+                enableVerticalScrollbar: uiGridConstants.scrollbars.ALWAYS,
                 enableColumnMenus: false,
-                enableFiltering: false,
-                enableSorting: false,
-                enableRowSelection: true,
+                enableColumnResizing: true,
                 multiSelect: false,
-                enableCellEditOnFocus: true,
                 enableCellEdit: false,
-                cellEditableCondition: true,
                 // rowTemplate: '<div ng-dblclick="grid.appScope.ondblclick(grid, row)" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{\'ui-grid-row-header-cell\': col.isRowHeader}" ui-grid-cell></div>',
                 // appScopeProvider: {
                 //     ondblclick: function (grid, row) {
                 //         console.info(row.entity);
                 //     }
                 // },
-                enablePagination: true,
-                useExternalPagination: true,
-                enablePaginationControls: true,
+                // enableFiltering: false,
+                // enableSorting: true,
+                // enableRowSelection: true,
+                // enableRowHeaderSelection: false,
+                // enableMinHeightCheck: true,
                 paginationPageSizes: [10, 20, 50],
                 paginationPageSize: 10,
-                paginationCurrentPage: 1,
-                totalItems: 0,
-                showGridFooter: false,
-                showColumnFooter: false
+                paginationCurrentPage: 1
             };
             var gridOptions = angular.copy($delegate);
             gridOptions.initialize = function (options) {

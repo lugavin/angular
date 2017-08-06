@@ -4,14 +4,13 @@
 
     angular
         .module('app.select.module')
-        //.directive('uiSelectWrap', uiSelectWrap)
+        .directive('uiSelectWrap', uiSelectWrap)
         .controller('SelectCtrl', SelectCtrl)
-        .filter('propsFilter', propsFilter);
+        .filter('propsFilter', propsFilter)
+        .filter('couponFormatter', couponFormatter);
 
     /* @ngInject */
     function SelectCtrl($scope, $uibModal, $http, $log, i18nService, uiGridConstants) {
-
-        $log.debug($scope);
 
         i18nService.setCurrentLang('zh-cn');
 
@@ -38,22 +37,7 @@
          * https://github.com/angular-ui/ui-grid/wiki/Defining-columns
          */
         vm.gridOptions = {
-            enableCellEditOnFocus: true,
-            enableHorizontalScrollbar: false,
-            enableVerticalScrollbar: true,
-            enableRowSelection: true,
-            multiSelect: false,
-            enableSorting: true,
-            enablePagination: true,
-            enablePaginationControls: true,
-            paginationPageSizes: [10, 20, 50, 100],
-            paginationPageSize: 10,
-            paginationCurrentPage: 1,
-            totalItems: 0,
-            useExternalPagination: true,
-            enableFiltering: false,
             showColumnFooter: true,
-            showGridFooter: false,
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
                 gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
@@ -66,62 +50,53 @@
                 {
                     field: 'id',
                     displayName: '商品编号',
-                    enableCellEdit: false,
-                    visible: true,
-                    enableColumnMenu: false
+                    visible: true
                 },
                 {
                     field: 'name',
-                    displayName: '商品名称',
-                    enableCellEdit: false,
-                    enableColumnMenu: false
+                    displayName: '商品名称'
                 },
                 {
                     field: 'cid',
+                    displayName: '优惠券编号',
                     visible: false
                 },
                 {
-                    field: 'cname',
+                    field: 'cdesc',
+                    displayName: '优惠券描述',
                     visible: false
                 },
                 {
                     field: 'coupon',
                     displayName: '优惠券',
+                    enableCellEdit: true,
                     // editableCellTemplate: 'ui-grid/dropdownEditor',
                     // editDropdownOptionsArray: dropdownOptions,
-                    // editDropdownIdLabel: 'cid',
-                    // editDropdownValueLabel: 'cname',
-                    // cellFilter: 'griddropdown:this',
-                    editableCellTemplate: 'template.html'
-
+                    editableCellTemplate: 'dropdownEditor.html',
+                    editDropdownIdLabel: 'id',
+                    editDropdownValueLabel: 'text',
+                    cellFilter: 'couponFormatter:this'
                 },
                 {
                     field: 'quantity',
                     displayName: '购买数量',
                     type: 'number',
-                    cellClass: 'text-left',
+                    cellClass: 'text-danger',
                     enableCellEdit: true,
-                    enableColumnMenu: false,
-                    validators: {required: true, minValue: 1},
+                    validators: {required: true, min: 1, max: 999},
                     cellTemplate: 'ui-grid/cellTitleValidator',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
-                    aggregationLabel: '购买总数量：'
+                    aggregationLabel: '合计：'
                 },
                 {
                     field: 'price',
-                    displayName: '商品单价',
-                    cellClass: 'text-left',
-                    enableCellEdit: false,
-                    enableColumnMenu: false
+                    displayName: '商品单价'
                 },
                 {
                     field: 'subcost',
                     displayName: '小计',
-                    cellClass: 'text-left',
-                    enableCellEdit: false,
-                    enableColumnMenu: false,
                     aggregationType: uiGridConstants.aggregationTypes.sum,
-                    aggregationLabel: '购买总价：'
+                    aggregationLabel: '合计：'
                 }
             ]
         };
@@ -146,7 +121,8 @@
 
         function selectGridItem($item, $model, grid, row) {
             row.entity.cid = $item.id;
-            row.entity.cname = $item.value;
+            row.entity.cdesc = $item.text;
+            $log.debug(row.entity);
         }
 
         function reset() {
@@ -159,14 +135,17 @@
     function uiSelectWrap($document, uiGridEditConstants) {
         return {
             link: function ($scope, $element, $attr) {
-                $document.on('click', onClick);
-                function onClick(evt) {
-                    if (!angular.element(evt.target).closest('.ui-select-container')) {
+
+                $document.on('click', clickFn);
+
+                function clickFn($event) {
+                    if (!$event.target.closest('.ui-select-container')) {
                         $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
-                        $document.off('click', onClick);
+                        $document.off('click', clickFn);
                     }
                 }
             }
+
         };
     }
 
@@ -196,27 +175,14 @@
         };
     }
 
-    // function griddropdown() {
-    //     return function (input, context) {
-    //         try {
-    //             var map = context.col.colDef.editDropdownOptionsArray;
-    //             var idField = context.col.colDef.editDropdownIdLabel;
-    //             var valueField = context.col.colDef.editDropdownValueLabel;
-    //             var initial = context.row.entity[context.col.field];
-    //             if (typeof map !== "undefined") {
-    //                 for (var i = 0; i < map.length; i++) {
-    //                     if (map[i][idField] == input) {
-    //                         return map[i][valueField];
-    //                     }
-    //                 }
-    //             } else if (initial) {
-    //                 return initial;
-    //             }
-    //             return input;
-    //         } catch (e) {
-    //             context.grid.appScope.vm.log("Error: " + e);
-    //         }
-    //     }
-    // }
+    function couponFormatter() {
+        return function (input, context) {
+            input = input || {};
+            // var initial = context.row.entity[context.col.field];
+            // var idField = context.col.colDef.editDropdownIdLabel;
+            var valueField = context.col.colDef.editDropdownValueLabel;
+            return input[valueField] || '';
+        }
+    }
 
 })();

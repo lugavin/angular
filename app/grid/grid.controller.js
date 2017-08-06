@@ -5,27 +5,15 @@
     angular
         .module('app.grid.module')
         .controller('GridCtrl', GridCtrl)
-        .controller('GridModalCtrl', GridModalCtrl)
-        .filter('statusFormatter', statusFormatter);
+        .controller('GridModalCtrl', GridModalCtrl);
 
     /* @ngInject */
-    function GridCtrl($scope, $uibModal, $log, i18nService, uiGridValidateService, uiGridConstants, dataService) {
-
-        i18nService.setCurrentLang('zh-cn');
-
-        /**
-         * setValidator(name, validatorFactory, messageFunction)
-         */
-        uiGridValidateService.setValidator('minValue', function (argument) {
-                return function (oldValue, newValue, rowEntity, colDef) {
-                    return newValue >= argument;
-                };
-            }, function (argument) {
-                return '你输入的值不能小于"' + argument + '"';
-            }
-        );
+    function GridCtrl($scope, $uibModal, $log, uiGridValidateService, uiGridConstants, dataService) {
 
         var vm = this;
+
+        vm.query = query;
+        vm.reset = reset;
 
         vm.add = add;
         vm.edit = edit;
@@ -36,37 +24,8 @@
         vm.removeRow = removeRow;
         vm.viewRow = viewRow;
 
-        /**
-         * https://github.com/angular-ui/ui-grid/wiki/Configuration-Options
-         * https://github.com/angular-ui/ui-grid/wiki/Defining-columns
-         */
         vm.gridOptions = {
-            enableCellEditOnFocus: true,
-            enableHorizontalScrollbar: false,
-            enableVerticalScrollbar: true,
-            enableRowSelection: true,
-            multiSelect: false,
-            enableSorting: true,
-            enablePagination: true,
-            enablePaginationControls: true,
-            paginationPageSizes: [10, 20, 50, 100],
-            paginationPageSize: 10,
-            paginationCurrentPage: 1,
-            totalItems: 0,
-            useExternalPagination: true,
-            enableFiltering: false,
             showColumnFooter: true,
-            showGridFooter: false,
-            // rowTemplate: '<div ng-dblclick="grid.appScope.ondblclick(grid, row)" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{\'ui-grid-row-header-cell\': col.isRowHeader}" ui-grid-cell></div>',
-            // appScopeProvider: {
-            //     ondblclick: function (grid, row) {
-            //         console.info(row.entity);
-            //     }
-            // },
-            enableCellEdit: false,
-            cellEditableCondition: function () {
-                return true;
-            },
             onRegisterApi: function (gridApi) {
                 vm.gridApi = gridApi;
                 gridApi.pagination.on.paginationChanged($scope, function (pageNumber, pageSize) {
@@ -81,7 +40,7 @@
                     }
                 });
                 gridApi.validate.on.validationFailed($scope, function (rowEntity, colDef, newValue, oldValue) {
-                    $log.info(rowEntity, colDef, newValue, oldValue);
+                    $log.info(uiGridValidateService.getErrorMessages(rowEntity, colDef));
                 });
             },
             columnDefs: [
@@ -95,12 +54,6 @@
                     displayName: '商品名称'
                 },
                 {
-                    field: 'status',
-                    displayName: '状态',
-                    visible: false,
-                    cellFilter: 'statusFormatter'
-                },
-                {
                     field: 'quantity',
                     displayName: '购买数量',
                     type: 'number',
@@ -109,7 +62,7 @@
                     cellEditableCondition: function ($scope) {
                         return $scope.row.entity.isNew;
                     },
-                    validators: {required: true, minValue: 1},
+                    validators: {required: true, min: 1, max: 999},
                     cellTemplate: 'ui-grid/cellTitleValidator',
                     aggregationType: uiGridConstants.aggregationTypes.sum,
                     aggregationLabel: '购买总数量：'
@@ -134,7 +87,26 @@
             ]
         };
 
-        vm.gridOptions.data = dataService.getDataList();
+        dataService.synchData().then(function (response) {
+            vm.gridOptions.data = dataService.getDataList();
+        });
+
+        function query() {
+            var rows = vm.gridOptions.data;
+            for (var i = 0; i < rows.length; i++) {
+                var obj = rows[i];
+                for (var prop in obj) {
+                    if (obj.hasOwnProperty(prop) && obj.hasOwnProperty('$$invalid' + prop)) {
+                        return $log.debug('Validation Failed: ' + prop + ' => ' + obj[prop]);
+                    }
+                }
+            }
+            $log.debug('Validation Successful.');
+        }
+
+        function reset() {
+            vm.product = {};
+        }
 
         function add() {
             var row = {id: 1004, name: 'iMac', status: '0', quantity: 5, price: 2000, subcost: 10000, isNew: true};
@@ -175,7 +147,7 @@
         }
 
         function refresh() {
-            vm.gridOptions.data = dataService.getDataList().pop();
+            $log.debug('Refresh DataGrid...');
         }
 
         function openModal(row, param) {
@@ -217,13 +189,6 @@
             $uibModalInstance.dismiss(0);
         }
 
-    }
-
-    function statusFormatter() {
-        var map = {'0': '不可用', '1': '可用'};
-        return function (input) {
-            return map[input] || '';
-        };
     }
 
 })();

@@ -1,5 +1,22 @@
 <div class="container-fluid">
     <form id="form" class="form-horizontal form-group-sm" role="form">
+        <fieldset class="bs-content" data-content="查询条件">
+            <div class="form-group">
+                <label class="control-label col-sm-1" for="cname">商品名称</label>
+                <div class="col-sm-3">
+                    <input id="cname" type="text" class="form-control" placeholder="商品名称"
+                           ng-model="vm.product.cname">
+                </div>
+                <div class="col-sm-4">
+                    <button id="btnQuery" type="button" class="btn btn-primary btn-sm" ng-click="vm.query()">
+                        <i class="glyphicon glyphicon-search"></i> 查询
+                    </button>
+                    <button id="btnReset" type="button" class="btn btn-default btn-sm" ng-click="vm.reset()">
+                        <i class="glyphicon glyphicon-refresh"></i> 重置
+                    </button>
+                </div>
+            </div>
+        </fieldset>
         <fieldset class="bs-content" data-content="数据列表">
             <div class="row">
                 <div class="col-sm-6">

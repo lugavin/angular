@@ -3,8 +3,9 @@
     'use strict';
 
     angular
-        .module('app.route', ['ngRoute'])
-        .config(routeConfig);
+        .module('app.route', [
+            'ngRoute'
+        ]).config(routeConfig);
 
     /* @ngInject */
     function routeConfig($routeProvider) {
@@ -17,11 +18,6 @@
             .when('/ui-grid', {
                 templateUrl: 'app/grid/index.html',
                 controller: 'GridCtrl',
-                controllerAs: 'vm'
-            })
-            .when('/ui-treegrid', {
-                templateUrl: 'app/treegrid/index.html',
-                controller: 'TreeGridCtrl',
                 controllerAs: 'vm'
             })
             .when('/ui-select', {

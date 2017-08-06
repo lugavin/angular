@@ -13,6 +13,7 @@
         var service = this;
 
         service.getDataList = getDataList;
+        service.synchData = synchData;
 
         return service;
 
@@ -23,6 +24,10 @@
                 {id: 1002, name: 'iPhone', status: '1', quantity: 5, price: 1000, subcost: 5000},
                 {id: 1003, name: 'iMac', status: '1', quantity: 5, price: 2000, subcost: 10000}
             ];
+        }
+
+        function synchData(params) {
+            return $http.get('data/Grid.json', params);
         }
 
     }

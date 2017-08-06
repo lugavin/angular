@@ -67,7 +67,6 @@
         }
 
         function query() {
-            $log.info('Query => ' + JSON.stringify(vm.user));
             $http({
                 method: 'GET',
                 url: 'data/Grid.json',

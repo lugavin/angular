@@ -10,7 +10,67 @@
         'ngAnimate',
         'ui.bootstrap',
         'app.service'
-    ]).decorator('$uibModal', uibModalDecorator);
+    ]).decorator('$uibModal', uibModalDecorator)
+        .factory('dialogService', dialogService);
+
+    /* @ngInject */
+    function dialogService($uibModal) {
+
+        // 用this定义类的public属性和public方法
+        // 用var定义类的private属性和private方法
+        var service = this;
+
+        service.alert = function(message, callback) {
+            openModal({
+                message: message,
+                callback: callback
+            });
+        };
+        service.confirm = angular.noop;
+        service.message = angular.noop;
+
+        return service;
+
+        function openModal(options) {
+            $uibModal.open({
+                template: '<div class="modal-header bg-primary">{{vm.title}}</div>' +
+                          '<div class="modal-body">{{vm.message}}</div>' +
+                          '<div class="modal-footer">' +
+                              '<button type="button" class="btn btn-sm btn-default" ng-click="vm.cancel()">取消</button>' +
+                              '<button type="button" class="btn btn-sm btn-primary" ng-click="vm.confirm()">确定</button>' +
+                          '</div>',
+                controller: function ($uibModalInstance, items) {
+
+                    var vm = this;
+
+                    var callback = items.callback || angular.noop;
+
+                    vm.title = items.title || '';
+                    vm.message = items.message || '';
+
+                    vm.cancel = cancel;
+                    vm.confirm = confirm;
+
+                    function confirm() {
+                        callback && callback();
+                        $uibModalInstance.close(items);
+                    }
+
+                    function cancel() {
+                        $uibModalInstance.dismiss('cancel');
+                    }
+
+                },
+                controllerAs: 'vm',
+                resolve: {
+                    items: function () {
+                        return options;
+                    }
+                }
+            });
+        }
+
+    }
 
     /* @ngInject */
     function uibModalDecorator($delegate, $injector, $log, tokenService) {

@@ -11,7 +11,7 @@
         .controller('BootstrapModalCtrl', BootstrapModalCtrl);
 
     /* @ngInject */
-    function BootstrapCtrl($scope, $http, $uibModal, $log) {
+    function BootstrapCtrl($scope, $http, $uibModal, $log, dialogService) {
 
         var vm = this;
 
@@ -47,7 +47,9 @@
         }
 
         function remove(row) {
-            $log.info(row);
+            dialogService.alert('确认删除吗？', function () {
+                $log.info(row);
+            });
         }
 
         function view(row) {

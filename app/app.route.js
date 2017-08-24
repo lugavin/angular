@@ -5,10 +5,10 @@
     angular
         .module('app.route', [
             'ngRoute'
-        ]).config(routeConfig);
+        ]).config(config);
 
     /* @ngInject */
-    function routeConfig($routeProvider) {
+    function config($routeProvider) {
         $routeProvider
             .when('/ui-bootstrap', {
                 templateUrl: 'app/bootstrap/index.html',

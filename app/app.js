@@ -11,53 +11,25 @@
      */
     angular.module('app', [
         'app.route',
+        'app.service',
         'app.bootstrap.module',
         'app.grid.module',
         'app.treegrid.module',
         'app.select.module'
-    ]).config(interceptorConfig)
-        .run(init)
-        .factory('asyncService', asyncService)
-        .factory('httpInterceptor', httpInterceptor);
+    ]).config(config);
 
     /**
-     * 声明依赖时用$inject手动添加组件所需的依赖(避免使用缩写语法导致压缩时的不安全性问题)
-     */
-    // interceptorConfig.$inject = ['$httpProvider'];
-    // init.$inject = ['$rootScope'];
-    // asyncService.$inject = ['$http'];
-    // httpInterceptor.$inject = ['$q', '$injector', '$log'];
-
-    /**
-     * 在Gulp或Grunt中使用ng-annotate, 用 \/* @ngInject *\/ 对需要自动依赖注入的function进行注释,
-     * 这样当代码通过ng-annotate运行时, 就会产生带有$inject注释的输出结果, 避免压缩时的不安全性问题.
+     * 依赖注入两种方式
+     * (1)声明依赖时用$inject手动添加组件所需的依赖(避免使用缩写语法导致压缩时的不安全性问题)
+     *    如: MainCtrl.$inject = ['$log', '$http', '$uibModal'];
+     * (2)在Gulp或Grunt中使用ng-annotate, 用 \/* @ngInject *\/ 对需要自动依赖注入的function进行注释,
+     *    这样当代码通过ng-annotate运行时, 就会产生带有$inject注释的输出结果, 避免压缩时的不安全性问题.
      *
      * @see {@link https://github.com/olov/ng-annotate}
      */
     /* @ngInject */
-    function interceptorConfig($httpProvider) {
+    function config($httpProvider) {
         $httpProvider.interceptors.push(httpInterceptor);
-    }
-
-    /* @ngInject */
-    function init($rootScope) {
-        $rootScope.$on('$uibModalInstance.opened', function (e, $uibModalInstance) {
-            console.log($uibModalInstance);
-        });
-    }
-
-    /* @ngInject */
-    function asyncService($http) {
-
-        var servic = this;
-
-        servic.genToken = genToken;
-
-        return servic;
-
-        function genToken() {
-            return $http.get('data/Data.json');
-        }
     }
 
     /* @ngInject */
@@ -73,22 +45,9 @@
         function requestInterceptor(config) {
 
             config.requestStartTime = new Date().getTime();
-
-            var deferred = $q.defer();
-
             config.headers = config.headers || {};
 
-            // var $injector = angular.injector();
-            // var asyncService = $injector.get('asyncService');
-            // asyncService.genToken().then(function (response) {
-            //     // Asynchronous succeeded
-            //     config.headers['Submit-Token'] = response.data['Submit-Token'];
-            //     deferred.resolve(config);
-            // }, function (response) {
-            //     // Asynchronous failed
-            //     config.headers['Submit-Token'] = null;
-            //     deferred.resolve(config);
-            // });
+            var deferred = $q.defer();
 
             deferred.resolve(config);
 

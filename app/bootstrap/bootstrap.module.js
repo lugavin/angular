@@ -11,62 +11,103 @@
         'ui.bootstrap',
         'app.service'
     ]).decorator('$uibModal', uibModalDecorator)
-        .factory('dialogService', dialogService);
+        .factory('dialog', dialog);
 
     /* @ngInject */
-    function dialogService($uibModal) {
+    function dialog($uibModal) {
+
+        // 用var定义类的private属性和private方法
+        const Type = {ALERT: 'alert', CONFIRM: 'confirm'};
 
         // 用this定义类的public属性和public方法
-        // 用var定义类的private属性和private方法
-        var service = this;
+        var dialog = this;
 
-        service.alert = function(message, callback) {
-            openModal({
-                message: message,
-                callback: callback
-            });
+        dialog.MsgType = {
+            SUCCESS: 'success',
+            ERROR: 'error',
+            WARN: 'warn',
+            QUESTION: 'question'
         };
-        service.confirm = angular.noop;
-        service.message = angular.noop;
 
-        return service;
+        dialog.alert = alert;
 
-        function openModal(options) {
+        dialog.confirm = confirm;
+
+        dialog.message = angular.noop;
+
+        return dialog;
+
+        function alert(msg, msgType, callback) {
+
+            var args = Array.prototype.slice.call(arguments);
+            msg = args.shift();
+            if (typeof args[args.length - 1] === 'function') {
+                callback = args.pop();
+            }
+            msgType = args.length > 0 ? args.shift() : null;
+
+            var map = {
+                success: {title: '成功提示', icon: '<i class="fa fa-info-circle fa-2x"></i>'},
+                error: {title: '失败提示', icon: '<i class="fa fa-times-circle fa-2x"></i>'},
+                warn: {title: '警告', icon: '<i class="fa fa-warning fa-2x"></i>'},
+                question: {title: '确认', icon: '<i class="fa fa-question-circle fa-2x"></i>'}
+            };
+
+            openModal(angular.extend({}, map[msgType] || {title: '提示消息', icon: ''}, {
+                message: msg,
+                callback: callback,
+                type: Type.ALERT
+            }));
+        }
+
+        function confirm(msg, callback) {
+            openModal({
+                title: '确认提示',
+                icon: '<i class="fa fa-question-circle fa-2x"></i>',
+                message: msg,
+                callback: callback,
+                type: Type.CONFIRM
+            });
+        }
+
+        function openModal(settings) {
             $uibModal.open({
-                template: '<div class="modal-header bg-primary">{{vm.title}}</div>' +
-                          '<div class="modal-body">{{vm.message}}</div>' +
+                size: 'sm',
+                keyboard: false,
+                backdrop: 'static',
+                template: '<div class="modal-body">' +
+                              '<span ng-bind-html="vm.icon"></span>&nbsp;<strong class="h4">{{vm.title}}：{{vm.message}}</strong>' +
+                          '</div>' +
                           '<div class="modal-footer">' +
-                              '<button type="button" class="btn btn-sm btn-default" ng-click="vm.cancel()">取消</button>' +
+                              '<button type="button" class="btn btn-sm btn-default" ng-click="vm.cancel()" ng-if="vm.type!=\'alert\'">取消</button>' +
                               '<button type="button" class="btn btn-sm btn-primary" ng-click="vm.confirm()">确定</button>' +
                           '</div>',
-                controller: function ($uibModalInstance, items) {
+                controller: function ($uibModalInstance) {
 
                     var vm = this;
 
-                    var callback = items.callback || angular.noop;
+                    var callback = settings.callback;
 
-                    vm.title = items.title || '';
-                    vm.message = items.message || '';
+                    vm.type = settings.type;
+                    vm.icon = settings.icon;
+                    vm.title = settings.title;
+                    vm.message = settings.message;
 
                     vm.cancel = cancel;
                     vm.confirm = confirm;
 
                     function confirm() {
-                        callback && callback();
-                        $uibModalInstance.close(items);
+                        $uibModalInstance.close(settings);
+                        callback && callback(true);
                     }
 
                     function cancel() {
                         $uibModalInstance.dismiss('cancel');
+                        callback && callback(false);
                     }
 
                 },
-                controllerAs: 'vm',
-                resolve: {
-                    items: function () {
-                        return options;
-                    }
-                }
+                controllerAs: 'vm'
             });
         }
 
@@ -78,11 +119,7 @@
         var defaults = {
             backdrop: 'static',
             keyboard: true,
-            size: 'lg',
-            resolve: {
-                items: angular.noop
-            },
-            appendTo: angular.element(document).find('body').eq(0)
+            size: 'lg'
         };
 
         var modal = angular.copy($delegate);

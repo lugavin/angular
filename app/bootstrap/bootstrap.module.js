@@ -11,10 +11,10 @@
         'ui.bootstrap',
         'app.service'
     ]).decorator('$uibModal', uibModalDecorator)
-        .factory('dialog', dialog);
+        .factory('dialogService', dialogService);
 
     /* @ngInject */
-    function dialog($uibModal) {
+    function dialogService($uibModal) {
 
         // 用var定义类的private属性和private方法
         const Type = {ALERT: 'alert', CONFIRM: 'confirm'};
@@ -47,11 +47,13 @@
             msgType = args.length > 0 ? args.shift() : null;
 
             var map = {
-                success: {title: '成功提示', icon: '<i class="fa fa-info-circle fa-2x"></i>'},
-                error: {title: '失败提示', icon: '<i class="fa fa-times-circle fa-2x"></i>'},
-                warn: {title: '警告', icon: '<i class="fa fa-warning fa-2x"></i>'},
-                question: {title: '确认', icon: '<i class="fa fa-question-circle fa-2x"></i>'}
+                success: {title: '成功提示', icon: 'fa fa-info-circle fa-2x'},
+                error: {title: '失败提示', icon: 'fa fa-times-circle fa-2x'},
+                warn: {title: '警告', icon: 'fa fa-warning fa-2x'},
+                question: {title: '确认', icon: 'fa fa-question-circle fa-2x'}
             };
+
+            console.info(map[msgType]);
 
             openModal(angular.extend({}, map[msgType] || {title: '提示消息', icon: ''}, {
                 message: msg,
@@ -63,7 +65,7 @@
         function confirm(msg, callback) {
             openModal({
                 title: '确认提示',
-                icon: '<i class="fa fa-question-circle fa-2x"></i>',
+                icon: 'fa fa-question-circle fa-2x',
                 message: msg,
                 callback: callback,
                 type: Type.CONFIRM
@@ -76,7 +78,7 @@
                 keyboard: false,
                 backdrop: 'static',
                 template: '<div class="modal-body">' +
-                              '<span ng-bind-html="vm.icon"></span>&nbsp;<strong class="h4">{{vm.title}}：{{vm.message}}</strong>' +
+                              '<i class="{{vm.icon}}"></i>&nbsp;<strong class="h4">{{vm.title}}：{{vm.message}}</strong>' +
                           '</div>' +
                           '<div class="modal-footer">' +
                               '<button type="button" class="btn btn-sm btn-default" ng-click="vm.cancel()" ng-if="vm.type!=\'alert\'">取消</button>' +

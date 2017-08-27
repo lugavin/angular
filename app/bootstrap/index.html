@@ -1,16 +1,25 @@
 <div class="container-fluid">
     <div class="bs-content" data-content="查询条件">
         <form id="form" class="form-horizontal form-group-sm" role="form">
-            <div class="form-group">
-                <label class="control-label col-sm-1" for="uid">用戶编号</label>
-                <div class="col-sm-3">
-                    <input id="uid" name="uid" type="text" class="form-control" placeholder="用户ID"
-                           ng-model="vm.user.uid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <uib-progressbar class="progress-striped" type="primary"
+                                     ng-class="{active: vm.percentage!=100}"
+                                     max="100" value="vm.percentage">
+                        <i>{{vm.percentage}}%</i>
+                    </uib-progressbar>
                 </div>
-                <label class="control-label col-sm-1" for="username">用户名</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-1" for="code">用戶编号</label>
                 <div class="col-sm-3">
-                    <input id="username" name="username" type="text" class="form-control" placeholder="用户名"
-                           ng-model="vm.user.username">
+                    <input id="code" name="code" type="text" class="form-control" placeholder="用戶编号"
+                           ng-model="vm.param.code">
+                </div>
+                <label class="control-label col-sm-1" for="name">用户名</label>
+                <div class="col-sm-3">
+                    <input id="name" name="name" type="text" class="form-control" placeholder="用户名"
+                           ng-model="vm.param.name">
                 </div>
                 <div class="col-sm-4">
                     <button id="btnQuery" type="button" class="btn btn-primary btn-sm"
@@ -44,8 +53,8 @@
                     <tbody>
                     <tr ng-repeat="user in vm.users">
                         <td>{{$index+1}}</td>
-                        <td>{{user['uid']}}</td>
-                        <td>{{user['username']}}</td>
+                        <td>{{user['code']}}</td>
+                        <td>{{user['name']}}</td>
                         <td>{{user['dept']}}</td>
                         <td>{{user['birthday']}}</td>
                         <td>{{user['createTime']}}</td>
@@ -71,37 +80,25 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="text-left">
-                    <label>
-                        <span>每页</span>
-                        <select class="form-control input-sm"
-                                ng-init="pageSize=10" ng-model="pageSize"
-                                ng-options="x for x in [10,20,50]">
-                        </select>
-                        <span>条，总共&nbsp;{{vm.recordsTotal}}&nbsp;条记录</span>
-                    </label>
+                    <label>每页 {{vm.pagination.pageSize}} 条，总共 {{vm.totalItems}} 条记录</label>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="text-right">
-                    <nav>
-                        <ul class="pagination" style="margin: 0;">
-                            <li class="disabled">
-                                <a href="#" aria-label="Previous">
-                                    <span aria-hidden="true">«</span>
-                                </a>
-                            </li>
-                            <li class="active">
-                                <a href="#">1 <span class="sr-only">(current)</span></a>
-                            </li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li>
-                                <a href="#" aria-label="Next">
-                                    <span aria-hidden="true">»</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <ul class="pagination-sm" style="margin: 0"
+                        uib-pagination
+                        items-per-page="vm.pagination.pageSize"
+                        ng-model="vm.pagination.currentPage"
+                        total-items="vm.totalItems"
+                        force-ellipses="true"
+                        max-size="vm.pagination.maxSize"
+                        boundary-links="true"
+                        direction-links="true"
+                        first-text="首页"
+                        previous-text="上一页"
+                        next-text="下一页"
+                        last-text="尾页"
+                        ng-change="vm.query()"></ul>
                 </div>
             </div>
         </div>
@@ -119,23 +116,24 @@
         <div class="container-fluid">
             <form class="form-horizontal form-group-sm" role="form">
                 <div class="form-group">
-                    <label class="control-label" for="uid_1">用戶编号</label>
-                    <input id="uid_1" name="uid" type="text" class="form-control" readonly placeholder="用戶编号"
-                           ng-model="vm.user.uid">
+                    <label class="control-label" for="user.code">用戶编号</label>
+                    <input id="user.code" name="user.code" type="text" class="form-control" placeholder="用戶编号"
+                           ng-model="vm.user.code" ng-disabled="vm.action!='add'">
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="name_1">用户名</label>
-                    <input id="name_1" name="name" type="text" class="form-control" placeholder="用户名"
-                           ng-model="vm.user.username">
+                    <label class="control-label" for="user.name">用户名</label>
+                    <input id="user.name" name="user.name" type="text" class="form-control" placeholder="用户名"
+                           ng-model="vm.user.name" ng-disabled="vm.disabled">
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="remark_1">备注</label>
-                    <textarea id="remark_1" name="remark" class="form-control" ng-model="vm.user.remark"></textarea>
+                    <textarea id="remark_1" name="remark" class="form-control"
+                              ng-model="vm.user.remark" ng-disabled="vm.disabled"></textarea>
                 </div>
             </form>
         </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" ng-if="!vm.disabled">
         <button type="button" class="btn btn-sm btn-primary" ng-click="vm.save()">
             <i class="glyphicon glyphicon-saved"></i> 保存
         </button>

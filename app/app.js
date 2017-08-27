@@ -16,7 +16,8 @@
         'app.grid.module',
         'app.treegrid.module',
         'app.select.module'
-    ]).config(config);
+    ]).config(config)
+        .run(initialization);
 
     /**
      * 依赖注入两种方式
@@ -73,6 +74,11 @@
             return $q.reject(rejection);
         }
 
+    }
+
+    /* @ngInject */
+    function initialization($rootScope) {
+        // $rootScope.navCollapsed = true;
     }
 
 })();

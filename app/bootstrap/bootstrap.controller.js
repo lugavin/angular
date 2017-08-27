@@ -11,9 +11,47 @@
         .controller('BootstrapModalCtrl', BootstrapModalCtrl);
 
     /* @ngInject */
-    function BootstrapCtrl($scope, $http, $uibModal, $log, dialogService) {
+    function BootstrapCtrl($uibModal, dialogService, $interval, $timeout, userService) {
 
         var vm = this;
+
+        vm.pagination = {
+            pageSizes: [10, 20, 50],
+            pageSize: 10,
+            currentPage: 1,
+            maxSize: 8
+        };
+
+        vm.percentage = 0;
+        /**
+         * (1)定时操作
+         * setInterval: 按指定的周期(以毫秒计)来不停地调用函数直到clearInterval()被调用或窗口被关闭
+         * clearInterval: 取消由setInterval()设置的timeout
+         *
+         * (2)延迟操作
+         * setTimeout: 在指定的毫秒数后调用函数
+         * clearTimeou: 可取消由setTimeout()方法设置的timeout
+         *
+         * 提示：setTimeout()只执行一次而setInterval()可执行多次
+         */
+        var timer = $interval(function () {
+            if (vm.percentage > 80) {
+                if (vm.percentage > 95) {
+                    $interval.cancel(timer);
+                } else {
+                    vm.percentage += Math.ceil(Math.random() * 2);
+                }
+            } else {
+                vm.percentage += 5 * Math.ceil(Math.random() * 2);
+            }
+        }, 1000);
+
+        var delay = $timeout(function () {
+            query(function () {
+                vm.percentage = 100;
+                $timeout.cancel(delay);
+            });
+        }, 5000);
 
         vm.user = {};
 
@@ -23,52 +61,50 @@
         vm.query = query;
         vm.reset = reset;
 
-        vm.query();
-
         function edit(row) {
-            var modalInstance = $uibModal.open({
-                templateUrl: 'edit.html',
-                controller: 'BootstrapModalCtrl',
-                controllerAs: 'vm',
-                scope: $scope,
-                resolve: {
-                    items: function () {
-                        return {
-                            rowData: angular.copy(row),
-                            action: 'edit'
-                        };
-                    }
-                }
-            });
-            modalInstance.result.then(function (result) {
-                // success: $uibModalInstance.close(result)
-                angular.extend(row, result);
+            openModal({
+                rowData: row,
+                action: 'edit',
+                disabled: false
             });
         }
 
         function remove(row) {
             dialogService.confirm('确认删除吗？', function (yes) {
-                $log.info(yes);
+                yes && console.info(row);
             });
         }
 
         function view(row) {
-            // row.uid = row.uid + '_';
-            // row.username = row.username + '_';
-            var userExt = angular.extend({}, row);
-            userExt.uid = row.uid + '_';
-            var userClone = angular.copy(row);
-            userClone.username = row.username + '_';
+            openModal({
+                rowData: row,
+                action: 'view',
+                disabled: true
+            });
         }
 
-        function query() {
-            $http({
-                method: 'GET',
-                url: 'data/Grid.json',
-                data: vm.user
+        function query(callback) {
+            userService.getUserList({
+                param: vm.param,
+                pageSize: vm.pagination.pageSize,
+                currentPage: vm.pagination.currentPage
             }).then(function (response) {
-                vm.recordsTotal = response.data.recordsTotal;
-                vm.users = response.data.data;
+                vm.users = response.data.items;
+                vm.totalItems = response.data.totalItems;
+                callback && callback(response);
+            });
+        }
+
+        function openModal(params) {
+            return $uibModal.open({
+                templateUrl: 'edit.html',
+                controller: 'BootstrapModalCtrl',
+                controllerAs: 'vm',
+                resolve: {
+                    items: function () {
+                        return params;
+                    }
+                }
             });
         }
 
@@ -79,25 +115,20 @@
     }
 
     /* @ngInject */
-    function BootstrapModalCtrl($scope, $uibModalInstance, $log, items) {
+    function BootstrapModalCtrl($uibModalInstance, items) {
 
         var vm = this;
 
-        vm.user = items.rowData;
+        vm.user = angular.copy(items.rowData);
         vm.action = items.action;
 
         vm.save = function () {
             $uibModalInstance.close(vm.user);
-            // $scope.$parent.vm.query();
         };
 
         vm.close = function () {
             $uibModalInstance.dismiss('cancel');
         };
-
-        // $scope.$on('$destroy', function () {
-        //     $log.debug('Modal scope should be destroyed.');
-        // });
 
     }
 

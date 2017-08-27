@@ -9,6 +9,10 @@ body {
     background-color: #ffffff;
 }
 
+.progress {
+    margin-bottom: 5px !important;
+}
+
 .page-header {
     display: block;
     width: 100%;

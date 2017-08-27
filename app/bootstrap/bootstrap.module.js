@@ -11,54 +11,114 @@
         'ui.bootstrap',
         'app.service'
     ]).decorator('$uibModal', uibModalDecorator)
-        .factory('dialogService', dialogService);
+        .factory('userService', userService)
+        .factory('dialogService', dialogService)
+        .factory('NProgress', NProgress);
+
+    /* @ngInject */
+    function uibModalDecorator($delegate, tokenService, $log) {
+
+        var defaults = {
+            backdrop: 'static',
+            keyboard: true,
+            size: 'lg'
+        };
+
+        var modal = angular.copy($delegate);
+
+        modal.open = function (options) {
+
+            options = angular.extend({}, defaults, options);
+
+            var modalInstance = $delegate.open(options);
+
+            modalInstance.opened.then(function () {
+                // $log.debug('modal opened');
+                var promise = tokenService.genSubmitToken();
+                promise.then(function (response) {
+                    $log.debug('Submit-Token: ' + response.data['Submit-Token']);
+                });
+            });
+            modalInstance.rendered.then(function () {
+                // $log.debug('modal rendered');
+            });
+            modalInstance.closed.then(function () {
+                // $log.debug('modal closed');
+            });
+            modalInstance.result.then(function (result) {
+                $log.debug('Call => $uibModalInstance.close(result)');
+            }, function (reason) {
+                $log.debug('Call => $uibModalInstance.dismiss(reason)');
+            });
+
+            return modalInstance;
+        };
+
+        return modal;
+    }
+
+    /* @ngInject */
+    function userService($q, $http) {
+
+        var servic = this;
+
+        servic.getUserList = getUserList;
+
+        return servic;
+
+        function getUserList(params) {
+
+            var deferred = $q.defer();
+
+            $http({
+                url: 'data/Grid.json',
+                data: params
+            }).then(function (response) {
+                deferred.resolve(response);
+            }, function (rejection) {
+                deferred.reject(rejection);
+            });
+
+            return deferred.promise;
+        }
+    }
 
     /* @ngInject */
     function dialogService($uibModal) {
 
         // 用var定义类的private属性和private方法
-        const Type = {ALERT: 'alert', CONFIRM: 'confirm'};
+        var DialogType = {ALERT: 'alert', CONFIRM: 'confirm'};
+        var Type = {SUCCESS: 'success', ERROR: 'error', WARN: 'warn', QUESTION: 'question'};
 
         // 用this定义类的public属性和public方法
         var dialog = this;
 
-        dialog.MsgType = {
-            SUCCESS: 'success',
-            ERROR: 'error',
-            WARN: 'warn',
-            QUESTION: 'question'
-        };
-
         dialog.alert = alert;
-
         dialog.confirm = confirm;
-
         dialog.message = angular.noop;
 
         return dialog;
 
-        function alert(msg, msgType, callback) {
+        function alert(msg, type, callback) {
 
             var args = Array.prototype.slice.call(arguments);
             msg = args.shift();
             if (typeof args[args.length - 1] === 'function') {
                 callback = args.pop();
             }
-            msgType = args.length > 0 ? args.shift() : null;
+            type = args.length > 0 ? args.shift() : null;
 
-            var map = {
+            var msgType = {
                 success: {title: '成功提示', icon: 'fa fa-info-circle fa-2x'},
                 error: {title: '失败提示', icon: 'fa fa-times-circle fa-2x'},
                 warn: {title: '警告', icon: 'fa fa-warning fa-2x'},
                 question: {title: '确认', icon: 'fa fa-question-circle fa-2x'}
             };
 
-            console.info(map[msgType]);
-
-            openModal(angular.extend({}, map[msgType] || {title: '提示消息', icon: ''}, {
+            openModal(angular.extend({}, msgType[type] || {title: '提示消息', icon: ''}, {
                 message: msg,
                 callback: callback,
-                type: Type.ALERT
+                type: DialogType.ALERT
             }));
         }
 
@@ -68,7 +128,7 @@
                 icon: 'fa fa-question-circle fa-2x',
                 message: msg,
                 callback: callback,
-                type: Type.CONFIRM
+                type: DialogType.CONFIRM
             });
         }
 
@@ -77,13 +137,11 @@
                 size: 'sm',
                 keyboard: false,
                 backdrop: 'static',
-                template: '<div class="modal-body">' +
-                              '<i class="{{vm.icon}}"></i>&nbsp;<strong class="h4">{{vm.title}}：{{vm.message}}</strong>' +
-                          '</div>' +
-                          '<div class="modal-footer">' +
-                              '<button type="button" class="btn btn-sm btn-default" ng-click="vm.cancel()" ng-if="vm.type!=\'alert\'">取消</button>' +
-                              '<button type="button" class="btn btn-sm btn-primary" ng-click="vm.confirm()">确定</button>' +
-                          '</div>',
+                template: '<div class="modal-body"><i class="{{vm.icon}}"></i>&nbsp;<strong class="h4">{{vm.title}}：{{vm.message}}</strong></div>' +
+                '<div class="modal-footer">' +
+                '<button type="button" class="btn btn-sm btn-default" ng-click="vm.cancel()" ng-if="vm.type!=\'alert\'">取消</button>' +
+                '<button type="button" class="btn btn-sm btn-primary" ng-click="vm.confirm()">确定</button>' +
+                '</div>',
                 controller: function ($uibModalInstance) {
 
                     var vm = this;
@@ -116,50 +174,49 @@
     }
 
     /* @ngInject */
-    function uibModalDecorator($delegate, $injector, $log, tokenService) {
+    function NProgress($interval, $uibModal) {
 
-        var defaults = {
-            backdrop: 'static',
-            keyboard: true,
-            size: 'lg'
-        };
+        var NProgress = this;
 
-        var modal = angular.copy($delegate);
+        var modalInstances = [];
 
-        modal.open = function (options) {
+        NProgress.start = start;
+        NProgress.done = done;
 
-            options = angular.extend({}, defaults, options);
+        return NProgress;
 
-            var modalInstance = $delegate.open(options);
 
-            modalInstance.opened.then(function () {
-                $log.debug('modal opened');
-                var promise = tokenService.genSubmitToken();
-                promise.then(function (response) {
-                    $log.debug('Submit-Token: ' + response.data['Submit-Token']);
-                });
+        function start() {
+            var modalInstance = $uibModal.open({
+                size: 'lg',
+                keyboard: false,
+                backdrop: 'static',
+                template: '<div class="modal-body"><uib-progressbar class="progress-striped" type="primary" ng-class="{active: vm.percentage!=100}" max="100" value="vm.percentage"><i>{{vm.percentage}}%</i></uib-progressbar></div>',
+                controller: function () {
+                    var vm = this;
+                    vm.percentage = 0;
+                    var timer = $interval(function () {
+                        if (vm.percentage > 80) {
+                            if (vm.percentage > 95) {
+                                $interval.cancel(timer);
+                            } else {
+                                vm.percentage += Math.ceil(Math.random() * 2);
+                            }
+                        } else {
+                            vm.percentage += 5 * Math.ceil(Math.random() * 2);
+                        }
+                    }, 1000);
+                },
+                controllerAs: 'vm'
             });
+            modalInstances.push(modalInstance);
+        }
 
-            modalInstance.rendered.then(function () {
-                $log.debug('modal rendered');
-            });
+        function done() {
+            var modalInstance = modalInstances.pop();
+            modalInstance && modalInstance.close('done');
+        }
 
-            modalInstance.closed.then(function () {
-                $log.debug('modal closed');
-            });
-
-            modalInstance.result.then(function (result) {
-                // success: $uibModalInstance.close(result)
-                $log.debug(result);
-            }, function (reason) {
-                // error or cancel: $uibModalInstance.dismiss(reason);
-                $log.debug(reason);
-            });
-
-            return modalInstance;
-        };
-
-        return modal;
     }
 
 })();

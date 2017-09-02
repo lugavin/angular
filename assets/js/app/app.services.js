@@ -5,13 +5,16 @@
 
     'use strict';
 
-    angular
-        .module('app.base', [])
+    angular.module('app.services', []);
+
+    angular.module('app.services')
         .factory('baseService', baseService);
 
     function baseService() {
 
-        return {};
+        var service = this;
+
+        return service;
     }
 
 })();

@@ -78,7 +78,6 @@
 
     /* @ngInject */
     function initialization($rootScope) {
-        // $rootScope.navCollapsed = true;
     }
 
 })();

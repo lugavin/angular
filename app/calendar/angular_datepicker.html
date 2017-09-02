@@ -91,14 +91,23 @@ https://arca-computing.github.io/MultipleDatePicker/
         vm.options = {
             months: 2,
             mode: 'multiple',
-            start: moment().add(0, 'month'),
-            filter: function (m) {
-                return !isContains(m);
-            },
-            callback: function (day) {
-                // console.log('call this: ', day);
-            }
+            start: moment().add(0, 'month')
+            // filter: function (m) {
+            //     return !isContains(m);
+            // },
+            // callback: function (day) {
+            //     console.log('call this: ', day);
+            // }
         };
+
+        /**
+         * 模拟Ajax请求
+         */
+        window.setTimeout(function () {
+            vm.options.filter = function (m) {
+                return !isContains(m);
+            };
+        }, 5000);
 
         function changeDate() {
             if (vm.order.startDate && vm.order.endDate) {

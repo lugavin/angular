@@ -13,6 +13,7 @@
         <form id="form" class="form-horizontal form-group-sm" role="form">
             <div class="form-group">
                 <label class="control-label col-sm-2" for="startDate">推广日期</label>
+
                 <div class="col-sm-6">
                     <div class="input-group">
                         <input id="startDate" name="order.startDate" type="date" class="form-control"
@@ -100,12 +101,10 @@ https://arca-computing.github.io/MultipleDatePicker/
         };
 
         function changeDate() {
-            var startDate = vm.order.startDate;
-            var endDate = vm.order.endDate;
-            if (startDate && endDate) {
+            if (vm.order.startDate && vm.order.endDate) {
                 vm.multi = [];
-                var dates = getDates(converter(startDate), converter(endDate));
-                angular.forEach(dates, function (m) {
+                var dates = getDates(converter(vm.order.startDate), converter(vm.order.endDate));
+                dates.forEach(function (m) {
                     !isContains(m) && vm.multi.push(m);
                 });
             }
@@ -113,14 +112,12 @@ https://arca-computing.github.io/MultipleDatePicker/
 
         function getMarkers() {
             var markers = [];
-            for (var i = 0; i < invalidDates.length; i++) {
-                var startDate = invalidDates[i].startDate;
-                var endDate = invalidDates[i].endDate;
-                var dates = getDates(converter(startDate), converter(endDate));
-                angular.forEach(dates, function (m) {
+            invalidDates.forEach(function (item) {
+                var dates = getDates(converter(item.startDate), converter(item.endDate));
+                dates.forEach(function (m) {
                     markers.push({day: m, marker: m.toDate().getDate() + '号已被预订'});
                 });
-            }
+            });
             return markers;
         }
 

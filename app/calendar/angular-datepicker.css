@@ -1,0 +1,91 @@
+.multi-picker__wrapper {
+    z-index: 1;
+    font-size: 14px;
+    color: #666;
+    font-family: Arial, sans-serif;
+}
+
+.multi-picker-calendar__day {
+    cursor: pointer;
+    position: relative;
+    color: #333;
+}
+
+.multi-picker-calendar__day--disabled {
+    color: #aaa;
+    cursor: auto;
+}
+
+.multi-picker-calendar__day--in-range {
+    color: #347ab3;
+    font-weight: bold;
+}
+
+.multi-picker-calendar__day-marker-wrapper {
+    position: relative;
+}
+
+.multi-picker-calendar__day-marker {
+    display: none;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 16px;
+    background-color: orange;
+    color: #666;
+    font-size: 12px;
+    line-height: 1;
+    padding: 4px 6px;
+    margin-bottom: 1px;
+}
+
+.multi-picker-calendar__day--marked:hover .multi-picker-calendar__day-marker {
+    display: block;
+    white-space: nowrap;
+}
+
+.multi-picker-calendar__day--marked {
+    color: orange;
+    font-weight: bold;
+    cursor: help !important;
+}
+
+.multi-picker-calendar__day--selected {
+    color: #3b5;
+    font-weight: bold;
+}
+
+.multi-picker__month {
+    display: inline-block;
+    margin: 0 6px;
+}
+
+.multi-picker__prev-month,
+.multi-picker__next-month {
+    cursor: pointer;
+}
+
+.multi-picker__prev-month:hover,
+.multi-picker__next-month:hover {
+    background-color: #ccc;
+    color: white;
+}
+
+.multi-picker__month-name {
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.multi-picker__wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.multi-picker__wrapper th {
+    color: #777;
+}
+
+.multi-picker__wrapper th, td {
+    text-align: left;
+    padding: 5px 10px;
+    border-bottom: 1px solid #e5e5e5;
+}

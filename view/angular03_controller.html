@@ -24,7 +24,6 @@
     </div>
     <div id="page-content">
         <form name="vm.form" class="form-horizontal form-group-sm">
-            <!--
             <div class="form-group">
                 <label class="control-label col-sm-2" for="usercode">Code</label>
                 <div class="col-sm-4">
@@ -46,28 +45,6 @@
                     <small class="help-block">字段是否无效: {{vm.form.usercode.$invalid}}</small>
                 </div>
             </div>
-            -->
-            <div class="form-group">
-                <label class="control-label col-sm-2">Name</label>
-
-                <div class="col-sm-4">
-                    <ul>
-                        <li ng-repeat="user in vm.users">
-                            <div class="input-group">
-                                <input name="username" class="form-control" placeholder="Enter a name here"
-                                       ng-readonly="!vm.users[$index].editable"
-                                       ng-model="vm.users[$index].name">
-                                <span class="input-group-addon">
-                                    <a href="#" ng-click="vm.edit(vm.users[$index])" ng-if="!vm.users[$index].editable">编辑</a>
-                                    <a href="#" ng-click="vm.save(vm.users[$index])" ng-if="vm.users[$index].editable">保存</a>
-                                    <a href="#" ng-click="vm.remove($index, vm.users[$index])">删除</a>
-                                </span>
-                            </div>
-                        </li>
-                    </ul>
-                    <a href="#" ng-click="vm.add()">新增</a>
-                </div>
-            </div>
         </form>
     </div>
 </div>
@@ -86,38 +63,7 @@
 
             var vm = this;
 
-            // vm.user = {code: 'Angular', name: 'JS'};
-
-            vm.user = {};
-
-            vm.users = [
-                {id: 1001, name: 'Alan', code: '阿兰', editable: false},
-                {id: 1002, name: 'Ann', code: '轩', editable: false},
-                {id: 1003, name: 'Gavin', code: '鹰', editable: false}
-            ];
-
-            vm.add = add;
-            vm.edit = edit;
-            vm.save = save;
-            vm.remove = remove;
-
-            function add() {
-                vm.users.push({id: null, name: null, code: null, editable: true});
-            }
-
-            function edit(item) {
-                item.editable = true;
-                console.info(item);
-            }
-
-            function save(item) {
-                item.editable = false;
-                console.info(item);
-            }
-
-            function remove(index, item) {
-                vm.users.splice(index, 1);
-            }
+            vm.user = {code: 'Angular', name: 'JS'};
 
         }
 

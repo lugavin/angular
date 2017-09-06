@@ -51,6 +51,28 @@
 
     Base.genRandomNum = function () {
         return Base.format('{0}_{1}', new Date().getTime(), Math.floor(Math.random() * 1000000));
-    }
+    };
+
+    Base.isString = function (value) {
+        return typeof value === 'string';
+    };
+
+    Base.isArray = Array.isArray;
+
+    Base.isFunction = function (value) {
+        return typeof value === 'function';
+    };
+
+    Base.isObject = function (value) {
+        return value !== null && typeof value === 'object';
+    };
+
+    Base.isEmptyObject = function (obj) {
+        var name;
+        for (name in obj) {
+            return false;
+        }
+        return true;
+    };
 
 });

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-TW" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular DateMultiPicker</title>
+    <link rel="stylesheet" href="angular-multiple-datepicker.css">
+</head>
+<body ng-controller="MainCtrl as vm">
+<div style="width: 400px;">
+    <multiple-date-picker ng-model="vm.multi" day-click="vm.check()"></multiple-date-picker>
+</div>
+<script src="moment-with-locales.js"></script>
+<script src="../../assets/js/lib/angular/angular.js"></script>
+<script src="angular-multiple-datepicker.js"></script>
+<script>
+
+    moment.locale('zh_cn');
+
+    /**
+     * @see https://arca-computing.github.io/MultipleDatePicker/
+     */
+    angular.module('app', ['multipleDatePicker']);
+
+    angular.module('app').controller('MainCtrl', MainCtrl);
+
+    function MainCtrl() {
+
+        var vm = this;
+
+        vm.multi = [];
+
+    }
+</script>
+</body>
+</html>

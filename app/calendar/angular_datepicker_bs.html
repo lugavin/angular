@@ -104,10 +104,11 @@
 
     moment.locale('zh_cn');
 
-    // 声明模块
+    /**
+     * @see https://monterail.github.io/angular-mighty-datepicker/
+     */
     angular.module('app', ['multiDatePicker', 'ui.bootstrap']);
 
-    // 使用模块
     angular.module('app').controller('MainCtrl', MainCtrl);
 
     function MainCtrl() {

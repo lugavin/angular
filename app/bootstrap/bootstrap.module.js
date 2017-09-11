@@ -13,7 +13,217 @@
     ]).decorator('$uibModal', uibModalDecorator)
         .factory('userService', userService)
         .factory('dialogService', dialogService)
-        .factory('NProgress', NProgress);
+        .factory('NProgress', NProgress)
+        .directive('tree', treeDirective);
+
+    /* @ngInject */
+    function treeDirective($compile) {
+        return {
+            restrict: 'AE',
+            scope: {
+                ngModel: '=?',
+                tree: '='
+            },
+            transclude: true,
+            replace: true,
+            link: function (scope, element, attrs, ctrls) {
+
+                var defaults = {
+                    rootPid: null,
+                    pidKey: 'pid',
+                    idKey: 'id',
+                    checkbox: false,
+                    url: null,
+                    data: [],
+                    onClick: function (node) {
+                    },
+                    onDblClick: function (node) {
+                    }
+                };
+
+                var settings = angular.extend({}, defaults, scope.tree);
+
+                scope.ngModel = scope.ngModel || [];
+
+                var data = [
+                    {id: '1001', pid: null, name: 'xxx'},
+                    {id: '1002', pid: '1001', name: 'yyy'},
+                    {id: '1003', pid: '1001', name: 'zzz'},
+                    {id: '1004', pid: '1003', name: 'qqq'}
+                ];
+                // if (Array.isArray(settings.data)) {
+                //     data = settings.data;
+                // } else if (typeof(settings.data) === 'string') {
+                //     data = JSON.parse(settings.data);
+                // }
+
+                var nodeArr = group(data, settings.pidKey);
+
+                var rootNodes = nodeArr[settings.rootPid];
+                iterator(rootNodes);
+
+                var tree = buildTreeNode(rootNodes);
+
+                element.empty().append($compile(tree)(scope));
+
+                /**
+                 * <i class="fa fa-folder-o"></i>
+                 * <i class="fa fa-folder-open-o"></i>
+                 * <i class="fa fa-folder"></i>
+                 * <i class="fa fa-folder-open"></i>
+                 *
+                 * <i class="fa fa-square-o"></i>
+                 * <i class="fa fa-minus-square-o"></i>
+                 * <i class="fa fa-check-square-o"></i>
+                 */
+                function buildTreeNode(treeNodes) {
+
+                    if (!treeNodes || !treeNodes.length) {
+                        return;
+                    }
+
+                    var ulNode = angular.element('<ul></ul>').addClass('tree');
+
+                    treeNodes.forEach(function (node) {
+
+                        var treeNode = angular.element('<div class="tree-node"></div>');
+
+                        // collapsed expanded
+                        var stateNode = angular.element('<i class="fa fa-folder-open-o"></i>&nbsp;');
+                        stateNode.on('click', function () {
+                            var $this = angular.element(this);
+                            if ($this.hasClass('fa-folder-open-o')) {
+                                $this.removeClass('fa-folder-open-o');
+                                $this.addClass('fa-folder-o');
+                            } else {
+                                $this.removeClass('fa-folder-o');
+                                $this.addClass('fa-folder-open-o');
+                            }
+                        });
+
+                        treeNode.append(stateNode);
+
+                        // checked unchecked
+                        if (settings.checkbox) {
+                            var checkNode = angular.element('<i class="fa fa-square-o"></i>&nbsp;');
+                            checkNode.on('click', function () {
+                                var $this = angular.element(this);
+                                if ($this.hasClass('fa-square-o')) {
+                                    $this.removeClass('fa-square-o');
+                                    $this.addClass('fa-check-square-o');
+                                } else {
+                                    $this.removeClass('fa-check-square-o');
+                                    $this.addClass('fa-square-o');
+                                }
+                            });
+
+                            treeNode.append(checkNode);
+                        }
+                        var aNode = angular.element('<a href="javascript:void(0)"></a>');
+                        aNode.text(node.name);
+                        treeNode.append(aNode);
+
+                        var subNodes = nodeArr[node[settings.idKey]];
+                        var liNode = angular.element('<li></li>');
+                        liNode.append(treeNode);
+                        liNode.append(buildTreeNode(subNodes));
+                        ulNode.append(liNode);
+                    });
+
+                    return ulNode;
+                }
+
+                function setParentCheckbox(node){
+                    var pnode = getParentNode(target, node[0]);
+                    if (pnode){
+                        var ck = $(pnode.target).find('.tree-checkbox');
+                        ck.removeClass('tree-checkbox0 tree-checkbox1 tree-checkbox2');
+                        if (isAllSelected(node)){
+                            ck.addClass('tree-checkbox1');
+                        } else if (isAllNull(node)){
+                            ck.addClass('tree-checkbox0');
+                        } else {
+                            ck.addClass('tree-checkbox2');
+                        }
+                        setParentCheckbox($(pnode.target));
+                    }
+
+                    function isAllSelected(n){
+                        var ck = n.find('.tree-checkbox');
+                        if (ck.hasClass('tree-checkbox0') || ck.hasClass('tree-checkbox2')) return false;
+                        var b = true;
+                        n.parent().siblings().each(function(){
+                            if (!$(this).find('.tree-checkbox').hasClass('tree-checkbox1')){
+                                b = false;
+                            }
+                        });
+                        return b;
+                    }
+                    function isAllNull(n){
+                        var ck = n.find('.tree-checkbox');
+                        if (ck.hasClass('tree-checkbox1') || ck.hasClass('tree-checkbox2')) return false;
+                        var b = true;
+                        n.parent().siblings().each(function(){
+                            if (!$(this).find('.tree-checkbox').hasClass('tree-checkbox0')){
+                                b = false;
+                            }
+                        });
+                        return b;
+                    }
+                }
+
+                function expandNode(target, node){
+
+                }
+
+                function collapseNode(target, node) {
+
+                    var hit = $('>span.tree-hit', node);
+                    if (hit.length == 0) {  // is a leaf node
+                        return;
+                    }
+
+                    if (hit.hasClass('tree-expanded')) {
+                        hit.removeClass('tree-expanded tree-expanded-hover').addClass('tree-collapsed');
+                        hit.next().removeClass('tree-folder-open');
+                        if (opts.animate) {
+                            $(node).next().slideUp();
+                        } else {
+                            $(node).next().css('display', 'none');
+                        }
+                    }
+                }
+
+                /**
+                 * 分组后进行迭代
+                 */
+                function iterator(rootNodes) {
+                    if (!rootNodes || !rootNodes.length) {
+                        return;
+                    }
+                    rootNodes.forEach(function (rootNode) {
+                        rootNode.children = nodeArr[rootNode[settings.idKey]] || [];
+                        iterator(rootNode.children);
+                    });
+                }
+
+                /**
+                 * 分组
+                 */
+                function group(dataArr, pidKey) {
+                    var nodeMap = {};
+                    dataArr.forEach(function (obj) {
+                        if (!nodeMap[obj[pidKey]]) {
+                            nodeMap[obj[pidKey]] = [];
+                        }
+                        nodeMap[obj[pidKey]].push(obj);
+                    });
+                    return nodeMap;
+                }
+
+            }
+        };
+    }
 
     /* @ngInject */
     function uibModalDecorator($delegate, tokenService, $log) {

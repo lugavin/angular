@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-TW" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS Tree With Checkbox</title>
+    <link rel="stylesheet" href="../assets/css/lib/font-awesome/font-awesome.css">
+    <style type="text/css">
+        .table-nested .indent {
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .table-nested .parent > .cell-name > .indent:before {
+            content: "\f196";
+            font-family: FontAwesome;
+            display: inline-block;
+        }
+
+        .table-nested .opened > tr > .cell-name > .indent:before {
+            content: "\f147";
+        }
+
+        .table-nested .children {
+            display: none;
+        }
+
+        .table-nested .opened > .children {
+            display: table-row;
+        }
+
+        .table-child {
+            margin-left: 30px;
+        }
+    </style>
+</head>
+<body ng-controller="MainCtrl">
+<div class="wrapper">
+    <table class="table-nested">
+        <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in list"></tbody>
+    </table>
+    <script id="table_tree.html" type="text/ng-template">
+        <tr ng-class="{parent: item.children}"
+            ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item)">
+            <td class="cell-name">
+                <div class="indent" ng-click="item.opened = !item.opened"></div>
+                <input ng-change="toggleCheckbox(item, parentScope)" ng-model="item.selected" type="checkbox"/>
+                {{item.name}}
+            </td>
+        </tr>
+        <tr class="children" ng-if="item.children && item.children.length > 0">
+            <td colspan="4">
+                <table class="table-child">
+                    <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1"
+                           ng-repeat="item in item.children"></tbody>
+                </table>
+            </td>
+        </tr>
+    </script>
+</div>
+
+<script src="../assets/js/lib/angular/angular.js"></script>
+<script type="text/javascript">
+
+    var list = [{
+        name: 'Developer',
+        opened: true,
+        children: [{
+            name: 'Front-End',
+            children: [
+                {name: 'Jack', title: 'Leader'},
+                {name: 'John', title: 'Senior F2E'},
+                {name: 'Jason', title: 'Junior F2E'}
+            ]
+        }, {
+            name: 'Back-End',
+            children: [
+                {name: 'Mary', title: 'Leader'},
+                {name: 'Gary', title: 'Intern'}
+            ]
+        }]
+    }, {
+        name: 'Design',
+        children: [{
+            name: 'Freeman',
+            title: 'Designer'
+        }]
+    }, {
+        name: 'S&S',
+        children: [{
+            name: 'Nikky',
+            title: 'Robot'
+        }]
+    }];
+
+    angular.module('app', []);
+
+    angular.module('app')
+            .controller('MainCtrl', MainCtrl)
+            .filter('selected', selectedFilter);
+
+    function MainCtrl($scope, $filter) {
+
+        $scope.list = list;
+
+        $scope.initCheckbox = function (item, parentItem) {
+            return item.selected = parentItem && parentItem.selected || item.selected || false;
+        };
+
+        $scope.toggleCheckbox = function (item, parentScope) {
+            if (item.children != null) {
+                // 向子controller传递event和data
+                $scope.$broadcast('changeChildren', item);
+            }
+            if (parentScope.item != null) {
+                // 向父controller传递event和data
+                return $scope.$emit('changeParent', parentScope);
+            }
+        };
+
+        $scope.$on('changeChildren', function (event, parentItem) {
+            var child, i, len, ref, results;
+            ref = parentItem.children;
+            results = [];
+            for (i = 0, len = ref.length; i < len; i++) {
+                child = ref[i];
+                child.selected = parentItem.selected;
+                if (child.children != null) {
+                    results.push($scope.$broadcast('changeChildren', child));
+                } else {
+                    results.push(void 0);
+                }
+            }
+            return results;
+        });
+
+        return $scope.$on('changeParent', function (event, parentScope) {
+            var children;
+            children = parentScope.item.children;
+            parentScope.item.selected = $filter('selected')(children).length === children.length;
+            parentScope = parentScope.$parent.$parent;
+            if (parentScope.item != null) {
+                return $scope.$broadcast('changeParent', parentScope);
+            }
+        });
+
+    }
+
+    function selectedFilter($filter) {
+        return function (files) {
+            return $filter('filter')(files, {selected: true});
+        };
+    }
+</script>
+</body>
+</html>

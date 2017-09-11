@@ -90,6 +90,7 @@
     </style>
 </head>
 <body ng-controller="MainCtrl">
+
 <div class="wrapper">
     <table class="table-nested">
         <thead>
@@ -105,6 +106,7 @@
         <tbody ng-class="{opened: item.opened}" ng-repeat="item in list" ng-include="'table_tree.html'"></tbody>
     </table>
 </div>
+
 <script id="table_tree.html" type="text/ng-template">
     <tr ng-class="{parent: item.children}"
         ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item)">

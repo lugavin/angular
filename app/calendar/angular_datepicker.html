@@ -13,36 +13,54 @@
         <form id="form" class="form-horizontal form-group-sm" role="form">
             <div class="form-group">
                 <label class="control-label col-sm-2" for="startDate">推广日期</label>
-                <div class="col-sm-6">
-                    <div class="input-group">
-                        <input id="startDate" name="order.startDate" type="date" class="form-control"
-                               ng-model="vm.order.startDate"
-                               ng-change="vm.changeDate()"
-                               placeholder="开始日期">
-                        <span class="input-group-addon input-group-sm">至</span>
-                        <input name="order.endDate" type="date" class="form-control"
-                               ng-model="vm.order.endDate"
-                               ng-change="vm.changeDate()"
-                               placeholder="结束日期">
+
+                <div class="col-sm-4">
+                    <div class="date-wrap" uib-dropdown auto-close="disabled" is-open="vm.startDateOpen">
+                        <input id="startDate" name="startDate" type="text" class="form-control"
+                               readonly placeholder="点击选择开始日期"
+                               uib-dropdown-toggle
+                               ng-value="vm.startDate|dateFormatter:this">
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                            <li role="menuitem">
+                                <div multi-date-picker
+                                     options="vm.startDateOptions"
+                                     after="vm.minDate"
+                                     markers="vm.markers"
+                                     ng-model="vm.order.startDate"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="date-wrap" uib-dropdown auto-close="disabled" is-open="vm.endDateOpen">
+                        <input id="endDate" name="endDate" type="text" class="form-control"
+                               readonly placeholder="点击选择结束日期"
+                               uib-dropdown-toggle
+                               ng-value="vm.endDate|dateFormatter:this">
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                            <li role="menuitem">
+                                <div multi-date-picker
+                                     options="vm.endDateOptions"
+                                     after="vm.minDate"
+                                     markers="vm.markers"
+                                     ng-model="vm.order.endDate"></div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="form-group" ng-if="vm.order.startDate && vm.order.endDate">
+            <div class="form-group" ng-if="vm.startDate && vm.endDate">
                 <div class="col-sm-8 col-sm-offset-2">
                     <div multi-date-picker
-                         options="vm.options"
-                         after="vm.startDate"
+                         options="vm.periodOptions"
+                         after="vm.minDate"
                          markers="vm.markers"
                          ng-model="vm.multi"></div>
-                </div>
-            </div>
-            <div class="row" ng-if="vm.order.startDate && vm.order.endDate">
-                <div class="col-sm-8 text-right">
-                    <strong class="text-danger" ng-bind="'单价：'+(vm.order.price|currency:'￥')"></strong>
-                    <span ng-bind=" '|' "></span>
-                    <strong class="text-success" ng-bind="'预定天数：'+vm.multi.length"></strong>
-                    <span ng-bind=" '|' "></span>
-                    <strong class="text-danger" ng-bind="'总价：'+(vm.order.price*vm.multi.length|currency:'￥')"></strong>
+                    <strong class="help-block">
+                        <span class="text-danger" ng-bind="'单价：'+(vm.order.price|currency:'￥')+' | '"></span>
+                        <span class="text-success" ng-bind="'预定天数：'+vm.multi.length+' | '"></span>
+                        <span class="text-danger" ng-bind="'总价：'+(vm.order.price*vm.multi.length|currency:'￥')"></span>
+                    </strong>
                 </div>
             </div>
         </form>
@@ -58,9 +76,9 @@
 
     moment.locale('zh_cn');
 
-    angular.module('app', ['multiDatePicker']);
+    angular.module('app', ['ui.bootstrap', 'multiDatePicker']);
 
-    angular.module('app').controller('MainCtrl', MainCtrl);
+    angular.module('app').controller('MainCtrl', MainCtrl).filter('dateFormatter', dateFormatter);
 
     /**
      * @see https://monterail.github.io/angular-mighty-datepicker/
@@ -70,45 +88,50 @@
         var vm = this;
 
         var invalidDates = [
-            {startDate: '2017-09-11', endDate: '2017-09-11'},
-            {startDate: '2017-09-13', endDate: '2017-09-14'},
-            {startDate: '2017-09-16', endDate: '2017-09-17'}
+            {startDate: '2017-09-15', endDate: '2017-09-16'},
+            {startDate: '2017-09-19', endDate: '2017-09-19'}
         ];
+
+        var periodDefault = {
+            months: 1,
+            mode: 'simple',
+            start: moment().add(0, 'month'),
+            filter: function (m) {
+                return !isContains(m);
+            }
+        };
+
+        vm.minDate = moment().add(0, 'day');
 
         vm.order = {price: 300};
 
         vm.multi = [];
         vm.markers = getMarkers();
 
-        vm.changeDate = changeDate;
+        vm.startDateOptions = angular.extend({}, periodDefault, {
+            callback: function (day) {
+                vm.startDate = day;
+                vm.startDateOpen = false;
+                changeDate();
+            }
+        });
 
-        vm.startDate = moment().add(0, 'day');
+        vm.endDateOptions = angular.extend({}, periodDefault, {
+            callback: function (day) {
+                vm.endDate = day;
+                vm.endDateOpen = false;
+                changeDate();
+            }
+        });
 
-        vm.options = {
-            months: 2,
-            mode: 'multiple',
-            start: moment().add(0, 'month')
-            // filter: function (m) {
-            //     return !isContains(m);
-            // },
-            // callback: function (day) {
-            //     console.log('call this: ', day);
-            // }
-        };
-
-        /**
-         * 模拟Ajax请求
-         */
-        window.setTimeout(function () {
-            vm.options.filter = function (m) {
-                return !isContains(m);
-            };
-        }, 5000);
+        vm.periodOptions = angular.extend({}, periodDefault, {
+            mode: 'multiple'
+        });
 
         function changeDate() {
-            if (vm.order.startDate && vm.order.endDate) {
+            if (vm.startDate && vm.endDate) {
                 vm.multi = [];
-                var dates = getDates(converter(vm.order.startDate), converter(vm.order.endDate));
+                var dates = getDates(vm.startDate, converter(vm.endDate));
                 dates.forEach(function (m) {
                     !isContains(m) && vm.multi.push(m);
                 });
@@ -154,6 +177,12 @@
             return moment(date).set({hour: 0, minute: 0, second: 0, millisecond: 0});
         }
 
+    }
+
+    function dateFormatter() {
+        return function (input) {
+            return moment.isMoment(input) ? input.format('YYYY-MM-DD') : '';
+        }
     }
 </script>
 </body>

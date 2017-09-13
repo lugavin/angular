@@ -3,14 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Angular DateMultiPicker</title>
+    <link rel="stylesheet" href="../../assets/css/lib/bootstrap/bootstrap.css">
     <link rel="stylesheet" href="angular-multiple-datepicker.css">
 </head>
 <body ng-controller="MainCtrl as vm">
-<div style="width: 400px;">
-    <multiple-date-picker ng-model="vm.multi" day-click="vm.check()"></multiple-date-picker>
+<div class="container">
+    <header><h3>Angular DateMultiPicker</h3></header>
+    <section>
+        <form id="form" class="form-horizontal form-group-sm" role="form">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="startDate">推广日期</label>
+
+                <div class="col-sm-4">
+                    <div class="date-wrap" uib-dropdown auto-close="disabled" is-open="vm.startDateOpen">
+                        <input id="startDate" name="startDate" type="text" class="form-control" readonly
+                               placeholder="点击选择开始日期"
+                               uib-dropdown-toggle ng-value="vm.order.startDate|date:'yyyy-MM-dd'">
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                            <li role="menuitem">
+                                <div multiple-date-picker
+                                     disallow-back-past-months="true"
+                                     disable-days-before="vm.minDate"
+                                     disable-days-after="vm.maxDate"
+                                     highlight-days="vm.highlightDays"
+                                     ng-model="vm.startDate"
+                                     day-click="vm.startDateSelection"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="date-wrap" uib-dropdown auto-close="disabled" is-open="vm.endDateOpen">
+                        <input id="endDate" name="endDate" type="text" class="form-control" readonly
+                               placeholder="点击选择结束日期"
+                               uib-dropdown-toggle ng-value="vm.order.endDate|date:'yyyy-MM-dd'">
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                            <li role="menuitem">
+                                <div multiple-date-picker
+                                     disallow-back-past-months="true"
+                                     disable-days-before="vm.minDate"
+                                     disable-days-after="vm.maxDate"
+                                     highlight-days="vm.highlightDays"
+                                     ng-model="vm.endDate"
+                                     day-click="vm.endDateSelection"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-if="vm.startDate.length>0 && vm.endDate.length>0">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div multiple-date-picker
+                         disallow-back-past-months="true"
+                         disable-days-before="vm.minDate"
+                         disable-days-after="vm.maxDate"
+                         highlight-days="vm.highlightDays"
+                         ng-model="vm.multi"></div>
+                    <strong class="help-block">
+                        <span class="text-danger" ng-bind="'单价：'+(vm.order.price|currency:'￥')+' | '"></span>
+                        <span class="text-success" ng-bind="'预定天数：'+vm.multi.length+' | '"></span>
+                        <span class="text-danger" ng-bind="'总价：'+(vm.order.price*vm.multi.length|currency:'￥')"></span>
+                    </strong>
+                </div>
+            </div>
+        </form>
+    </section>
 </div>
 <script src="moment-with-locales.js"></script>
 <script src="../../assets/js/lib/angular/angular.js"></script>
+<script src="../../assets/js/lib/angular-ui/ui-bootstrap-tpls.js"></script>
 <script src="angular-multiple-datepicker.js"></script>
 <script>
 
@@ -19,16 +80,119 @@
     /**
      * @see https://arca-computing.github.io/MultipleDatePicker/
      */
-    angular.module('app', ['multipleDatePicker']);
+    angular.module('app', ['ui.bootstrap', 'multipleDatePicker']);
 
-    angular.module('app').controller('MainCtrl', MainCtrl);
+    angular.module('app')
+            .controller('MainCtrl', MainCtrl)
+            .filter('dateFormatter', dateFormatter);
 
-    function MainCtrl() {
+    function MainCtrl($scope) {
 
         var vm = this;
 
-        vm.multi = [];
+        var invalidDates = [
+            {startDate: '2017-09-15', endDate: '2017-09-16'},
+            {startDate: '2017-09-19', endDate: '2017-09-19'}
+        ];
 
+        // vm.highlightDays = [
+        //     {date: moment().date(2).valueOf(), css: 'holiday', selectable: false, title: 'Holiday time !'},
+        //     {date: moment().date(14).valueOf(), css: 'off', selectable: false, title: 'We don\'t work today'},
+        //     {date: moment().date(25).valueOf(), css: 'birthday', selectable: true, title: 'I\'m thir... i\'m 28, seriously, I mean ...'}
+        // ];
+
+        vm.highlightDays = getHighlightDays();
+
+        vm.order = {price: 300};
+
+        vm.minDate = moment();
+        vm.maxDate = moment().add(60, 'days');
+
+        vm.multi = [];
+        vm.startDate = [];
+        vm.endDate = [];
+
+        vm.startDateSelection = function (event, day) {
+            // One day selection only
+            vm.startDate.length = 0;
+            day.selectable && (vm.startDateOpen = false);
+        };
+
+        vm.endDateSelection = function (event, day) {
+            // One day selection only
+            vm.endDate.length = 0;
+            day.selectable && (vm.endDateOpen = false);
+        };
+
+        $scope.$watch('vm.startDate', function () {
+            vm.order.startDate = vm.startDate.length == 1 ? vm.startDate[0].valueOf() : null;
+            checkSelection();
+        }, true);
+
+        $scope.$watch('vm.endDate', function () {
+            vm.order.endDate = vm.endDate.length == 1 ? vm.endDate[0].valueOf() : null;
+            checkSelection();
+        }, true);
+
+        function getHighlightDays() {
+            var highlightDays = [];
+            invalidDates.forEach(function (item) {
+                var dates = getDates(converter(item.startDate), converter(item.endDate));
+                dates.forEach(function (m) {
+                    highlightDays.push({
+                        date: m.valueOf(),
+                        css: 'off',
+                        selectable: false,
+                        title: m.toDate().getDate() + '号已被预订'
+                    });
+                });
+            });
+            return highlightDays;
+        }
+
+        function checkSelection() {
+            if (vm.order.startDate && vm.order.endDate) {
+                vm.multi = [];
+                var dateArr = getDates(converter(vm.order.startDate), converter(vm.order.endDate));
+                dateArr.forEach(function (m) {
+                    !isContains(m) && vm.multi.push(m);
+                });
+            }
+        }
+
+        function getDates(startDate, endDate) {
+            var dateArr = [];
+            var i = 0;
+            var days = moment.duration(endDate.diff(startDate)).asDays();
+            while (i <= days) {
+                dateArr.push(moment(startDate).add(i, 'days'));
+                i++;
+            }
+            return dateArr;
+        }
+
+        function isContains(date) {
+            for (var i = 0; i < invalidDates.length; i++) {
+                var startDate = invalidDates[i].startDate;
+                var endDate = invalidDates[i].endDate;
+                if (moment(date).isBetween(startDate, endDate)
+                        || moment(startDate).isSame(date)
+                        || moment(endDate).isSame(date)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function converter(date) {
+            return moment(date).set({hour: 0, minute: 0, second: 0, millisecond: 0});
+        }
+    }
+
+    function dateFormatter() {
+        return function (input) {
+            return input ? input.format('YYYY-MM-DD') : null;
+        }
     }
 </script>
 </body>

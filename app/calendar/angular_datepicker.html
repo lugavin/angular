@@ -13,13 +13,10 @@
         <form id="form" class="form-horizontal form-group-sm" role="form">
             <div class="form-group">
                 <label class="control-label col-sm-2" for="startDate">推广日期</label>
-
                 <div class="col-sm-4">
                     <div class="date-wrap" uib-dropdown auto-close="disabled" is-open="vm.startDateOpen">
-                        <input id="startDate" name="startDate" type="text" class="form-control"
-                               readonly placeholder="点击选择开始日期"
-                               uib-dropdown-toggle
-                               ng-value="vm.startDate|dateFormatter:this">
+                        <input id="startDate" name="startDate" type="text" class="form-control" readonly placeholder="点击选择开始日期"
+                               uib-dropdown-toggle ng-value="vm.startDate|dateFormatter:this">
                         <ul class="dropdown-menu" uib-dropdown-menu role="menu">
                             <li role="menuitem">
                                 <div multi-date-picker
@@ -33,10 +30,8 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="date-wrap" uib-dropdown auto-close="disabled" is-open="vm.endDateOpen">
-                        <input id="endDate" name="endDate" type="text" class="form-control"
-                               readonly placeholder="点击选择结束日期"
-                               uib-dropdown-toggle
-                               ng-value="vm.endDate|dateFormatter:this">
+                        <input id="endDate" name="endDate" type="text" class="form-control" readonly placeholder="点击选择结束日期"
+                               uib-dropdown-toggle ng-value="vm.endDate|dateFormatter:this">
                         <ul class="dropdown-menu" uib-dropdown-menu role="menu">
                             <li role="menuitem">
                                 <div multi-date-picker
@@ -78,7 +73,9 @@
 
     angular.module('app', ['ui.bootstrap', 'multiDatePicker']);
 
-    angular.module('app').controller('MainCtrl', MainCtrl).filter('dateFormatter', dateFormatter);
+    angular.module('app')
+            .controller('MainCtrl', MainCtrl)
+            .filter('dateFormatter', dateFormatter);
 
     /**
      * @see https://monterail.github.io/angular-mighty-datepicker/

@@ -3,7 +3,7 @@
     'use strict';
 
     /**
-     * 获取已声明模块(使用getter的链式语法避免直接用一个变量导致出现变量冲突和泄漏问题)
+     * Using declared modules(使用getter的链式语法避免直接用一个变量导致出现变量冲突和泄漏问题)
      */
     angular
         .module('app.bootstrap.module')

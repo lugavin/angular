@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-ng-annotate": "^2.0.0"
+    "gulp-asset-rev": "0.0.15",
+    "gulp-ng-annotate": "^2.0.0",
+    "gulp-rev": "^8.0.0",
+    "gulp-rev-collector": "^1.2.2",
+    "run-sequence": "^2.2.0"
   }
 }

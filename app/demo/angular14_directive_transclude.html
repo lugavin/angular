@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="../../assets/css/app.css">
+    <script src="../../assets/plugins/angular/angular.js"></script>
+</head>
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
+    <div class="page-header">
+        <label class="h4">Angular14-directive-transclude</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <h3>自定义指令</h3>
+            <p ng-tmpl1=""></p>
+            <p ng-tmpl2=""></p>
+            <p ng-tmpl3="">旧数据</p>
+        </form>
+    </div>
+</div>
+<script id="template" type="text/ng-template">
+    <div><img src="{{faviconIco}}"/></div>
+</script>
+<script type="text/javascript">
+    var myApp = angular.module("myApp", [], ["$compileProvider", function ($compileProvider) {
+        $compileProvider.directive("ngTmpl1", function () {
+            return {
+                restrict: 'ECMA',
+                template: '<div><img src="{{faviconIco}}"></div>',
+                replace: true
+            };
+        });
+    }]).directive("ngTmpl2", function () {
+        return {
+            restrict: 'ECMA',
+            templateUrl: 'template',
+            replace: true
+        };
+    }).directive("ngTmpl3", function () {
+        return {
+            priorty: 0,         // 设置优先级,默认是0
+            terminal: false,    // 设置权重,如果设置为true则节点中权重小于当前指令权重的其它指令不会被执行.
+            transclude: true,   // 当设置为true时指令会删掉原来的内容,使你的模板可以用ng-transclude指令进行重新插入
+            restrict: 'ECMA',
+            template: '<div class="h4">新数据... <small ng-transclude=""></small></div>',
+            replace: true
+        };
+    });
+    myApp.controller("myController", ["$scope", function ($scope) {
+        $scope.faviconIco = '../favicon.ico';
+    }]);
+</script>
+</body>
+</html>

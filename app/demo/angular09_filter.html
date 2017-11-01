@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="../../assets/css/app.css">
+    <script src="../../assets/plugins/angular/angular.js"></script>
+</head>
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
+    <div class="page-header">
+        <label class="h4">Angular09-filter</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <h3>数字(number):</h3>
+            <p>{{3.1415926}}</p>
+            <p>{{3.1415926|number}}</p>
+            <p>{{3.1415926|number:2}}</p>
+
+            <h3>货币(currency):</h3>
+            <p>{{100000000}}</p>
+            <p>{{100000000|currency}}</p>
+            <p>{{100000000|currency:'RMB'}}</p>
+
+            <h3>日期(date):</h3>
+            <p>{{sysDate}}</p>
+            <p>{{sysDate|date}}</p>
+            <p>{{sysDate|date:'yyyy-MM-dd HH:mm:ss'}}</p>
+
+            <h3>大小写(uppercase&lowercase):</h3>
+            <p>{{'Hello AngularJS'}}</p>
+            <p>{{'Hello AngularJS'|uppercase}}</p>
+            <p>{{'Hello AngularJS'|lowercase}}</p>
+
+            <h3>限制(limitTo):</h3>
+            <p>{{data}}</p>
+            <p>{{data|limitTo:3}}</p>
+            <p>{{data|limitTo:-3}}</p>
+
+            <h3>排序(orderBy):</h3>
+            <p>{{data}}</p>
+            <p>{{data|orderBy:'py'}}</p>
+            <p>{{data|orderBy:'-py'}}</p>
+
+            <h3>过滤(filter):</h3>
+            <p>{{data}}</p>
+            <p>{{data|filter:'上海'}}</p>
+            <p>{{data|filter:filterItem}}</p>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var myApp = angular.module("myApp", []);
+    myApp.controller("myController", ["$scope", "$filter", function ($scope, $filter) {
+        $scope.sysDate = new Date();
+        $scope.data = [
+            {id: 101, name: '上海', py: 'shanghai'},
+            {id: 102, name: '北京', py: 'beijing'},
+            {id: 103, name: '天津', py: 'tianjin'},
+            {id: 103, name: '重庆', py: ''}
+        ];
+        $scope.filterItem = function (obj) {
+            return obj.py;
+        };
+        var json = $filter('json')($scope.data);
+        console.info(json);
+    }]);
+</script>
+</body>
+</html>

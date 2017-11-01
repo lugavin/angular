@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="../../assets/css/app.css">
+    <script src="../../assets/plugins/angular/angular.js"></script>
+</head>
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
+    <div class="page-header">
+        <label class="h4">Angular17-directive-require</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <h3>自定义指令</h3>
+            <div ng-tmpl=""></div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var myApp = angular.module("myApp", [], ["$compileProvider", function ($compileProvider) {
+        $compileProvider.directive("ngTmpl", function () {
+            return {
+                restrict: 'ECMA',
+                controller: function ($scope) {
+                    $scope.list = [
+                        {id: 101, name: "Java"},
+                        {id: 102, name: "C++"},
+                        {id: 103, name: "C"},
+                        {id: 104, name: "Javascript"}
+                    ];
+                    this.add = function () {
+                        $scope.$apply(function () {
+                            $scope.list.push({
+                                id: 105,
+                                name: "AngularJS"
+                            });
+                        });
+                    };
+                },
+                /**
+                 * 给controller起别名
+                 */
+                controllerAs: 'ctrl',
+                template: '<div><ul><li ng-repeat="item in list">{{item.id}} {{item.name}}</li></ul><ng-add></ng-add></div>',
+                replace: true
+            };
+        });
+    }]).directive("ngAdd", function() {
+        return {
+            restrict: 'ECMA',
+            require: '^ngTmpl',
+            template: '<button type="button">Add</button>',
+            replace: true,
+            link: function (scope, element, attr, ctrl) {
+                element.on('click', ctrl.add);
+            }
+        };
+    });
+    myApp.controller("myController", ["$scope", function ($scope) {
+        // console.info($scope);
+    }]);
+</script>
+</body>
+</html>

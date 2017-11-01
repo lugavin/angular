@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="../../assets/css/app.css">
+    <script src="../../assets/plugins/angular/angular.js"></script>
+</head>
+<body ng-app="myApp">
+<div id="page-wrapper" class="container">
+    <div class="page-header">
+        <label class="h4">Angular08-multiple-controller</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <fieldset ng-controller="myController1">
+                <div class="form-group">
+                    <label class="control-label col-sm-2 sr-only" for="name">Name:</label>
+
+                    <div class="col-sm-4">
+                        <input id="name" name="name" class="form-control" ng-model="data.name"
+                               placeholder="Enter a name here">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <h4>{{data.name}}</h4>
+                </div>
+            </fieldset>
+            <fieldset ng-controller="myController2">
+                <div class="form-group">
+                    <h4>{{data.name}}</h4>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var myApp = angular.module("myApp", [], function ($provide) {
+        // 通过 factory/service 来实现多个控制器之间数据的共享.
+        $provide.factory('data', function () {
+            return {
+                name: "Share Data"
+            };
+        });
+    });
+    myApp.controller("myController1", ["$scope", "data", function ($scope, data) {
+        // 注意: 若写作 $scope.name = data.name 则当 name 的值改变时,
+        // 另一 controller 中对应的值不会跟着改变, 因为 name 不是引用类型.
+        $scope.data = data;
+    }]);
+    myApp.controller("myController2", ["$scope", "data", function ($scope, data) {
+        $scope.data = data;
+    }]);
+</script>
+</body>
+</html>

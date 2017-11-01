@@ -73,7 +73,7 @@ gulp.task('clean', function () {
 });
 
 gulp.task('assets', function () {
-    return gulp.src(['assets/**/*.css', 'assets/**/*.js'])
+    return gulp.src(['assets/css/*.css', 'assets/js/*.js', 'app/*.js', 'app/**/*.js'])
         .pipe(rev())
         .pipe(rev.manifest('tmp/rev-manifest.json', {
             base: 'www/',
@@ -84,12 +84,12 @@ gulp.task('assets', function () {
 
 gulp.task('inject', function () {
     return gulp.src('index.html')
-        .pipe(inject(gulp.src(['assets/**/*.css', 'assets/**/*.js'], {read: false})))
+        .pipe(inject(gulp.src(['assets/css/*.css', 'assets/js/*.js', 'app/*.js', 'app/**/*.js'], {read: false})))
         .pipe(gulp.dest('www/'));
 });
 
 gulp.task('html', ['inject'], function () {
-    return gulp.src(['www/tmp/rev-manifest.json', 'index.html'])
+    return gulp.src(['www/tmp/rev-manifest.json', 'www/*.html'])
         .pipe(revCollector())
         .pipe(gulp.dest('www/'));
 });

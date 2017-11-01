@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <title>AngularJS</title>
     <link rel="shortcut icon" href="favicon.ico">
-    <!-- build:css -->
+    <!-- build:css app/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="assets/plugins/nprogress/css/nprogress.css">
+    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/plugins/font-awesome/font-awesome.css">
+    <link rel="stylesheet" href="assets/plugins/noty/css/noty.css">
+    <link rel="stylesheet" href="assets/plugins/angular-ui/css/ui-grid.css">
+    <link rel="stylesheet" href="assets/plugins/angular-ui/css/ui-select.css">
+    <!-- endinject -->
+    <!-- endbuild -->
+    <!-- build:css app/app.css -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="assets/css/base.css">
     <!-- endinject -->
     <!-- endbuild -->
 </head>
@@ -60,7 +70,8 @@
         </div>
     </div>
 </footer>
-<!-- inject:js -->
+<!-- build:js app/vendor.js -->
+<!-- bower:js -->
 <script src="assets/plugins/lodash/lodash.js"></script>
 <script src="assets/plugins/angular/angular.js"></script>
 <script src="assets/plugins/angular/angular-route.js"></script>
@@ -70,7 +81,8 @@
 <script src="assets/plugins/angular-ui/js/ui-grid.js"></script>
 <script src="assets/plugins/angular-ui/js/ui-select.js"></script>
 <!-- endinject -->
-<!-- build:js -->
+<!-- endbuild -->
+<!-- build:js app/app.js  -->
 <!-- inject:js -->
 <script src="app/app.js"></script>
 <script src="app/app.route.js"></script>

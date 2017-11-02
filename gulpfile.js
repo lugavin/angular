@@ -72,6 +72,8 @@ gulp.task('clean', function () {
     return del(['www/'], {dot: true});
 });
 
+// https://coderwall.com/p/vtkdbg/inject-js-and-css-into-html-using-gulp
+
 gulp.task('assets', function () {
     return gulp.src(['assets/css/*.css', 'assets/js/*.js', 'app/*.js', 'app/**/*.js'])
         .pipe(rev())

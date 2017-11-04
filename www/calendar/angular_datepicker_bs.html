@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular DateMultiPicker</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="angular-datepicker.css">
+    <style type="text/css">
+        .ng-cloak {
+            display: none !important;
+        }
+    </style>
+</head>
+<body ng-controller="MainCtrl as vm">
+<div class="container">
+    <header><h3>Angular DateMultiPicker</h3></header>
+    <section>
+        <form id="form" class="form-horizontal form-group-sm" role="form">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="startDate">推广日期</label>
+
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="input-group input-group-sm">
+                                <input id="startDate" name="order.startDate" type="text" class="form-control"
+                                       uib-datepicker-popup="yyyy-MM-dd"
+                                       ng-model-options="{timezone: 'utc'}"
+                                       datepicker-options="vm.dateOptions"
+                                       show-button-bar="true"
+                                       close-on-date-selection="true"
+                                       is-open="vm.startDateOpened"
+                                       ng-model="vm.order.startDate"
+                                       select-range="true"
+                                       current-text="今天"
+                                       clear-text="清空"
+                                       close-text="关闭"
+                                       placeholder="开始日期"
+                                       readonly
+                                       ng-change="vm.changeDate()">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="vm.openStartDate()">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="input-group input-group-sm">
+                                <input id="endDate" name="order.endDate" type="text" class="form-control"
+                                       uib-datepicker-popup="yyyy-MM-dd"
+                                       ng-model-options="{timezone: 'utc'}"
+                                       datepicker-options="vm.dateOptions"
+                                       show-button-bar="true"
+                                       close-on-date-selection="true"
+                                       is-open="vm.endDateOpened"
+                                       ng-model="vm.order.endDate"
+                                       select-range="true"
+                                       current-text="今天"
+                                       clear-text="清空"
+                                       close-text="关闭"
+                                       placeholder="结束日期"
+                                       readonly
+                                       ng-change="vm.changeDate()">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="vm.openEndDate()">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group"
+                 ng-if="vm.order.startDate && vm.order.endDate && vm.checkDate(vm.order.startDate, vm.order.endDate)">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div multi-date-picker
+                         options="vm.options"
+                         after="vm.startDate"
+                         markers="vm.markers"
+                         ng-model="vm.multi"></div>
+                </div>
+            </div>
+            <div class="row" ng-if="vm.order.startDate && vm.order.endDate">
+                <div class="col-sm-8 text-right">
+                    <strong class="text-danger" ng-bind="'单价：'+(vm.order.price|currency:'￥')"></strong>
+                    <span ng-bind=" '|' "></span>
+                    <strong class="text-success" ng-bind="'预定天数：'+vm.multi.length"></strong>
+                    <span ng-bind=" '|' "></span>
+                    <strong class="text-danger" ng-bind="'总价：'+(vm.order.price*vm.multi.length|currency:'￥')"></strong>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+<script src="../../lib/angular/angular.js"></script>
+<script src="../../lib/angular/i18n/angular-locale_zh.js"></script>
+<script src="../../lib/angular-ui/js/ui-bootstrap-tpls.js"></script>
+<script src="moment-with-locales.js"></script>
+<script src="bindonce.js"></script>
+<script src="angular-datepicker.js"></script>
+<script type="text/javascript">
+
+    moment.locale('zh_cn');
+
+    /**
+     * @see https://monterail.github.io/angular-mighty-datepicker/
+     */
+    angular.module('app', ['multiDatePicker', 'ui.bootstrap']);
+
+    angular.module('app').controller('MainCtrl', MainCtrl);
+
+    function MainCtrl() {
+
+        var vm = this;
+
+        var invalidDates = [
+            {startDate: '2017-09-11', endDate: '2017-09-11'},
+            {startDate: '2017-09-13', endDate: '2017-09-14'},
+            {startDate: '2017-09-16', endDate: '2017-09-17'}
+        ];
+
+        vm.startDateOpened = false;
+        vm.endDateOpened = false;
+
+        vm.dateOptions = {
+            startingDay: 1,
+            monthColumns: 4,
+            minDate: new Date()
+            // maxDate: new Date(2017, 12, 31),
+            // dateDisabled: function (data) {
+            //     return isContains(converter(data.date));
+            // }
+        };
+
+        /**
+         * 模拟Ajax请求
+         */
+        window.setTimeout(function () {
+            vm.dateOptions.dateDisabled = function (data) {
+                return isContains(converter(data.date));
+            };
+        }, 5000);
+
+        vm.openStartDate = function () {
+            vm.startDateOpened = true;
+        };
+
+        vm.openEndDate = function () {
+            vm.endDateOpened = true;
+        };
+
+        vm.multi = [];
+        vm.markers = getMarkers();
+
+        vm.order = {price: 300};
+
+        vm.checkDate = checkDate;
+
+        vm.startDate = moment().add(0, 'day');
+
+        // console.info(isContains(moment('2017-09-10')));
+
+        vm.changeDate = function () {
+            var startDate = vm.order.startDate;
+            var endDate = vm.order.endDate;
+            if (startDate && endDate) {
+                if (checkDate(startDate, endDate)) {
+                    vm.multi = [];
+                    var dates = getDates(converter(startDate), converter(endDate));
+                    dates.forEach(function (m) {
+                        !isContains(m) && vm.multi.push(m);
+                    });
+                } else {
+                    return alert('结束日期不能小于开始日期');
+                }
+            }
+        };
+
+        vm.options = {
+            months: 2,
+            mode: 'multiple',
+            start: moment().add(0, 'month')
+            // filter: function (m) {
+            //     return !isContains(m);
+            // },
+            // callback: function (day) {
+            //     console.log('call this: ', day);
+            // }
+        };
+
+        /**
+         * 模拟Ajax请求
+         */
+        window.setTimeout(function () {
+            vm.options.filter = function (m) {
+                return !isContains(m);
+            };
+        }, 5000);
+
+        function checkDate(startDate, endDate) {
+            return moment(endDate).isAfter(startDate) || moment(endDate).isSame(startDate);
+        }
+
+        function getMarkers() {
+            var markers = [];
+            invalidDates.forEach(function (item) {
+                var dates = getDates(converter(item.startDate), converter(item.endDate));
+                dates.forEach(function (m) {
+                    markers.push({day: m, marker: m.toDate().getDate() + '号已被预订'});
+                });
+            });
+            return markers;
+        }
+
+        function isContains(date) {
+            for (var i = 0; i < invalidDates.length; i++) {
+                var startDate = invalidDates[i].startDate;
+                var endDate = invalidDates[i].endDate;
+                if (moment(date).isBetween(startDate, endDate)
+                        || moment(startDate).isSame(date)
+                        || moment(endDate).isSame(date)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function getDates(startDate, endDate) {
+            var dates = [];
+            var i = 0;
+            var days = moment.duration(endDate.diff(startDate)).asDays();
+            while (i <= days) {
+                dates.push(moment(startDate).add(i, 'days'));
+                i++;
+            }
+            return dates;
+        }
+
+        function converter(date) {
+            return moment(date).set({hour: 0, minute: 0, second: 0, millisecond: 0});
+        }
+
+    }
+</script>
+</body>
+</html>

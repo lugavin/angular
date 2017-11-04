@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh-TW" ng-app="app">
 <head>
+    <base href="./">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AngularJS</title>
     <link rel="shortcut icon" href="favicon.ico">
-    <!-- build:css app/vendor.css -->
+    <link rel="manifest" href="manifest.webapp">
+    <!-- build:css assets/css/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="assets/plugins/nprogress/css/nprogress.css">
-    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="assets/plugins/font-awesome/font-awesome.css">
-    <link rel="stylesheet" href="assets/plugins/noty/css/noty.css">
-    <link rel="stylesheet" href="assets/plugins/angular-ui/css/ui-grid.css">
-    <link rel="stylesheet" href="assets/plugins/angular-ui/css/ui-select.css">
-    <!-- endinject -->
+    <link rel="stylesheet" href="lib/nprogress/css/nprogress.css">
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="lib/font-awesome/font-awesome.css">
+    <link rel="stylesheet" href="lib/noty/css/noty.css">
+    <link rel="stylesheet" href="lib/angular-ui/css/ui-grid.css">
+    <link rel="stylesheet" href="lib/angular-ui/css/ui-select.css">
+    <!-- endbower -->
     <!-- endbuild -->
-    <!-- build:css app/app.css -->
+    <!-- build:css assets/css/main.css -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="css/base.css">
     <!-- endinject -->
     <!-- endbuild -->
 </head>
@@ -70,31 +73,31 @@
         </div>
     </div>
 </footer>
-<!-- build:js app/vendor.js -->
+<!-- build:js assets/js/vendor.js -->
 <!-- bower:js -->
-<script src="assets/plugins/lodash/lodash.js"></script>
-<script src="assets/plugins/angular/angular.js"></script>
-<script src="assets/plugins/angular/angular-route.js"></script>
-<script src="assets/plugins/angular/angular-animate.js"></script>
-<script src="assets/plugins/angular/angular-sanitize.js"></script>
-<script src="assets/plugins/angular-ui/js/ui-bootstrap-tpls.js"></script>
-<script src="assets/plugins/angular-ui/js/ui-grid.js"></script>
-<script src="assets/plugins/angular-ui/js/ui-select.js"></script>
-<!-- endinject -->
+<script src="lib/lodash/lodash.js"></script>
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular/angular-route.js"></script>
+<script src="lib/angular/angular-animate.js"></script>
+<script src="lib/angular/angular-sanitize.js"></script>
+<script src="lib/angular-ui/js/ui-bootstrap-tpls.js"></script>
+<script src="lib/angular-ui/js/ui-grid.js"></script>
+<script src="lib/angular-ui/js/ui-select.js"></script>
+<!-- endbower -->
 <!-- endbuild -->
-<!-- build:js app/app.js  -->
+<!-- build:js assets/js/main.js -->
 <!-- inject:js -->
-<script src="app/app.js"></script>
-<script src="app/app.route.js"></script>
-<script src="app/app.service.js"></script>
-<script src="app/bootstrap/bootstrap.module.js"></script>
-<script src="app/bootstrap/bootstrap.controller.js"></script>
-<script src="app/grid/grid.module.js"></script>
-<script src="app/grid/treegrid.module.js"></script>
-<script src="app/grid/grid.service.js"></script>
-<script src="app/grid/grid.controller.js"></script>
-<script src="app/select/select.module.js"></script>
-<script src="app/select/select.controller.js"></script>
+<script src="www/app.js"></script>
+<script src="www/app.route.js"></script>
+<script src="www/app.service.js"></script>
+<script src="www/bootstrap/bootstrap.module.js"></script>
+<script src="www/bootstrap/bootstrap.controller.js"></script>
+<script src="www/grid/grid.module.js"></script>
+<script src="www/grid/treegrid.module.js"></script>
+<script src="www/grid/grid.service.js"></script>
+<script src="www/grid/grid.controller.js"></script>
+<script src="www/select/select.module.js"></script>
+<script src="www/select/select.controller.js"></script>
 <!-- endinject -->
 <!-- endbuild -->
 </body>

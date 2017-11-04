@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <script src="../lib/angular/angular.js"></script>
+</head>
+<body ng-app="myApp">
+<div id="page-wrapper" class="container" ng-controller="myController">
+    <div class="page-header">
+        <label class="h4">Angular10-filterProvider</label>
+    </div>
+    <div id="page-content">
+        <form id="form" method="post" class="form-horizontal form-group-sm">
+            <ul>
+                <li ng-repeat="item in data | filterItem">
+                    {{item.id}} -- {{item.name}} -- {{item.py}}
+                </li>
+            </ul>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var myApp = angular.module("myApp", [], function ($provide, $filterProvider) {
+        $provide.service('data', function () {
+            return [
+                {id: 101, name: '上海', py: 'shanghai'},
+                {id: 102, name: '北京', py: 'beijing'},
+                {id: 103, name: '天津', py: 'tianjin'},
+                {id: 103, name: '重庆', py: ''}
+            ];
+        });
+        $filterProvider.register('filterItem', function () {
+            return function (objs) {
+                var results = [];
+                angular.forEach(objs, function (obj) {
+                    if (obj.py) {
+                        results.push(obj);
+                    }
+                });
+                return results;
+            };
+        });
+    });
+    myApp.controller('myController', ["$scope", "data", function ($scope, data) {
+        $scope.data = data;
+    }]);
+</script>
+</body>
+</html>

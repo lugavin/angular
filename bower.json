@@ -1,7 +1,7 @@
 {
-  "name": "app",
+  "name": "ngapp",
   "version": "0.1.0",
-  "description": "",
+  "description": "Angular Single Page Application",
   "dependencies": {
     "angular": "1.5.8",
     "angular-aria": "1.5.8",

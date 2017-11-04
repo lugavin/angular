@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-TW" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <style type="text/css">
+        .has-error .help-block {
+            color: #a94442;
+        }
+    </style>
+</head>
+<body ng-controller="mainCtrl">
+<div id="page-wrapper" class="container">
+    <div class="page-header">
+        <label class="h4">Angular17-form</label>
+    </div>
+    <div id="page-content">
+        <!--
+        Form控制变量
+        (1)字段是否已更改: {{formName.fieldName.$dirty}}
+        (1)字段是否未更改: {{formName.fieldName.$pristine}}
+        (1)字段是否有效: {{formName.fieldName.$valid}}
+        (1)字段是否无效: {{formName.fieldName.$invalid}}
+        (1)字段错误信息: {{formName.fieldName.$error}}
+        -->
+        <form id="form" name="form" method="post" class="form-horizontal form-group-sm">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="username">用户名</label>
+
+                <div class="col-sm-6" ng-class="{'has-error':form.username.$dirty && form.username.$invalid}">
+                    <input id="username" name="username" type="text" class="form-control" placeholder="用户名"
+                           ng-model="data.username" ng-required="true" ng-pattern="/^[a-zA-Z][a-zA-Z0-9_]{4,15}$/">
+                    <small class="help-block" ng-show="form.username.$dirty && form.username.$error.required">
+                        用户名不能为空
+                    </small>
+                    <small class="help-block" ng-show="form.username.$error.pattern">
+                        用户名必须以英文字母开头且只能包含5-15位单词
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="password">密码</label>
+
+                <div class="col-sm-6" ng-class="{'has-error':form.password.$dirty && form.password.$invalid}">
+                    <input id="password" name="password" type="password" class="form-control" placeholder="密码"
+                           ng-model="data.password" ng-required="true" ng-minlength="5" ng-maxlength="15">
+                    <small class="help-block" ng-show="form.password.$dirty && form.password.$error.required">
+                        密码不能为空
+                    </small>
+                    <small class="help-block" ng-show="form.password.$error.minlength">
+                        密码长度不能小于5位
+                    </small>
+                    <small class="help-block" ng-show="form.password.$error.maxlength">
+                        密码长度不能大于15位
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="repPassword">确认密码</label>
+
+                <div class="col-sm-6"
+                     ng-class="{'has-error':form.password.$dirty && form.repPassword.$dirty && data.password!==data.repPassword}">
+                    <input id="repPassword" name="repPassword" type="password" class="form-control"
+                           placeholder="确认密码"
+                           ng-model="data.repPassword" ng-required="true">
+                    <small class="help-block"
+                           ng-show="form.password.$dirty && form.repPassword.$dirty && data.password!==data.repPassword">
+                        两次输入密码不一致
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="email">邮箱</label>
+
+                <div class="col-sm-6" ng-class="{'has-error':form.email.$dirty && form.email.$invalid}">
+                    <input id="email" name="email" type="email" class="form-control" placeholder="邮箱"
+                           ng-model="data.email">
+                    <small class="help-block" ng-show="form.email.$dirty && form.email.$error.email">
+                        邮箱格式不正确
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="phone">手机号</label>
+
+                <div class="col-sm-6" ng-class="{'has-error':form.phone.$dirty && form.phone.$invalid}">
+                    <input id="phone" name="phone" type="text" class="form-control" placeholder="手机号"
+                           ng-model="data.phone" ng-required="true">
+                    <small class="help-block" ng-show="form.phone.$dirty && form.phone.$error.required">
+                        手机号不能为空
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="captcha">验证码</label>
+
+                <div class="col-sm-6" ng-class="{'has-error':form.captcha.$dirty && form.captcha.$invalid}">
+                    <div class="input-group">
+                        <input id="captcha" name="captcha" type="text" class="form-control" placeholder="验证码"
+                               ng-model="data.captcha" ng-required="true">
+                            <span class="input-group-btn">
+                                <button class="btn btn-sm btn-primary" type="button"
+                                        ng-bind="desc" ng-disabled="canClick"
+                                        ng-click="sendSms()"></button>
+                            </span>
+                    </div>
+                    <small class="help-block" ng-show="form.captcha.$dirty && form.captcha.$error.required">
+                        验证码不能为空
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="email">博客网址</label>
+
+                <div class="col-sm-6" ng-class="{'has-error':form.url.$dirty && form.url.$invalid}">
+                    <input id="url" name="url" type="url" class="form-control" placeholder="博客网址"
+                           ng-model="data.url">
+                    <small class="help-block" ng-show="form.url.$dirty && form.url.$error.url">
+                        博客网址不正确
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="age">年龄</label>
+
+                <div class="col-sm-6" ng-class="{'has-error':form.age.$dirty && form.age.$invalid}">
+                    <input id="age" name="age" type="number" class="form-control" placeholder="年龄"
+                           min="16" max="100" ng-model="data.age">
+                    <small class="help-block" ng-show="form.age.$dirty && form.age.$error.min">
+                        年龄不能小于16周岁
+                    </small>
+                    <small class="help-block" ng-show="form.age.$dirty && form.age.$error.max">
+                        年龄不能大于100周岁
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">性别</label>
+
+                <div class="col-sm-6">
+                    <label class="radio-inline">
+                        <input name="gender" value="1" type="radio" ng-model="data.gender"> 男
+                    </label>
+                    <label class="radio-inline">
+                        <input name="gender" value="0" type="radio" ng-model="data.gender"> 女
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">爱好</label>
+
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input name="hobby[0].id" value="100" type="checkbox"> 打台球
+                    </label>
+                    <label class="checkbox-inline">
+                        <input name="hobby[1].id" value="101" type="checkbox"> 下象棋
+                    </label>
+                    <label class="checkbox-inline">
+                        <input name="hobby[2].id" value="102" type="checkbox"> 玩游戏
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="province">联系地址</label>
+
+                <div class="col-sm-2">
+                    <select id="province" name="province" class="form-control"
+                            ng-model="data.province" ng-options="x.id as x.name for x in area | filter:0">
+                        <option value="" selected="selected">请选择...</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select id="city" name="city" class="form-control"
+                            ng-model="data.city" ng-show="data.province"
+                            ng-options="x.id as x.name for x in area | filter:data.province">
+                        <option value="" selected="selected">请选择...</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select id="county" name="county" class="form-control"
+                            ng-model="data.county" ng-show="data.province && data.city"
+                            ng-options="x.id as x.name for x in area | filter:data.city">
+                        <option value="" selected="selected">请选择...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="remark">备注</label>
+                <div class="col-sm-6" ng-class="{'has-error':form.remark.$dirty && form.remark.$invalid}">
+                        <textarea id="remark" name="remark" class="form-control" rows="3" placeholder="备注"
+                                  ng-model="data.remark" ng-maxlength="100" ng-validator="true">
+                        </textarea>
+                    <small class="help-block" ng-show="form.remark.$dirty && form.remark.$error.maxlength">
+                        备注不能超过100个字符
+                    </small>
+                    <small class="help-block" ng-show="form.remark.$dirty && form.remark.$error.validator">
+                        备注不能包含angular字符
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="salary">月薪</label>
+
+                <div class="col-sm-6" ng-class="{'has-error':form.salary.$dirty && form.salary.$invalid}">
+                    <input id="salary" name="salary" type="number" min="1000" max="99999.99" step="0.01"
+                           class="form-control" placeholder="月薪"
+                           ng-model="data.num" ng-pattern="/^[0-9]{1,5}(.[0-9]{1,2})?$/">
+                    <small class="help-block" ng-show="form.salary.$dirty && form.salary.$error.min">
+                        月薪不能低于1000
+                    </small>
+                    <small class="help-block" ng-show="form.salary.$dirty && form.salary.$error.max">
+                        月薪不能高于99999.99
+                    </small>
+                    <small class="help-block" ng-show="form.salary.$dirty && form.salary.$error.pattern">
+                        月薪最多只能包含两位小数
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-2">
+                    <button type="submit" class="btn btn-primary btn-sm" ng-disabled="form.$invalid">
+                        <i class="glyphicon glyphicon-save"></i> 提交
+                    </button>
+                    <button type="reset" class="btn btn-default btn-sm">
+                        <i class="glyphicon glyphicon-refresh"></i> 重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="../lib/angular/angular.js"></script>
+<script type="text/javascript">
+
+    (function () {
+
+        angular.module("app", [])
+                .service("dataService", dataService)
+                .filter("dataFilter", dataFilter)
+                .directive("ngValidator", ngValidator)
+                .controller("mainCtrl", mainCtrl);
+
+        function mainCtrl($scope, $interval, dataService) {
+            $scope.area = dataService.area;
+            // Captcha
+            $scope.desc = "发送验证码";
+            $scope.canClick = false;
+            var second = 59;
+            var timer;
+            $scope.sendSms = function () {
+                timer = $interval(function () {
+                    if (second <= 0) {
+                        $interval.cancel(timer);
+                        second = 59;
+                        $scope.desc = "重新发送";
+                        $scope.canClick = false;
+                    } else {
+                        $scope.desc = "重新发送(" + second + "s)";
+                        second--;
+                        $scope.canClick = true;
+                    }
+                }, 1000)
+            };
+        }
+
+        function dataService() {
+            return {
+                area: [
+                    {id: "10", name: "广西", pid: "0"},
+                    {id: "11", name: "广东", pid: "0"},
+                    {id: "1001", name: "南宁", pid: "10"},
+                    {id: "1002", name: "桂林", pid: "10"},
+                    {id: "1003", name: "柳州", pid: "10"},
+                    {id: "1101", name: "广州", pid: "11"},
+                    {id: "1102", name: "深圳", pid: "11"},
+                    {id: "1103", name: "东莞", pid: "11"},
+                    {id: "1104", name: "珠海", pid: "11"},
+                    {id: "100101", name: "兴宁区", pid: "1001"},
+                    {id: "100102", name: "青秀区", pid: "1001"},
+                    {id: "100103", name: "江南区", pid: "1001"},
+                    {id: "100201", name: "秀峰区", pid: "1002"},
+                    {id: "100202", name: "叠彩区", pid: "1002"},
+                    {id: "100203", name: "象山区", pid: "1002"},
+                    {id: "100204", name: "七星区", pid: "1002"},
+                    {id: "100301", name: "城中区", pid: "1003"},
+                    {id: "100302", name: "鱼峰区", pid: "1003"},
+                    {id: "100303", name: "柳南区", pid: "1003"},
+                    {id: "110101", name: "天河区", pid: "1101"},
+                    {id: "110102", name: "白云区", pid: "1101"},
+                    {id: "110103", name: "黄埔区", pid: "1101"},
+                    {id: "110201", name: "罗湖区", pid: "1102"},
+                    {id: "110202", name: "福田区", pid: "1102"},
+                    {id: "110203", name: "南山区", pid: "1102"},
+                    {id: "110301", name: "塘厦镇", pid: "1103"},
+                    {id: "110302", name: "凤岗镇", pid: "1103"},
+                    {id: "110303", name: "虎门镇", pid: "1103"},
+                    {id: "110401", name: "香洲区", pid: "1104"},
+                    {id: "110402", name: "斗门区", pid: "1104"},
+                    {id: "110403", name: "金湾区", pid: "1104"}
+                ]
+            };
+        }
+
+        function ngValidator() {
+            /**
+             * ng-model是angular原生的directive,通过require ngModel可以更深入地去处理数据的双向绑定.
+             * ngModel里的属性
+             * $parsers: 保存从viewValue向modelValue绑定过程中的处理函数;
+             * $formatters: 保存从modelValue向viewValue绑定过程中的处理函数;
+             * $setViewValue: 当view发生改变时,从view向model绑定调用$setViewValue函数把viewValue保存下来;
+             * $render: 当model发生改变时,从model向view绑定调用ctrl.$render函数将viewValue渲染到页面上;
+             * $setValidity: 设置验证结果;
+             * $viewValue: 视图中的值;
+             * $modelValue: 模型中的值;
+             */
+            return {
+                // require: "ngModel",
+                // link: function (scope, element, attr, controller) {
+                //     controller.$parsers.push(function (viewValue) {
+                //         controller.$setValidity("validator", viewValue.toLowerCase().indexOf("angular") === -1);
+                //         return viewValue;
+                //     });
+                // }
+            };
+        }
+
+        function dataFilter() {
+            return function (data, pid) {
+                var filterData = [];
+                angular.forEach(data, function (obj) {
+                    if (obj.pid == pid) {
+                        filterData.push(obj);
+                    }
+                });
+                return filterData;
+            };
+        }
+
+    })();
+</script>
+</body>
+</html>

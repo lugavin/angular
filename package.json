@@ -32,15 +32,13 @@
     "gulp-uglify": "^3.0.0",
     "imagemin-jpeg-recompress": "^5.1.0",
     "imagemin-optipng": "^5.2.1",
-    "run-sequence": "^2.2.0"
+    "run-sequence": "^2.2.0",
+    "wiredep": "^4.0.0"
   },
   "engines": {
     "node": ">=6.9.0"
   },
   "scripts": {
     "test": "gulp test"
-  },
-  "dependencies": {
-    "wiredep": "^4.0.0"
   }
 }

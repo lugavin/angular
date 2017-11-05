@@ -1,35 +1,19 @@
 /*!
- * ============================== bower vs npm vs yarn ==============================
+ * ============================== npm & bower ==============================
  *
- * $ yarn install
- * $ bower install
- * $ gulp build
- *
- * $ npm init   # package.json
- * $ bower init # bower.json
- *
- * ============================== bower vs npm vs yarn ==============================
- *
- * $ npm cache clean
- * $ npm install -g grunt-cli
+ * $ npm init   => package.json
  * $ npm install -g bower
- * $ npm install --global gulp
- * $ npm install --save-dev gulp
- * $ npm install --save-dev gulp-rev
- * $ npm install --save-dev gulp-rev-collector
- * $ npm install --save-dev gulp-asset-rev
- * $ npm install --save-dev run-sequence
- * $ npm install --save-dev gulp-ng-annotate
  *
- * ============================== bower & npm ==============================
+ * $ bower init => bower.json
+ * $ bower install --save noty
  *
- * $ bower install --save-dev noty
+ * 说明：NPM主要运用于NodeJS项目的内部依赖包管理, 安装的模块位于项目根目录下的node_modules文件夹内;
+ * 而Bower大部分情况下用于前端开发, 对CSS/JS内容进行依赖管理, 依赖的下载目录(如: assets、vendor、bower_components等)可以自定义;
+ * 在实际项目中, 一般将NPM(NodeJS后端)和Bower(前端)组合使用.
  *
- * ============================== bower & npm ==============================
+ * ============================== npm & yarn ==============================
  *
- * ============================== npm & yarn 指令对照表 ==============================
- *
- * npm                                         Yarn
+ * npm                                         yarn
  * $ npm install                               $ yarn install
  * (N/A)                                       $ yarn install --flat
  * (N/A)                                       $ yarn install --har
@@ -49,7 +33,7 @@
  * $ npm uninstall --save-optional [package]   $ yarn remove [package]
  * $ rm -rf node_modules && npm install        $ yarn upgrade
  *
- * ============================== npm & yarn 指令对照表 ==============================
+ * ========================================================================
  */
 
 'use strict';
@@ -80,11 +64,11 @@ var gulp = require('gulp'),
     browserSync = require('browser-sync').create();
 
 var config = {
-    app: 'www/',
+    app: 'app/',
     tmp: 'tmp/',
-    dist: 'dist/',
+    dist: 'www/',
     test: 'test/',
-    plugins: 'assets/plugins',
+    vendor: 'assets/lib',
     bower: 'bower_components/',
     revManifest: 'tmp/rev-manifest.json'
 };
@@ -96,28 +80,29 @@ gulp.task('clean', function () {
 gulp.task('css', function () {
     return gulp.src('assets/css/*.css')
         .pipe(autoprefixer({
-            // 主流浏览器的最新两个版本
-            browsers: ['last 2 version', 'Android >= 4.0']
+            browsers: ['last 2 version', 'Android >= 4.0']  // 主流浏览器的最新两个版本
         }))
-        .pipe(concat('app.css'))        // 将src目录下的css文件和合并到app.css
+        .pipe(concat('main.css'))       // 将src目录下的css文件和合并到main.css
         .pipe(minCss())                 // 压缩
         .pipe(rename({suffix: '.min'})) // 重命名
         .pipe(rev())                    // 文件名加md5后缀
-        .pipe(gulp.dest(config.dist + 'css/'))  // 输出md5后缀的文件到指定目录
+        .pipe(gulp.dest(config.dist + 'assets/css/'))  // 输出md5后缀的文件到指定目录
         .pipe(rev.manifest())           // 生成一个rev-manifest.json文件
         .pipe(gulp.dest(config.tmp));   // 将rev-manifest.json文件保存到指定目录
 });
 
 gulp.task('js', function () {
     return gulp.src('assets/js/*.js')
+        .pipe(concat('main.js'))
         .pipe(uglify())
+        .pipe(rename({suffix: '.min'}))
         .pipe(rev())
-        .pipe(gulp.dest(config.dist + 'js/'))
+        .pipe(gulp.dest(config.dist + 'assets/js/'))
         .pipe(rev.manifest(config.tmp + '/rev-manifest.json', {
             base: config.tmp,
             merge: true
         }))
-        .pipe(gulp.dest(config.dist));
+        .pipe(gulp.dest(config.tmp));
 });
 
 gulp.task('img', function () {
@@ -135,7 +120,12 @@ gulp.task('img', function () {
                 optimizationLevel: 4
             })]
         }))
-        .pipe(gulp.dest(config.dist + 'img/'));
+        .pipe(gulp.dest(config.dist + 'assets/img/'));
+});
+
+gulp.task('vendor', function () {
+    gulp.src('bower_components/**')
+        .pipe(gulp.dest(config.dist + 'bower_components/'));
 });
 
 gulp.task('app', function () {

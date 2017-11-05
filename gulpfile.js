@@ -207,3 +207,110 @@ gulp.task('release', function () {
 });
 
 gulp.task('default', ['release']);
+
+
+// gulp.task('copy', ['copy:common']);
+//
+// gulp.task('copy:common', function () {
+//     return gulp.src(['favicon.ico', 'manifest.webapp'], {dot: true})
+//         .pipe(changed(config.dist))
+//         .pipe(gulp.dest(config.dist));
+// });
+//
+// gulp.task('copy:images', function () {
+//     return gulp.src(bowerFiles({filter: ['**/*.{gif,jpg,png}']}), {base: config.bower})
+//         .pipe(changed(config.dist + 'bower_components'))
+//         .pipe(gulp.dest(config.dist + 'bower_components'));
+// });
+//
+// gulp.task('inject', function () {
+//     runSequence('inject:vendor', 'inject:app');
+// });
+//
+// gulp.task('inject:vendor', function () {
+//     return gulp.src('./index.html')
+//         .pipe(inject(gulp.src(bowerFiles(), {read: false}), {
+//             name: 'bower',
+//             relative: true
+//         }))
+//         .pipe(gulp.dest(config.dist));
+// });
+//
+// gulp.task('inject:app', function () {
+//     return gulp.src('./index.html')
+//         .pipe(inject(gulp.src(config.app + '**/*.js')
+//             .pipe(naturalSort())
+//             .pipe(angularFilesort()), {relative: true}))
+//         .pipe(gulp.dest(config.dist));
+// });
+//
+// gulp.task('assets:prod', ['images', 'styles', 'html', 'copy:images'], function () {
+//     var initTask = lazypipe()
+//         .pipe(sourcemaps.init);
+//     var jsTask = lazypipe()
+//         .pipe(ngAnnotate)
+//         .pipe(uglify);
+//     var cssTask = lazypipe()
+//         .pipe(autoprefixer)
+//         .pipe(cssnano);
+//     var manifest = gulp.src(config.revManifest);
+//     return gulp.src([config.app + '**/*.html',
+//         '!' + config.app + 'app/**/*.html',
+//         '!' + config.bower + '**/*.html'])
+//         .pipe(useref({}, initTask))
+//         .pipe(gulpIf('*.js', jsTask()))
+//         .pipe(gulpIf('*.css', cssTask()))
+//         .pipe(gulpIf('*.html', htmlmin({collapseWhitespace: true})))
+//         .pipe(gulpIf('**/*.!(html)', rev()))
+//         .pipe(revReplace({manifest: manifest}))
+//         .pipe(sourcemaps.write('.'))
+//         .pipe(gulp.dest(config.dist + config.app));
+// });
+//
+// gulp.task('images', function () {
+//     return gulp.src('assets/img/**')
+//         .pipe(changed(config.dist + 'assets/img/'))
+//         .pipe(imagemin({optimizationLevel: 5, progressive: true, interlaced: true}))
+//         .pipe(rev())
+//         .pipe(gulp.dest(config.dist + 'assets/img/'))
+//         .pipe(rev.manifest(config.revManifest, {
+//             base: config.dist,
+//             merge: true
+//         }))
+//         .pipe(gulp.dest(config.dist))
+//         .pipe(browserSync.reload({stream: true}));
+// });
+//
+// gulp.task('styles', [], function () {
+//     return gulp.src('assets/css/*.css')
+//         .pipe(browserSync.reload({stream: true}));
+// });
+//
+// gulp.task('scripts', [], function () {
+//     return gulp.src('assets/js/*.js')
+//         .pipe(browserSync.reload({stream: true}));
+// });
+//
+// gulp.task('html', function () {
+//     return gulp.src('app/**/*.html')
+//         .pipe(htmlmin({collapseWhitespace: true}))
+//         .pipe(templateCache({
+//             module: 'ngApp',
+//             root: 'app/',
+//             moduleSystem: 'IIFE'
+//         }))
+//         .pipe(gulp.dest(config.tmp));
+// });
+//
+// gulp.task('watch', function () {
+//     gulp.watch('scss/*.scss', ['scss']);
+//     gulp.watch('assets/img/**', ['images']);
+//     gulp.watch('assets/css/*.css', ['styles']);
+//     gulp.watch('assets/js/*.js', ['scripts']);
+//     gulp.watch('app/**/*.js', ['inject:app']);
+//     gulp.watch([config.dist + '*.html', config.dist + 'app/**']).on('change', browserSync.reload);
+// });
+//
+// gulp.task('build', ['clean'], function (callback) {
+//     runSequence(['copy', 'inject:vendor'], 'inject:app', 'assets:prod', callback);
+// });

@@ -60,6 +60,8 @@ var gulp = require('gulp'),
     del = require('del'),
     changed = require('gulp-changed'),
     gulpIf = require('gulp-if'),
+    useref = require('gulp-useref'),
+    bowerFiles = require('main-bower-files'),
     wiredep = require('wiredep').stream,
     browserSync = require('browser-sync').create();
 
@@ -68,7 +70,7 @@ var config = {
     tmp: 'tmp/',
     dist: 'www/',
     test: 'test/',
-    vendor: 'assets/lib',
+    vendor: 'assets/lib/',
     bower: 'bower_components/',
     revManifest: 'tmp/rev-manifest.json'
 };
@@ -77,36 +79,69 @@ gulp.task('clean', function () {
     return del([config.dist, config.tmp], {dot: true});
 });
 
+// SCSS文件预编译
+// gulp.task('scss', function () {
+//     return gulp.src('scss/*.scss')
+//         .pipe(sass({
+//             outputStyle: 'compressed'
+//         }))
+//         .pipe(gulp.dest('dist/css'));
+// });
+
+// Inject第三方依赖库
+// gulp.task('bower', function () {
+//     return gulp.src('./index.html')
+//         .pipe(wiredep({
+//             optional: 'configuration',
+//             goes: 'here'
+//         }))
+//         .pipe(gulp.dest(config.dist));
+// });
+// gulp.task('inject', function () {
+//     return gulp.src('./index.html')
+//         .pipe(inject(gulp.src(bowerFiles(), {read: false}), {
+//             name: 'bower',
+//             relative: true
+//         }))
+//         .pipe(gulp.dest(config.dist));
+// });
+
+
+// CSS文件合并压缩
 gulp.task('css', function () {
     return gulp.src('assets/css/*.css')
-        .pipe(autoprefixer({
-            browsers: ['last 2 version', 'Android >= 4.0']  // 主流浏览器的最新两个版本
-        }))
-        .pipe(concat('main.css'))       // 将src目录下的css文件和合并到main.css
+        .pipe(autoprefixer('last 2 version')) // 主流浏览器的最新两个版本
+        // .pipe(concat('main.css'))       // 将src目录下的css文件和合并到main.css
         .pipe(minCss())                 // 压缩
-        .pipe(rename({suffix: '.min'})) // 重命名
+        // .pipe(rename({suffix: '.min'})) // 重命名
         .pipe(rev())                    // 文件名加md5后缀
         .pipe(gulp.dest(config.dist + 'assets/css/'))  // 输出md5后缀的文件到指定目录
         .pipe(rev.manifest())           // 生成一个rev-manifest.json文件
         .pipe(gulp.dest(config.tmp));   // 将rev-manifest.json文件保存到指定目录
 });
 
+// JS文件压缩
 gulp.task('js', function () {
     return gulp.src('assets/js/*.js')
-        .pipe(concat('main.js'))
         .pipe(uglify())
-        .pipe(rename({suffix: '.min'}))
         .pipe(rev())
         .pipe(gulp.dest(config.dist + 'assets/js/'))
-        .pipe(rev.manifest(config.tmp + '/rev-manifest.json', {
+        .pipe(rev.manifest(config.revManifest, {
             base: config.tmp,
             merge: true
         }))
         .pipe(gulp.dest(config.tmp));
 });
 
+// 第三方依赖库
+gulp.task('vendor', function () {
+    return gulp.src('assets/lib/**')
+        .pipe(gulp.dest(config.dist + config.vendor));
+});
+
+// IMG文件压缩
 gulp.task('img', function () {
-    gulp.src('assets/img/*.*')
+    return gulp.src('assets/img/**')
         .pipe(imagemin({
             use: [imageminJpegRecompress({
                 accurate: true,         // 高精度模式
@@ -123,100 +158,44 @@ gulp.task('img', function () {
         .pipe(gulp.dest(config.dist + 'assets/img/'));
 });
 
-gulp.task('vendor', function () {
-    gulp.src('bower_components/**')
-        .pipe(gulp.dest(config.dist + 'bower_components/'));
-});
-
 gulp.task('app', function () {
-    gulp.src('app/**')
-        .pipe(gulp.dest(config.dist + 'app/'));
+    return gulp.src('app/**')
+        .pipe(gulp.dest(config.dist + 'app/'))
+        .pipe(gulpIf('*.js', rev()))
+        .pipe(gulp.dest(config.dist + 'app/'))
+        .pipe(rev.manifest(config.revManifest, {
+            base: config.tmp,
+            merge: true
+        }))
+        .pipe(gulp.dest(config.tmp));
 });
 
-gulp.task('bower', function () {
-    gulp.src('./index.html')
-        .pipe(wiredep({
-            optional: 'configuration',
-            goes: 'here'
+gulp.task('html', function () {
+    return gulp.src('./index.html')
+        // .pipe(useref())
+        .pipe(gulpIf('*.js', uglify()))
+        .pipe(gulpIf('*.css', cssnano()))
+        // .pipe(gulpIf('*.html', htmlmin({collapseWhitespace: true})))
+        .pipe(gulp.dest(config.dist));
+});
+
+gulp.task('rev', function () {
+    return gulp.src([config.revManifest, config.dist + '*.html'])
+        .pipe(revCollector({
+            replaceReved: true
         }))
         .pipe(gulp.dest(config.dist));
 });
 
-// SCSS文件预编译
-// gulp.task('scss', function () {
-//     gulp.src('src/scss/*.scss')
-//         .pipe(sass({
-//             outputStyle: 'compressed'
-//         }))
-//         .pipe(gulp.dest('dist/css'));
-// });
-
-// CSS文件压缩
-// gulp.task('css', function () {
-//     gulp.src('css/*.css')
-//         .pipe(minifyCss())
-//         .pipe(rename({suffix: '.min'}))
-//         .pipe(gulp.dest('dist/css'));
-// });
-
-// JS文件压缩
-// gulp.task('js', function () {
-//     gulp.src('js/*.js')
-//         .pipe(uglify())
-//         .pipe(rename({suffix: '.min'}))
-//         .pipe(gulp.dest('dist/js'));
-// });
-
-// HTML文件压缩
-// gulp.task('html', function () {
-//     gulp.src('html/*.html')
-//         .pipe(minifyHtml())
-//         .pipe(gulp.dest('dist/html'));
-// });
-
-// 文件合并
-// gulp.task('concat', function () {
-//     gulp.src('js/*.js')
-//         .pipe(concat('all.js'))
-//         .pipe(gulp.dest('dist/js'));
-// });
-
-// 文件重命名
-// gulp.task('rename', function () {
-//     gulp.src('js/jquery.js')
-//         .pipe(uglify())
-//         .pipe(rename('jquery.min.js'))
-//         .pipe(gulp.dest('js'));
-// });
-
-gulp.task('assets', function () {
-    return gulp.src(['assets/css/*.css', 'assets/js/*.js', 'app/*.js', 'app/**/*.js'])
-        .pipe(rev())
-        .pipe(rev.manifest('tmp/rev-manifest.json', {
-            base: 'www/',
-            merge: true
-        }))
-        .pipe(gulp.dest('www/assets/'));
-});
-
-gulp.task('inject', function () {
-    return gulp.src('index.html')
-        .pipe(inject(gulp.src(['assets/css/*.css', 'assets/js/*.js', 'app/*.js', 'app/**/*.js'], {read: false})))
-        .pipe(gulp.dest('www/'));
-});
-
-gulp.task('html', function () {
-    return gulp.src(['www/tmp/rev-manifest.json', 'www/*.html'])
-        .pipe(revCollector())
-        .pipe(gulp.dest('www/'));
-});
-
-gulp.task('release', function (callback) {
-    runSequence('clean', [
-        'assets',
-        'inject',
-        'html'
-    ], callback);
+gulp.task('release', function () {
+    runSequence(
+        'clean',
+        ['css', 'js', 'vendor'],
+        'img',
+        'app',
+        'html',
+        'rev'
+    );
 });
 
 gulp.task('default', ['release']);

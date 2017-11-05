@@ -79,15 +79,6 @@ gulp.task('clean', function () {
     return del([config.dist, config.tmp], {dot: true});
 });
 
-// SCSS文件预编译
-// gulp.task('scss', function () {
-//     return gulp.src('scss/*.scss')
-//         .pipe(sass({
-//             outputStyle: 'compressed'
-//         }))
-//         .pipe(gulp.dest('dist/css'));
-// });
-
 // Inject第三方依赖库
 // gulp.task('bower', function () {
 //     return gulp.src('./index.html')
@@ -106,6 +97,14 @@ gulp.task('clean', function () {
 //         .pipe(gulp.dest(config.dist));
 // });
 
+// SCSS文件预编译
+gulp.task('scss', function () {
+    return gulp.src('scss/*.scss')
+        .pipe(sass({
+            outputStyle: 'compressed'
+        }))
+        .pipe(gulp.dest('dist/css'));
+});
 
 // CSS文件合并压缩
 gulp.task('css', function () {
@@ -185,6 +184,15 @@ gulp.task('rev', function () {
             replaceReved: true
         }))
         .pipe(gulp.dest(config.dist));
+});
+
+gulp.task('watch', function () {
+    gulp.watch('scss/*.scss', ['scss']);
+    gulp.watch('assets/css/*.css', ['css']);
+    gulp.watch('assets/js/*.js', ['js']);
+    gulp.watch('assets/img/**', ['img']);
+    gulp.watch('app/**', ['app']);
+    gulp.watch('www/**').on('change', browserSync.reload);
 });
 
 gulp.task('release', function () {

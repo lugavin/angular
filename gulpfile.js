@@ -62,6 +62,8 @@ var gulp = require('gulp'),
     gulpIf = require('gulp-if'),
     useref = require('gulp-useref'),
     bowerFiles = require('main-bower-files'),
+    naturalSort = require('gulp-natural-sort'),
+    angularFilesort = require('gulp-angular-filesort'),
     wiredep = require('wiredep').stream,
     browserSync = require('browser-sync').create();
 
@@ -79,23 +81,44 @@ gulp.task('clean', function () {
     return del([config.dist, config.tmp], {dot: true});
 });
 
-// Inject第三方依赖库
-// gulp.task('bower', function () {
-//     return gulp.src('./index.html')
-//         .pipe(wiredep({
-//             optional: 'configuration',
-//             goes: 'here'
-//         }))
-//         .pipe(gulp.dest(config.dist));
-// });
-// gulp.task('inject', function () {
-//     return gulp.src('./index.html')
-//         .pipe(inject(gulp.src(bowerFiles(), {read: false}), {
-//             name: 'bower',
-//             relative: true
-//         }))
-//         .pipe(gulp.dest(config.dist));
-// });
+gulp.task('copy', ['copy:common']);
+
+gulp.task('copy:common', function () {
+    return gulp.src(['favicon.ico', 'manifest.webapp'], {dot: true})
+        .pipe(changed(config.dist))
+        .pipe(gulp.dest(config.dist));
+});
+
+gulp.task('copy:vendor', function () {
+    var paths = {
+        bowerrc: './.bowerrc',
+        bowerJson: './bower.json',
+        bowerDirectory: './bower_components'
+    };
+    return gulp.src(bowerFiles(paths))
+        .pipe(gulp.dest(config.dist + config.vendor));
+});
+
+gulp.task('inject', function () {
+    runSequence('inject:vendor', 'inject:app');
+});
+
+gulp.task('inject:vendor', function () {
+    return gulp.src('./index.html')
+        .pipe(inject(gulp.src(bowerFiles(), {read: false}), {
+            name: 'bower',
+            relative: true
+        }))
+        .pipe(gulp.dest(config.dist));
+});
+
+gulp.task('inject:app', function () {
+    return gulp.src('./index.html')
+        .pipe(inject(gulp.src(config.app + '**/*.js')
+            .pipe(naturalSort())
+            .pipe(angularFilesort()), {relative: true}))
+        .pipe(gulp.dest(config.dist));
+});
 
 // SCSS文件预编译
 gulp.task('scss', function () {
@@ -133,10 +156,10 @@ gulp.task('js', function () {
 });
 
 // 第三方依赖库
-gulp.task('vendor', function () {
-    return gulp.src('assets/lib/**')
-        .pipe(gulp.dest(config.dist + config.vendor));
-});
+// gulp.task('vendor', function () {
+//     return gulp.src('assets/lib/**')
+//         .pipe(gulp.dest(config.dist + config.vendor));
+// });
 
 // IMG文件压缩
 gulp.task('img', function () {
@@ -208,42 +231,6 @@ gulp.task('release', function () {
 
 gulp.task('default', ['release']);
 
-
-// gulp.task('copy', ['copy:common']);
-//
-// gulp.task('copy:common', function () {
-//     return gulp.src(['favicon.ico', 'manifest.webapp'], {dot: true})
-//         .pipe(changed(config.dist))
-//         .pipe(gulp.dest(config.dist));
-// });
-//
-// gulp.task('copy:images', function () {
-//     return gulp.src(bowerFiles({filter: ['**/*.{gif,jpg,png}']}), {base: config.bower})
-//         .pipe(changed(config.dist + 'bower_components'))
-//         .pipe(gulp.dest(config.dist + 'bower_components'));
-// });
-//
-// gulp.task('inject', function () {
-//     runSequence('inject:vendor', 'inject:app');
-// });
-//
-// gulp.task('inject:vendor', function () {
-//     return gulp.src('./index.html')
-//         .pipe(inject(gulp.src(bowerFiles(), {read: false}), {
-//             name: 'bower',
-//             relative: true
-//         }))
-//         .pipe(gulp.dest(config.dist));
-// });
-//
-// gulp.task('inject:app', function () {
-//     return gulp.src('./index.html')
-//         .pipe(inject(gulp.src(config.app + '**/*.js')
-//             .pipe(naturalSort())
-//             .pipe(angularFilesort()), {relative: true}))
-//         .pipe(gulp.dest(config.dist));
-// });
-//
 // gulp.task('assets:prod', ['images', 'styles', 'html', 'copy:images'], function () {
 //     var initTask = lazypipe()
 //         .pipe(sourcemaps.init);

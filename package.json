@@ -1,5 +1,5 @@
 {
-  "name": "ngapp",
+  "name": "ngApp",
   "version": "0.1.0",
   "description": "Angular Single Page Application",
   "private": true,
@@ -20,6 +20,7 @@
     "gulp-changed": "^3.1.1",
     "gulp-clean-css": "^3.9.0",
     "gulp-concat": "^2.6.1",
+    "gulp-debug": "^3.1.0",
     "gulp-footer": "^1.0.5",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",

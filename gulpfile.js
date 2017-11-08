@@ -39,14 +39,15 @@
 'use strict';
 
 var fs = require('fs'),
+    es = require('event-stream'),
     gulp = require('gulp'),
     inject = require('gulp-inject'),
     rev = require('gulp-rev'),  // 生成MD5签名, 打包后的文件名后加上MD5签名, 同时生成一个json文件用来保存文件名对应关系.
     revReplace = require('gulp-rev-replace'),
-    runSequence = require('run-sequence'),          // 按顺序同步执行Gulp任务
-    concat = require('gulp-concat'),                // 文件合并
-    uglify = require("gulp-uglify"),                // JS压缩
-    minCss = require('gulp-clean-css'),             // CSS压缩
+    runSequence = require('run-sequence'),  // 按顺序同步执行Gulp任务
+    concat = require('gulp-concat'),        // 文件合并
+    uglify = require("gulp-uglify"),        // JS压缩
+    minCss = require('gulp-clean-css'),     // CSS压缩
     cssnano = require('gulp-cssnano'),
     sass = require('gulp-sass'),
     autoprefixer = require('gulp-autoprefixer'),
@@ -64,6 +65,7 @@ var fs = require('fs'),
     templateCache = require('gulp-angular-templatecache'),
     ngAnnotate = require('gulp-ng-annotate'),
     footer = require('gulp-footer'),
+    flatten = require('gulp-flatten'),
     lazypipe = require('lazypipe'),
     sourcemaps = require('gulp-sourcemaps'),
     browserSync = require('browser-sync').create();
@@ -72,13 +74,12 @@ var config = {
     root: './',
     tmp: 'tmp/',
     dist: 'www/',
-    test: 'test/',
     bower: 'bower_components/',
     revManifest: 'tmp/rev-manifest.json'
 };
 
 gulp.task('clean', function () {
-    return del([config.dist, config.tmp], {dot: true});
+    return del([config.dist], {dot: true});
 });
 
 gulp.task('scss', [], function () {
@@ -91,7 +92,36 @@ gulp.task('scss', [], function () {
         .pipe(gulp.dest('dist/css'))
 });
 
-gulp.task('copy', ['copy:common']);
+gulp.task('copy', ['copy:i18n', 'copy:fonts', 'copy:common', 'copy:data']);
+
+gulp.task('copy:i18n', function () {
+    return gulp.src(config.root + 'i18n/**')
+        .pipe(changed(config.dist + 'i18n/'))
+        .pipe(gulp.dest(config.dist + 'i18n/'));
+});
+
+gulp.task('copy:fonts', function () {
+    return es.merge(gulp.src(config.bower + 'bootstrap/fonts/*.*')
+            .pipe(changed(config.dist + 'assets/fonts/'))
+            .pipe(rev())
+            .pipe(gulp.dest(config.dist + 'assets/fonts/'))
+            .pipe(rev.manifest(config.revManifest, {
+                base: config.dist,
+                merge: true
+            }))
+            .pipe(gulp.dest(config.dist)),
+        gulp.src(config.root + 'assets/**/*.{woff,woff2,svg,ttf,eot,otf}')
+            .pipe(changed(config.dist + 'assets/fonts/'))
+            .pipe(flatten())
+            .pipe(rev())
+            .pipe(gulp.dest(config.dist + 'assets/fonts/'))
+            .pipe(rev.manifest(config.revManifest, {
+                base: config.dist,
+                merge: true
+            }))
+            .pipe(gulp.dest(config.dist))
+    );
+});
 
 gulp.task('copy:common', function () {
     return gulp.src(['favicon.ico', 'manifest.webapp'], {dot: true})
@@ -99,15 +129,10 @@ gulp.task('copy:common', function () {
         .pipe(gulp.dest(config.dist));
 });
 
-gulp.task('copy:vendor', function () {
-    var paths = {
-        bowerrc: './.bowerrc',
-        bowerJson: './bower.json',
-        bowerDirectory: './bower_components'
-    };
-    return gulp.src(bowerFiles(paths))
-        .pipe(changed(config.dist + 'bower_components'))
-        .pipe(gulp.dest(config.dist + 'bower_components'));
+gulp.task('copy:data', function () {
+    return gulp.src(config.root + 'data/**')
+        .pipe(changed(config.dist + 'data/'))
+        .pipe(gulp.dest(config.dist + 'data/'));
 });
 
 gulp.task('copy:images', function () {
@@ -145,10 +170,10 @@ gulp.task('images', function () {
         .pipe(rev())
         .pipe(gulp.dest(config.dist + 'assets/img/'))
         .pipe(rev.manifest(config.revManifest, {
-            base: config.tmp,
+            base: config.dist,
             merge: true
         }))
-        .pipe(gulp.dest(config.tmp))
+        .pipe(gulp.dest(config.dist))
         .pipe(browserSync.reload({stream: true}));
 });
 
@@ -156,6 +181,28 @@ gulp.task('styles', [], function () {
     return gulp.src('assets/css/*.css')
         .pipe(browserSync.reload({stream: true}));
 });
+
+gulp.task('scripts', [], function () {
+    return gulp.src('assets/js/*.js')
+        .pipe(browserSync.reload({stream: true}));
+});
+
+// gulp.task('scripts', [], function () {
+//     return gulp.src('assets/js/*.js')
+//         .pipe(debug())
+//         .pipe(changed(config.dist + 'assets/js/'))
+//         .pipe(concat('main.js'))
+//         .pipe(uglify())
+//         .pipe(rename({suffix: '.min'}))
+//         .pipe(rev())
+//         .pipe(gulp.dest(config.dist + 'assets/js/'))
+//         .pipe(rev.manifest(config.revManifest, {
+//             base: config.dist,
+//             merge: true
+//         }))
+//         .pipe(gulp.dest(config.dist))
+//         .pipe(browserSync.reload({stream: true}));
+// });
 
 gulp.task('html', function () {
     return gulp.src(config.root + 'app/**/*.html')
@@ -194,10 +241,11 @@ gulp.task('assets:prod', ['images', 'styles', 'html', 'copy:images'], function (
 });
 
 gulp.task('watch', function () {
-    gulp.watch(config.root + 'assets/css/*.css', ['styles']);
     gulp.watch(config.root + 'assets/img/**', ['images']);
+    gulp.watch(config.root + 'assets/css/*.css', ['styles']);
+    gulp.watch(config.root + 'assets/js/*.js', ['scripts']);
     gulp.watch(config.root + 'app/**/*.js', ['inject:app']);
-    gulp.watch([config.root + '*.html', config.root + 'app/**']).on('change', browserSync.reload);
+    gulp.watch([config.root + '*.html', config.root + 'app/**', config.root + 'i18n/**']).on('change', browserSync.reload);
 });
 
 gulp.task('build', ['clean'], function (callback) {

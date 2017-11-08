@@ -9,18 +9,16 @@
     <link rel="manifest" href="manifest.webapp">
     <!-- build:css assets/css/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="assets/lib/nprogress/css/nprogress.css">
     <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="assets/lib/font-awesome/font-awesome.css">
     <link rel="stylesheet" href="assets/lib/noty/css/noty.css">
-    <link rel="stylesheet" href="assets/lib/angular-ui/css/ui-grid.css">
     <link rel="stylesheet" href="assets/lib/angular-ui/css/ui-select.css">
     <!-- endinject -->
     <!-- endbuild -->
-    <!-- build:css assets/css/app.css -->
-    <!-- inject:css -->
+    <link rel="stylesheet" href="assets/lib/angular-ui/css/ui-grid.css">
+    <link rel="stylesheet" href="assets/lib/nprogress/css/nprogress.css">
+    <link rel="stylesheet" href="assets/lib/font-awesome/font-awesome.css">
+    <!-- build:css assets/css/main.css -->
     <link rel="stylesheet" href="assets/css/base.css">
-    <!-- endinject -->
     <!-- endbuild -->
 </head>
 <body>
@@ -75,9 +73,7 @@
 </footer>
 <!-- build:js assets/js/vendor.js -->
 <!-- bower:js -->
-<script src="assets/lib/lodash/lodash.js"></script>
 <script src="assets/lib/angular/angular.js"></script>
-<script src="assets/lib/angular/angular-route.js"></script>
 <script src="assets/lib/angular/angular-animate.js"></script>
 <script src="assets/lib/angular/angular-sanitize.js"></script>
 <script src="assets/lib/angular-ui/js/ui-bootstrap-tpls.js"></script>
@@ -85,8 +81,14 @@
 <script src="assets/lib/angular-ui/js/ui-select.js"></script>
 <!-- endinject -->
 <!-- endbuild -->
-
-<!-- build:js assets/js/app.js -->
+<script src="assets/lib/lodash/lodash.js"></script>
+<script src="assets/lib/angular/angular-route.js"></script>
+<!-- build:js assets/js/main.js -->
+<script src="assets/js/Namespace.js"></script>
+<script src="assets/js/Base.js"></script>
+<script src="assets/js/Cookie.js"></script>
+<!-- endbuild -->
+<!-- build:js app/app.js -->
 <!-- inject:js -->
 <script src="app/app.js"></script>
 <script src="app/app.route.js"></script>

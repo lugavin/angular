@@ -7,7 +7,6 @@
      * 声明模块(每个独立子模块使用唯一的命名约定以避免命名冲突)
      */
     angular.module('app.bootstrap.module', [
-        'ngAnimate',
         'ui.bootstrap',
         'app.service'
     ]).decorator('$uibModal', uibModalDecorator)

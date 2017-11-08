@@ -179,10 +179,9 @@ gulp.task('assets:prod', ['images', 'styles', 'html', 'copy:images'], function (
         .pipe(autoprefixer)
         .pipe(cssnano);
     var manifest = gulp.src(config.revManifest);
-    return gulp.src([config.root + '**/*.html',
+    return gulp.src([config.root + '*.html',
         '!' + config.root + 'app/**/*.html',
-        '!' + config.bower + '**/*.html',
-        '!' + config.root + 'node_modules/**/*.html'])
+        '!' + config.bower + '**/*.html'])
         .pipe(useref({}, initTask))
         .pipe(gulpIf('**/app.js', footer(templates)))
         .pipe(gulpIf('*.js', jsTask()))

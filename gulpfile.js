@@ -187,22 +187,19 @@ gulp.task('scripts', [], function () {
         .pipe(browserSync.reload({stream: true}));
 });
 
-// gulp.task('scripts', [], function () {
-//     return gulp.src('assets/js/*.js')
-//         .pipe(debug())
-//         .pipe(changed(config.dist + 'assets/js/'))
-//         .pipe(concat('main.js'))
-//         .pipe(uglify())
-//         .pipe(rename({suffix: '.min'}))
-//         .pipe(rev())
-//         .pipe(gulp.dest(config.dist + 'assets/js/'))
-//         .pipe(rev.manifest(config.revManifest, {
-//             base: config.dist,
-//             merge: true
-//         }))
-//         .pipe(gulp.dest(config.dist))
-//         .pipe(browserSync.reload({stream: true}));
-// });
+gulp.task('vendor', [], function () {
+    return gulp.src(config.root + 'assets/lib/**')
+        .pipe(debug())
+        .pipe(changed(config.dist + 'assets/lib/'))
+        .pipe(rev())
+        .pipe(gulp.dest(config.dist + 'assets/lib/'))
+        .pipe(rev.manifest(config.revManifest, {
+            base: config.dist,
+            merge: true
+        }))
+        .pipe(gulp.dest(config.dist))
+        .pipe(browserSync.reload({stream: true}));
+});
 
 gulp.task('html', function () {
     return gulp.src(config.root + 'app/**/*.html')

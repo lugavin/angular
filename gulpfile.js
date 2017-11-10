@@ -1,15 +1,16 @@
 /*!
  * ============================== npm & bower ==============================
  *
- * $ npm init   => package.json
- * $ npm install -g bower
+ * 1. Use npm to manage NodeJS modules
+ * 2. Use bower to manage front-end assets
+ * 3. We need to insert dependencies downloaded by bower into HTML layout
  *
- * $ bower init => bower.json
- * $ bower install --save noty
+ * I.E. $ npm init   => package.json
+ *      $ npm install -g bower
+ *      $ bower init => bower.json
+ *      $ bower install --save noty
  *
- * 说明：NPM主要运用于NodeJS项目的内部依赖包管理, 安装的模块位于项目根目录下的node_modules文件夹内;
- * 而Bower大部分情况下用于前端开发, 对CSS/JS内容进行依赖管理, 依赖的下载目录(如: assets、vendor、bower_components等)可以自定义;
- * 在实际项目中, 一般将NPM(NodeJS后端)和Bower(前端)组合使用.
+ * NPM + Gulp + Bower VS NPM + Webpack + YARN
  *
  * ============================== npm & yarn ==============================
  *
@@ -33,7 +34,7 @@
  * $ npm uninstall --save-optional [package]   $ yarn remove [package]
  * $ rm -rf node_modules && npm install        $ yarn upgrade
  *
- * ========================================================================
+ * https://excodus.com/en/blog/post/managing-development-and-production-assets-gulp
  */
 
 'use strict';

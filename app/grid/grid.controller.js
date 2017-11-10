@@ -52,11 +52,13 @@
                 {
                     field: 'id',
                     displayName: '商品编号',
+                    cellTooltip: true,
                     visible: true
                 },
                 {
                     field: 'name',
-                    displayName: '商品名称'
+                    displayName: '商品名称',
+                    cellTooltip: true
                 },
                 {
                     field: 'price',

@@ -62,4 +62,9 @@
     //         });
     // }
 
+    // function addActiveClassToMenuItem() {
+    //     var anchor = window.location.hash;
+    //     anchor && $('.dropdown-menu a[href="' + anchor + '"]').parent().addClass('active');
+    // }
+
 })();

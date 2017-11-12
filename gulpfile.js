@@ -109,6 +109,7 @@ gulp.task('copy:fonts', function () {
     ];
     return es.merge(
         gulp.src(fonts)
+            .pipe(debug())
             .pipe(changed(config.dist + 'assets/fonts/'))
             .pipe(rev())
             .pipe(gulp.dest(config.dist + 'assets/fonts/'))
@@ -118,6 +119,7 @@ gulp.task('copy:fonts', function () {
             }))
             .pipe(gulp.dest(config.dist)),
         gulp.src(config.root + 'assets/**/*.{eot,svg,ttf,otf,woff,woff2}')
+            .pipe(debug())
             .pipe(changed(config.dist + 'assets/fonts/'))
             .pipe(flatten())
             .pipe(rev())

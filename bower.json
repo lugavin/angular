@@ -17,6 +17,11 @@
     "font-awesome": "^4.7.0"
   },
   "overrides": {
+    "font-awesome": {
+      "main": [
+        "css/font-awesome.css"
+      ]
+    },
     "bootstrap": {
       "main": [
         "dist/css/bootstrap.css"

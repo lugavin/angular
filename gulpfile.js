@@ -102,7 +102,7 @@ gulp.task('copy:i18n', function () {
 });
 
 gulp.task('copy:fonts', function () {
-    return es.merge(gulp.src(config.bower + 'bootstrap/fonts/*.*')
+    return es.merge(gulp.src([config.bower + 'bootstrap/fonts/*.*', config.bower + 'font-awesome/fonts/*.*'])
             .pipe(changed(config.dist + 'assets/fonts/'))
             .pipe(rev())
             .pipe(gulp.dest(config.dist + 'assets/fonts/'))

@@ -80,7 +80,7 @@ var config = {
 };
 
 gulp.task('clean', function () {
-    return del([config.dist], {dot: true});
+    return del([config.dist, config.tmp], {dot: true});
 });
 
 gulp.task('scss', [], function () {
@@ -102,7 +102,13 @@ gulp.task('copy:i18n', function () {
 });
 
 gulp.task('copy:fonts', function () {
-    return es.merge(gulp.src([config.bower + 'bootstrap/fonts/*.*', config.bower + 'font-awesome/fonts/*.*'])
+    var fonts = [
+        config.bower + 'font-awesome/fonts/*.*',
+        config.bower + 'bootstrap/fonts/*.*',
+        config.bower + 'angular-ui-grid/*.{eot,svg,ttf,otf,woff,woff2}'
+    ];
+    return es.merge(
+        gulp.src(fonts)
             .pipe(changed(config.dist + 'assets/fonts/'))
             .pipe(rev())
             .pipe(gulp.dest(config.dist + 'assets/fonts/'))
@@ -111,7 +117,7 @@ gulp.task('copy:fonts', function () {
                 merge: true
             }))
             .pipe(gulp.dest(config.dist)),
-        gulp.src(config.root + 'assets/**/*.{woff,woff2,svg,ttf,eot,otf}')
+        gulp.src(config.root + 'assets/**/*.{eot,svg,ttf,otf,woff,woff2}')
             .pipe(changed(config.dist + 'assets/fonts/'))
             .pipe(flatten())
             .pipe(rev())

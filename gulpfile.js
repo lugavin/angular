@@ -69,6 +69,7 @@ var fs = require('fs'),
     flatten = require('gulp-flatten'),
     lazypipe = require('lazypipe'),
     sourcemaps = require('gulp-sourcemaps'),
+    replace = require('gulp-replace'),
     browserSync = require('browser-sync').create();
 
 var config = {
@@ -105,7 +106,7 @@ gulp.task('copy:fonts', function () {
     var fonts = [
         config.bower + 'font-awesome/fonts/*.*',
         config.bower + 'bootstrap/fonts/*.*',
-        config.bower + 'angular-ui-grid/*.{eot,svg,ttf,otf,woff,woff2}'
+        config.bower + 'angular-ui-grid/*.{eot,svg,ttf,woff}'
     ];
     return es.merge(
         gulp.src(fonts)
@@ -118,7 +119,7 @@ gulp.task('copy:fonts', function () {
                 merge: true
             }))
             .pipe(gulp.dest(config.dist)),
-        gulp.src(config.root + 'assets/**/*.{eot,svg,ttf,otf,woff,woff2}')
+        gulp.src(config.root + 'assets/fonts/*.{eot,svg,ttf,otf,woff,woff2}')
             .pipe(debug())
             .pipe(changed(config.dist + 'assets/fonts/'))
             .pipe(flatten())
@@ -230,7 +231,8 @@ gulp.task('assets:prod', ['images', 'styles', 'html', 'copy:images'], function (
         .pipe(uglify);
     var cssTask = lazypipe()
         .pipe(autoprefixer)
-        .pipe(cssnano);
+        .pipe(cssnano)
+        .pipe(replace, /url\(ui-grid.(ttf|woff|(eot|svg)[\S]*?)\)/g, 'url(../fonts/ui-grid.$1)');
     var manifest = gulp.src(config.revManifest);
     return gulp.src([config.root + '*.html',
         '!' + config.root + 'app/**/*.html',

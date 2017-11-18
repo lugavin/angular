@@ -54,6 +54,7 @@
     "node": ">=6.9.0"
   },
   "scripts": {
-    "test": "gulp test"
+    "comment": "npm run release",
+    "release": "gulp build"
   }
 }

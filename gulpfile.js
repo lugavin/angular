@@ -1,4 +1,7 @@
 /*!
+ *
+ * NPM + Gulp VS YARN + Webpack
+ *
  * ============================== npm & bower ==============================
  *
  * 1. Use npm to manage NodeJS modules
@@ -6,35 +9,14 @@
  * 3. We need to insert dependencies downloaded by bower into HTML layout
  *
  * I.E. $ npm init   => package.json
- *      $ npm install -g bower
+ *      $ npm install --save-dev bower
  *      $ bower init => bower.json
  *      $ bower install --save noty
  *
- * NPM + Gulp + Bower VS NPM + Webpack + YARN
- *
- * ============================== npm & yarn ==============================
- *
- * npm                                         yarn
- * $ npm install                               $ yarn install
- * (N/A)                                       $ yarn install --flat
- * (N/A)                                       $ yarn install --har
- * (N/A)                                       $ yarn install --no-lockfile
- * (N/A)                                       $ yarn install --pure-lockfile
- * $ npm install [package]                     (N/A)
- * $ npm install --save [package]              $ yarn add [package]
- * $ npm install --save-dev [package]          $ yarn add [package] --dev
- * (N/A)                                       $ yarn add [package] --peer
- * $ npm install --save-optional [package]     $ yarn add [package] --optional
- * $ npm install --save-exact [package]        $ yarn add [package] --exact
- * (N/A)                                       $ yarn add [package] --tilde
- * $ npm install --global [package]            $ yarn global add [package]
- * $ npm uninstall [package]                   (N/A)
- * $ npm uninstall --save [package]            $ yarn remove [package]
- * $ npm uninstall --save-dev [package]        $ yarn remove [package]
- * $ npm uninstall --save-optional [package]   $ yarn remove [package]
- * $ rm -rf node_modules && npm install        $ yarn upgrade
+ * ============================== npm & bower ==============================
  *
  * https://excodus.com/en/blog/post/managing-development-and-production-assets-gulp
+ *
  */
 
 'use strict';

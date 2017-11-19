@@ -46,7 +46,7 @@
     "node": ">=6.9.0"
   },
   "scripts": {
-    "comment": "npm run build",
-    "build": "gulp build"
+    "start": "gulp build",
+    "build": "yarn run gulp build"
   }
 }

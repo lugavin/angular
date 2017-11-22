@@ -2,10 +2,12 @@
 
     'use strict';
 
-    angular
-        .module('app.route', [
-            'ui.router'
-        ]).config(config);
+    angular.module('app.route', [
+        'ui.router'
+    ]);
+
+    angular.module('app.route')
+        .config(config);
 
     /* @ngInject */
     function config($stateProvider, $urlRouterProvider) {

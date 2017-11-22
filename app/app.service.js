@@ -2,7 +2,9 @@
 
     'use strict';
 
-    angular.module('app.service', [])
+    angular.module('app.service', []);
+
+    angular.module('app.service')
         .factory('tokenService', tokenService);
 
     /* @ngInject */

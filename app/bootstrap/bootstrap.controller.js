@@ -8,7 +8,10 @@
     angular
         .module('app.bootstrap.module')
         .controller('BootstrapCtrl', BootstrapCtrl)
+        .controller('BootstrapCtrl', BootstrapCtrl)
         .controller('BootstrapModalCtrl', BootstrapModalCtrl);
+
+    // BootstrapCtrl.$inject = ['$resource', '$uibModal', 'dialogService', '$interval', '$timeout', 'userService'];
 
     /* @ngInject */
     function BootstrapCtrl($uibModal, dialogService, $interval, $timeout, userService) {
@@ -35,6 +38,7 @@
          * 提示：setTimeout()只执行一次而setInterval()可执行多次
          */
         var timer = $interval(function () {
+            console.log('%c [ %f ]', 'color: #a94442;', vm.percentage);
             if (vm.percentage > 80) {
                 if (vm.percentage > 95) {
                     $interval.cancel(timer);
@@ -44,14 +48,14 @@
             } else {
                 vm.percentage += 5 * Math.ceil(Math.random() * 2);
             }
-        }, 1000);
+        }, 500);
 
         var delay = $timeout(function () {
             query(function () {
                 vm.percentage = 100;
                 $timeout.cancel(delay);
             });
-        }, 5000);
+        }, 1000);
 
         vm.user = {};
 
@@ -84,14 +88,14 @@
         }
 
         function query(callback) {
-            userService.getUserList({
-                param: vm.param,
+            userService.findAll({
+                keyword: vm.param,
                 pageSize: vm.pagination.pageSize,
                 currentPage: vm.pagination.currentPage
-            }).then(function (response) {
-                vm.users = response.data.items;
-                vm.totalItems = response.data.totalItems;
-                callback && callback(response);
+            }, function (entry) {
+                vm.users = entry.items;
+                vm.totalItems = entry.totalItems;
+                callback && callback(entry);
             });
         }
 

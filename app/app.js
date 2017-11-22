@@ -16,7 +16,10 @@
         'app.grid.module',
         'app.treegrid.module',
         'app.select.module'
-    ]).config(config)
+    ]);
+
+    angular.module('app')
+        .config(config)
         .run(initialization);
 
     /**

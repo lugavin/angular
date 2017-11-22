@@ -7,9 +7,13 @@
      * 声明模块(每个独立子模块使用唯一的命名约定以避免命名冲突)
      */
     angular.module('app.bootstrap.module', [
+        'ngResource',
         'ui.bootstrap',
         'app.service'
-    ]).decorator('$uibModal', uibModalDecorator)
+    ]);
+
+    angular.module('app.bootstrap.module')
+        .decorator('$uibModal', uibModalDecorator)
         .factory('userService', userService)
         .factory('dialogService', dialogService)
         .factory('NProgress', NProgress)
@@ -132,14 +136,14 @@
                     return ulNode;
                 }
 
-                function setParentCheckbox(node){
+                function setParentCheckbox(node) {
                     var pnode = getParentNode(target, node[0]);
-                    if (pnode){
+                    if (pnode) {
                         var ck = $(pnode.target).find('.tree-checkbox');
                         ck.removeClass('tree-checkbox0 tree-checkbox1 tree-checkbox2');
-                        if (isAllSelected(node)){
+                        if (isAllSelected(node)) {
                             ck.addClass('tree-checkbox1');
-                        } else if (isAllNull(node)){
+                        } else if (isAllNull(node)) {
                             ck.addClass('tree-checkbox0');
                         } else {
                             ck.addClass('tree-checkbox2');
@@ -147,23 +151,24 @@
                         setParentCheckbox($(pnode.target));
                     }
 
-                    function isAllSelected(n){
+                    function isAllSelected(n) {
                         var ck = n.find('.tree-checkbox');
                         if (ck.hasClass('tree-checkbox0') || ck.hasClass('tree-checkbox2')) return false;
                         var b = true;
-                        n.parent().siblings().each(function(){
-                            if (!$(this).find('.tree-checkbox').hasClass('tree-checkbox1')){
+                        n.parent().siblings().each(function () {
+                            if (!$(this).find('.tree-checkbox').hasClass('tree-checkbox1')) {
                                 b = false;
                             }
                         });
                         return b;
                     }
-                    function isAllNull(n){
+
+                    function isAllNull(n) {
                         var ck = n.find('.tree-checkbox');
                         if (ck.hasClass('tree-checkbox1') || ck.hasClass('tree-checkbox2')) return false;
                         var b = true;
-                        n.parent().siblings().each(function(){
-                            if (!$(this).find('.tree-checkbox').hasClass('tree-checkbox0')){
+                        n.parent().siblings().each(function () {
+                            if (!$(this).find('.tree-checkbox').hasClass('tree-checkbox0')) {
                                 b = false;
                             }
                         });
@@ -171,7 +176,7 @@
                     }
                 }
 
-                function expandNode(target, node){
+                function expandNode(target, node) {
 
                 }
 
@@ -267,29 +272,10 @@
     }
 
     /* @ngInject */
-    function userService($q, $http) {
-
-        var servic = this;
-
-        servic.getUserList = getUserList;
-
-        return servic;
-
-        function getUserList(params) {
-
-            var deferred = $q.defer();
-
-            $http({
-                url: 'data/Grid.json',
-                data: params
-            }).then(function (response) {
-                deferred.resolve(response);
-            }, function (rejection) {
-                deferred.reject(rejection);
-            });
-
-            return deferred.promise;
-        }
+    function userService($resource) {
+        return $resource('data/Grid.json', {pageSize: 10, currentPage: 1}, {
+            'findAll': {method: 'GET'}
+        });
     }
 
     /* @ngInject */

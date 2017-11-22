@@ -13,7 +13,10 @@
         'ui.grid.pagination',
         'ui.grid.autoResize',
         'ui.grid.resizeColumns'
-    ]).config(config)
+    ]);
+
+    angular.module('app.grid.module')
+        .config(config)
         .decorator('GridOptions', uiGridDecorator)
         .decorator('uiGridValidateService', uiGridValidateDecorator);
 

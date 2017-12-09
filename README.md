@@ -93,5 +93,5 @@ AngularJS路由允许我们通过不同的URL访问不同的内容，通过Angul
 [http://www.example.com/#/third](#)  
 当我们点击以上的任意一个链接时，向服务端请的地址都是一样的 ([http://www.example.com/](#))。 因为 # 号之后的内容在向服务端请求时会被浏览器忽略掉。 所以我们就需要在客户端实现 # 号后面内容的功能实现。 AngularJS路由就通过 **# + 标记** 帮助我们区分不同的逻辑页面并将不同的页面绑定到对应的控制器上。
 
-## [Angular编程规范](https://github.com/mgechev/angularjs-style-guide/blob/master/README-zh-cn.md)
+## [Angular编程规范](https://github.com/johnpapa/angular-styleguide)
 ## [JS代码检查工具](http://jshint.com/)
